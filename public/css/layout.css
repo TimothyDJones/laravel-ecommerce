@@ -1,0 +1,137 @@
+body {
+  margin      : 0;
+  padding     : 0 0 50px 0;
+  font-family : "Helvetica", "Arial";
+  font-size   : 14px;
+  line-height : 18px;
+  cursor      : default;
+}
+
+/*
+a {
+  color : #ef7c61;
+}
+*/
+ 
+.container {
+  width    : 960px;
+  position : relative;
+  margin   : 0 auto;
+}
+ 
+.header, .footer {
+  background  : #800000;
+  line-height : 36px;
+  height      : 36px;
+  width       : 100%;
+  color       : whitesmoke;
+  position: fixed;
+  top: 100%;
+  margin-top: -36px;
+  text-align: right;
+}
+
+.footer a {
+    color: #ecf0f1;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    color: #aa7979;
+    text-decoration: none;
+}
+ 
+.header h1, .header a {
+  display : inline-block;
+}
+ 
+.header h1 {
+  margin      : 0;
+  font-weight : normal;
+}
+
+/*
+.footer {
+  position : absolute;
+  bottom : 0;
+}
+*/
+ 
+.content {
+  padding : 10px 0;
+}
+
+.control-label-reqd {
+    color: #710909;
+}
+
+
+//label, input {
+//  clear  : both;
+//  float  : left;
+//  margin : 5px 0;
+//}
+
+/* Custom Bootstrap Navbar Colors 
+   http://twbscolor.smarchal.com/scss?bd=800000&bh=c00000&cd=ecf0f1&ch=aa7979
+*/
+
+.navbar-default {
+	background-color: #800000;
+	border-color: #c00000;
+}
+.navbar-default .navbar-brand {
+	color: #ecf0f1;
+}
+.navbar-default .navbar-brand:hover, .navbar-default .navbar-brand:focus {
+	color: #aa7979;
+}
+.navbar-default .navbar-text {
+	color: #ecf0f1;
+}
+.navbar-default .navbar-nav > li > a {
+	color: #ecf0f1;
+}
+.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
+	color: #aa7979;
+}
+.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {
+	color: #aa7979;
+	background-color: #c00000;
+}
+.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
+	color: #aa7979;
+	background-color: #c00000;
+}
+.navbar-default .navbar-toggle {
+	border-color: #c00000;
+}
+.navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus {
+	background-color: #c00000;
+}
+.navbar-default .navbar-toggle .icon-bar {
+	background-color: #ecf0f1;
+}
+.navbar-default .navbar-collapse,
+.navbar-default .navbar-form {
+	border-color: #ecf0f1;
+}
+.navbar-default .navbar-link {
+	color: #ecf0f1;
+}
+.navbar-default .navbar-link:hover {
+	color: #aa7979;
+}
+
+@media (max-width: 767px) {
+	.navbar-default .navbar-nav .open .dropdown-menu > li > a {
+		color: #ecf0f1;
+	}
+	.navbar-default .navbar-nav .open .dropdown-menu > li > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
+		color: #aa7979;
+	}
+	.navbar-default .navbar-nav .open .dropdown-menu > .active > a, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
+		color: #aa7979;
+		background-color: #c00000;
+	}
+}
