@@ -20,8 +20,9 @@
 		<!--<header>
 			
 		</header>-->
-		<div id="content" class="content">
-                    <div class="container">
+            <div class="container">
+		<div id="content" class="content row">
+                    <div class="col-md-8">
 			@if (Session::has('message'))
 				<div class="flash alert">
 					<p>{{ Session::get('message') }}</p>
@@ -37,7 +38,11 @@
 			@yield('main')	
                         
                     </div>
+                    <div class="col-md-4">
+                        @include("layouts.sidebar")
+                    </div>
 		</div>
+            </div>
 	</div>
         @include("layouts.footer")
 </body>

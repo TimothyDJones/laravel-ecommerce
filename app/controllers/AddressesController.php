@@ -63,12 +63,12 @@ class AddressesController extends BaseController {
 	 * @param  Address $address
 	 * @return Response
 	 */
-	public function show(Address $address)
+	public function show(Customer $customer, Address $address)
 	{
             //echo $id;
             //$customer = Customer::findOrFail($id);
             //echo $customer;
-            $this->layout->content = View::make('addresses.show', compact('address'))->with('heading', 'Show Address');
+            $this->layout->content = View::make('addresses.show', compact('customer', 'address'))->with('heading', 'Show Address');
 	}
 
 	/**

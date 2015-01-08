@@ -12,7 +12,8 @@
 		"anahkiasen/former": "1.*@dev",
 		"patricktalmadge/bootstrapper": "5.*@dev",
 		"cviebrock/eloquent-sluggable": "2.*",
-		"pragmarx/steroids": "0.*"
+		"pragmarx/steroids": "0.*",
+		"raveren/kint": "0.9.*"
 	},
 	"autoload": {
 		"classmap": [

@@ -1,7 +1,8 @@
 body {
   margin      : 0;
   padding     : 0 0 50px 0;
-  font-family : "Helvetica", "Arial";
+  /*font-family : "Helvetica", "Arial";*/
+  font-family: verdana, arial, helvetica, sans-serif;
   font-size   : 14px;
   line-height : 18px;
   cursor      : default;
@@ -14,7 +15,7 @@ a {
 */
  
 .container {
-  width    : 960px;
+  width    : 1040px;
   position : relative;
   margin   : 0 auto;
 }
@@ -74,7 +75,6 @@ a {
 
 /* Custom Bootstrap Navbar Colors 
    http://twbscolor.smarchal.com/scss?bd=800000&bh=c00000&cd=ecf0f1&ch=aa7979
-*/
 
 .navbar-default {
 	background-color: #800000;
@@ -122,6 +122,33 @@ a {
 .navbar-default .navbar-link:hover {
 	color: #aa7979;
 }
+*/
+
+.navbar-default {
+  background-color: #8a0a0a;
+}
+
+.navbar-brand {
+ background-color: black;
+}
+
+.navbar-default .navbar-brand {
+ color:white;
+}
+
+.navbar-default .navbar-nav>li>a {
+  color: white;
+  font-weight: 900;
+  font-size: 14px;
+}
+
+.navbar-default .navbar-text {
+ background-color: black;
+ color: white;
+ font-weight: 900;
+ font-size: 14px;
+}
+
 
 @media (max-width: 767px) {
 	.navbar-default .navbar-nav .open .dropdown-menu > li > a {
