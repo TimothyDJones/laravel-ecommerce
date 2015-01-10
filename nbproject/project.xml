@@ -3,10 +3,15 @@
     <type>org.netbeans.modules.php.project</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/php-project/1">
+<<<<<<< HEAD
             <name>laravel</name>
         </data>
         <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
             <word>endif</word>
         </spellchecker-wordlist>
+=======
+            <name>laravel-ecommerce</name>
+        </data>
+>>>>>>> 90fb85ce3c8b751d6d57cff7b348c02d9c00579a
     </configuration>
 </project>

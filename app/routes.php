@@ -25,6 +25,7 @@ Route::model('tasks', 'Task');
 Route::model('projects', 'Project');
 Route::model('customers', 'Customer');
 Route::model('addresses', 'Address');
+Route::model('products', 'Product');
 
 Route::bind('tasks', function($value, $route) {
 	return Task::whereSlug($value)->first();
@@ -57,4 +58,6 @@ Route::resource('customers', 'CustomersController');
 //Route::get('addresses.create', 'AddressesController@create');
 Route::resource('customers.addresses', 'AddressesController');
 
-
+// If user includes 4-digit year, call the 'index' method (instead of the 'show' method).
+Route::get('products/{id}', 'ProductsController@index')->where('id', '^20[01][0-9]$');
+Route::resource('products', 'ProductsController');
