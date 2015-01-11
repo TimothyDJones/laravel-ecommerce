@@ -22,7 +22,7 @@
 		</header>-->
             <div class="container">
 		<div id="content" class="content row">
-                    <div class="col-md-8">
+                    <div class="col-md-10">
 
 			@if (Session::has('message'))
 				<div class="flash alert">
@@ -39,7 +39,7 @@
 			@yield('main')	
                         
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-2">
                         @include("layouts.sidebar")
                     </div>
 		</div>
