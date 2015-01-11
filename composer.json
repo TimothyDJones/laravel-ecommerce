@@ -13,7 +13,8 @@
 		"patricktalmadge/bootstrapper": "5.*@dev",
 		"cviebrock/eloquent-sluggable": "2.*",
 		"pragmarx/steroids": "0.*",
-		"raveren/kint": "0.9.*"
+		"raveren/kint": "0.9.*",
+		"phansys/getid3": "2.1.*@dev"
 	},
 	"autoload": {
 		"classmap": [
