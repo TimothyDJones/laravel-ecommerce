@@ -63,5 +63,6 @@ Route::resource('customers.addresses', 'AddressesController');
 Route::get('products/{id}', 'ProductsController@index')->where('id', '^20[01][0-9]$');
 Route::resource('products', 'ProductsController');
 
-Route::get('item/download', array( 'as' => 'download', 'uses' => 'ItemsController@download' ));
+Route::get('items/download', array( 'as' => 'download', 'uses' => 'ItemsController@download' ));
+Route::post('items/search', array('as' => 'search', 'uses' => 'ItemsController@search'));
 Route::resource('items', 'ItemsController');

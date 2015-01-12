@@ -99,7 +99,25 @@ class ItemsController extends \BaseController {
         public function search()
          {
              $input = Input::get('search');
-             $searchTerms = explode();
+             if ( !empty( $input ) ) {
+                $searchTerms = explode(' ', $input);
+                
+                $query = Item::orderBy('id', 'desc');
+                // Assign index 0 search terms directly...
+                $query->where('speaker_name', 'LIKE', '%' . $searchTerms[0] . '%');
+                $query->whereOr('session_title', 'LIKE', '%' . $searchTerms[0] . '%');
+                foreach ( $searchTerms as $key => $value ) {
+                    if ($key > 0)   // Skip index 0; see above
+                    {
+                        $query->whereOr('speaker_name', 'LIKE', '%' . $searchTerms[$key] . '%');
+                        $query->whereOr('session_title', 'LIKE', '%' . $searchTerms[$key] . '%');
+                    }
+                }
+                
+                $items = $query->get();  //->paginate(20);
+                
+                $this->layout->content = View::make('items.index', compact('items'));
+             }
              
          }
          
