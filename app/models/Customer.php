@@ -56,7 +56,7 @@ class Customer extends \LaravelBook\Ardent\Ardent
         }
         
         public function addresses() {
-            return $this->hasMany('Address');
+            return $this->hasOne('Address');
         }
         
         public function orders() {
