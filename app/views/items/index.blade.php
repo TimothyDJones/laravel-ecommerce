@@ -16,14 +16,20 @@
                         <h2>{{ $item->session_title }}</h2>
                         <h3>{{ $item->speaker_name }}</h3>
                         <h3>{{ date('l, F d, Y', strtotime($item->session_date)) }}</h3>
-                        <p>{{ link_to_route('download', 'Download', array('item' => $item->id)) }}</p>
+                        <div class="item-link">
+                            <p>{{ link_to_route('download', 'Download', array('item' => $item->id)) }}</p>
+                        </div>
                     </div>
                 @endforeach
         
             </div>
                 @if ( $items->links() )
                 <span style="text-align: center;">
-                    {{ $items->links() }}
+                    @if ( $search_criteria )
+                        {{ $items->appends(array('search' => $search_criteria))->links() }}
+                    @else
+                        {{ $items->links() }}
+                    @endif
                 </span>
                 @endif
         </div>

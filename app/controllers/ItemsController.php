@@ -16,7 +16,7 @@ class ItemsController extends \BaseController {
             //$items->get();
             //$items = Item::all();
             
-            $this->layout->content = View::make('items.index', compact('items'));
+            $this->layout->content = View::make('items.index', compact('items'))->with('search_criteria', NULL);
 	}
 
 
@@ -98,7 +98,7 @@ class ItemsController extends \BaseController {
 	 */
         public function search()
          {
-             $input = Input::get('search');
+             $input = urldecode(Input::get('search'));
              if ( !empty( $input ) ) {
                 $searchTerms = explode(' ', $input);
                 
@@ -114,9 +114,18 @@ class ItemsController extends \BaseController {
                     }
                 }
                 
-                $items = $query->get();  //->paginate(20);
+                $results = $query->get();  //->paginate(20);
                 
-                $this->layout->content = View::make('items.index', compact('items'));
+                // http://stackoverflow.com/a/23881516
+                $paginator = json_decode($results);
+                $perPage = 20;
+                $page = Input::get('page', 1);
+                if ( $page > count($paginator) or $page < 1 ) { $page = 1; }
+                $offset = ($page * $perPage) - $perPage;
+                $dataSubset = array_slice($paginator, $offset, $perPage);
+                $items = Paginator::make($dataSubset, count($paginator), $perPage);                
+                
+                $this->layout->content = View::make('items.index', compact('items'))->with('search_criteria', urlencode($input));
              }
              
          }

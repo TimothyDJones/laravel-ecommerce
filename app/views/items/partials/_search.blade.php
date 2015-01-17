@@ -1,5 +1,5 @@
     <div class="row">
-        {{ Form::open(array('action' => 'ItemsController@search', 'role' => 'form')) }}
+        {{ Form::open(array('method' => 'get', 'action' => 'ItemsController@search', 'role' => 'form')) }}
             <div class="col-xs-9">
                 <div class="form-group floating-label-form-group">
                     {{ Form::label('search', 'Search Criteria', ['class' => 'control-label control-label-reqd col-xs-5']) }}

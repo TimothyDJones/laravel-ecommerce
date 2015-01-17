@@ -64,5 +64,6 @@ Route::get('products/{id}', 'ProductsController@index')->where('id', '^20[01][0-
 Route::resource('products', 'ProductsController');
 
 Route::get('items/download', array( 'as' => 'download', 'uses' => 'ItemsController@download' ));
-Route::post('items/search', array('as' => 'search', 'uses' => 'ItemsController@search'));
+//Route::post('items/search', array('as' => 'search', 'uses' => 'ItemsController@search'));
+Route::get('items/search', array('as' => 'search', 'uses' => 'ItemsController@search'));
 Route::resource('items', 'ItemsController');

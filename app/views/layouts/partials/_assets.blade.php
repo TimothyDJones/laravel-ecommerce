@@ -4,6 +4,7 @@
         {{ HTML::style('css/layout.css') }}
 	{{ HTML::script('js/jquery-1.11.1.min.js') }}
         {{ HTML::script('js/bootstrap.min.js') }}
+        {{ HTML::script('js/jquery-match-height/jquery.matchHeight-min.js') }}
 	
 	<style>
 		#wrapper {width: 960px; max-width: 100%; margin: auto}
@@ -45,9 +46,19 @@
 	</style>
         
         <script>
+            (function () {
             $.ready( {
-                $(function () {
+                /*$(function () {
                     $('[data-toggle="tooltip"]').tooltip()
+                });*/
+                
+                // apply matchHeight to each item container's items
+                //var byRow = true;
+                (function() {
+                    $('.items-container').each(function() {
+                        $(this).children('.item').matchHeight();
+                    });
                 });
             });
+        });
         </script>
