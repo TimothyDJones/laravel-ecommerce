@@ -15,6 +15,9 @@
 		"pragmarx/steroids": "0.*",
 		"raveren/kint": "0.9.*",
 		"phansys/getid3": "2.1.*@dev",
+		"moltin/currency": "dev-master@dev",
+		"moltin/tax": "dev-master@dev",
+		"moltin/cart": "dev-master@dev",
 		"moltin/laravel-cart": "dev-master@dev"
 	},
 	"autoload": {

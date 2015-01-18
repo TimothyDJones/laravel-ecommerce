@@ -123,6 +123,7 @@ return array(
 		'Illuminate\Workbench\WorkbenchServiceProvider',
 		'Way\Generators\GeneratorsServiceProvider',
                 'Cviebrock\EloquentSluggable\SluggableServiceProvider',
+                'Moltin\Cart\CartServiceProvider',
 
 	),
 
@@ -191,6 +192,7 @@ return array(
 		'Validator'         => 'Illuminate\Support\Facades\Validator',
 		'View'              => 'Illuminate\Support\Facades\View',
                 'Sluggable'         => 'Cviebrock\EloquentSluggable\Facades\Sluggable',
+                'Cart'              => 'Moltin\Cart\Facade',
 
 	),
 

@@ -11,7 +11,7 @@ class ItemsController extends \BaseController {
 	 */
 	public function index()
 	{
-            $items = Item::orderBy('id', 'DESC')->paginate(20);
+            $items = Item::orderBy('id', 'DESC')->remember(5)->paginate(20);
             //$items->paginate(20);
             //$items->get();
             //$items = Item::all();
@@ -114,7 +114,7 @@ class ItemsController extends \BaseController {
                     }
                 }
                 
-                $results = $query->get();  //->paginate(20);
+                $results = $query->remember(5)->get();  //->paginate(20);
                 
                 // http://stackoverflow.com/a/23881516
                 $paginator = json_decode($results);
