@@ -48,7 +48,7 @@ a {
   z-index: 8;
 }
 
-/*
+
 .footer a {
     color: #ecf0f1;
     text-decoration: none;
@@ -59,7 +59,7 @@ a {
     background-color: #055a7a;    
     text-decoration: none;
 }
-*/
+
 
 .header h1, .header a {
   display : inline-block;
@@ -84,78 +84,6 @@ a {
 .control-label-reqd {
     
 }
-
-
-//label, input {
-//  clear  : both;
-//  float  : left;
-//  margin : 5px 0;
-//}
-
-
-/* Custom Bootstrap Navbar Colors - RED
-   http://twbscolor.smarchal.com/scss?bd=800000&bh=c00000&cd=ecf0f1&ch=aa7979
-*/
-/*
-.navbar-default {
-	background-color: #800000;
-	border-color: #c00000;
-}
-.navbar-default .navbar-brand {
-	color: #ecf0f1;
-}
-.navbar-default .navbar-brand:hover, .navbar-default .navbar-brand:focus {
-	color: #aa7979;
-}
-.navbar-default .navbar-text {
-	color: #ecf0f1;
-}
-.navbar-default .navbar-nav > li > a {
-	color: #ecf0f1;
-}
-.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
-	color: #aa7979;
-}
-.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {
-	color: #aa7979;
-	background-color: #c00000;
-}
-.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
-	color: #aa7979;
-	background-color: #c00000;
-}
-.navbar-default .navbar-toggle {
-	border-color: #c00000;
-}
-.navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus {
-	background-color: #c00000;
-}
-.navbar-default .navbar-toggle .icon-bar {
-	background-color: #ecf0f1;
-}
-.navbar-default .navbar-collapse,
-.navbar-default .navbar-form {
-	border-color: #ecf0f1;
-}
-.navbar-default .navbar-link {
-	color: #ecf0f1;
-}
-.navbar-default .navbar-link:hover {
-	color: #aa7979;
-}
-
-@media (max-width: 767px) {
-	.navbar-default .navbar-nav .open .dropdown-menu > li > a {
-		color: #ecf0f1;
-	}
-	.navbar-default .navbar-nav .open .dropdown-menu > li > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
-		color: #aa7979;
-	}
-	.navbar-default .navbar-nav .open .dropdown-menu > .active > a, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
-		color: #aa7979;
-		background-color: #c00000;
-	}
-}  */
 
 /* Custom Bootstrap Navbar Colors - BLUE
    http://twbscolor.smarchal.com/scss?bd=033649&bh=055a7a&cd=ecf0f1&ch=f0f0f0
@@ -231,6 +159,10 @@ a {
     background-color: #e7c3c3;
 }
 
+
+.nav-pills a {
+    color: #ad2b35;
+}
 
 /*
     Tiles for layout of sessions/products 

@@ -1,4 +1,4 @@
-            <div class='col-xs-6'>
+            <div class='col-xs-9'>
                 <div class="form-group">
                     {{ Form::label('addr1', 'Address', ['class' => 'control-label col-xs-5']) }}
                     <div class="input-group col-xs-6">

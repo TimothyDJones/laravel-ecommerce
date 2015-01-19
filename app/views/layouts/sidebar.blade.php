@@ -1,9 +1,9 @@
     <!-- sidebar nav -->
     <nav id="sidebar-nav">
         <ul class="nav nav-pills nav-stacked">
-            <li><a href="#">Fly to the Moon</a></li>
-            <li><a href="#">Dig to China</a></li>
-            <li><a href="#">Swim Across the Sea</a></li>
+            <li><a href="http://www.tulsaworkshop.org/">Tulsa Workshop</a></li>
+            <li><a href="http://www.memorialdrive.org/">Memorial Drive Church of Christ</a></li>
+            <li> {{ link_to('items', 'Free Downloads') }}</li>
         </ul>
     </nav>
 

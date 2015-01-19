@@ -100,7 +100,7 @@ class ItemsController extends \BaseController {
          {
              $input = urldecode(Input::get('search'));
              if ( !empty( $input ) ) {
-                $searchTerms = explode(' ', $input);
+                $searchTerms = explode(',', $input);
                 
                 $query = Item::orderBy('id', 'desc');
                 // Assign index 0 search terms directly...

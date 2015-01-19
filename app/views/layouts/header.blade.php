@@ -8,7 +8,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            {{ link_to('http://www.workshopmultimedia.com/', 'Workshop Multimedia', ['class' => 'navbar-brand']) }}
+            {{ link_to('http://www.workshopmultimedia.com/', 'Workshop Multimedia', array('class' => 'navbar-brand')) }}
         </div>
         <!-- Collection of nav links, forms, and other content for toggling -->
         <div id="navbarCollapse" class="collapse navbar-collapse">
@@ -28,9 +28,9 @@
                     </ul>
                 </li>
             </ul>
-            {{ Form::open(['role' => 'search', 'class' => 'navbar-form navbar-left']) }}
+            {{ Form::open(array('route' => 'search', 'method' => 'get', 'role' => 'search', 'class' => 'navbar-form navbar-left')) }}
                 <div class="form-group">
-                    {{ Form::text('nav-search', null, ['placeholder' => 'Search', 'class' => 'form-control']) }}
+                    {{ Form::text('nav-search', null, array('placeholder' => 'Search', 'class' => 'form-control')) }}
                 </div>
             {{ Form::close() }}
             <ul class="nav navbar-nav navbar-right">
