@@ -18,6 +18,7 @@ class AddressesController extends BaseController {
 	 */
 	public function index(Customer $customer)
 	{
+            $address = $customer->addresses();
             $this->layout->content = View::make('addresses.index', compact('customer'));
 	}
 
@@ -29,10 +30,11 @@ class AddressesController extends BaseController {
 	 */
 	public function create(Customer $customer)
 	{
-            //if ( !Auth::check() )
+            if ( $customer->addresses()->count() > 0 ) {
+                return Redirect::route('customers.addresses.show', array($customer->id, $customer->addresses()->first()->id))->with('message', '<strong>Customer already has address.  See below.</strong>');
+            } else {
                 $this->layout->content = View::make('addresses.create', compact('customer'));
-            //else
-            //    return Redirect::to('profile')->with('message', 'You are already a customer!');
+            }
 	}
 
 
@@ -77,9 +79,9 @@ class AddressesController extends BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function edit($id)
+	public function edit(Customer $customer, Address $address)
 	{
-		//
+            $this->layout->content = View::make('addresses.edit', compact('customer', 'address'))->with('heading', 'Edit Address');
 	}
 
 

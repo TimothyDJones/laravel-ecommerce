@@ -56,7 +56,6 @@ Route::post('login', 'CustomersController@login');
 Route::resource('customers', 'CustomersController');
 //Route::resource('customer', 'CustomersController');
 
-//Route::get('addresses.create', 'AddressesController@create');
 Route::resource('customers.addresses', 'AddressesController');
 
 // If user includes 4-digit year, call the 'index' method (instead of the 'show' method).
