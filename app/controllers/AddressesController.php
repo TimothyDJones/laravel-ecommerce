@@ -27,7 +27,7 @@ class AddressesController extends BaseController {
 	 *
 	 * @return Response
 	 */
-	public function create(Customer $customer=NULL)
+	public function create(Customer $customer)
 	{
             //if ( !Auth::check() )
                 $this->layout->content = View::make('addresses.create', compact('customer'));
@@ -52,7 +52,7 @@ class AddressesController extends BaseController {
                 return Redirect::route('customers.addresses.show', $address->id)->with('message', 'Address created.');
             } else {
                 //return Redirect::route('customers.create')->withInput()->withErrors( $customer->errors() );
-                return Redirect::route('customers.addresses.create')->withInput()->withErrors( $address->errors() );
+                return Redirect::route('customers.addresses.create', $customer->id)->withInput()->withErrors( $address->errors() );
             }
 	}
 
