@@ -124,6 +124,7 @@ return array(
 		'Way\Generators\GeneratorsServiceProvider',
                 'Cviebrock\EloquentSluggable\SluggableServiceProvider',
                 'Moltin\Cart\CartServiceProvider',
+                'Barryvdh\Debugbar\ServiceProvider',
 
 	),
 

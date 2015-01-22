@@ -18,7 +18,8 @@
 		"moltin/currency": "dev-master@dev",
 		"moltin/tax": "dev-master@dev",
 		"moltin/cart": "dev-master@dev",
-		"moltin/laravel-cart": "dev-master@dev"
+		"moltin/laravel-cart": "dev-master@dev",
+		"barryvdh/laravel-debugbar": "1.*"
 	},
 	"autoload": {
 		"classmap": [
