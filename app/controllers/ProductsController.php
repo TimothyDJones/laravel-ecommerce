@@ -9,13 +9,31 @@ class ProductsController extends \BaseController {
 	 */
 	public function index($workshop_year = NULL)
 	{
+            /*
             if ( !$workshop_year ) {
                 $products = Product::paginate(20);
                 //$products = Product::all();
-            } else {
-                $products = Product::where('workshop_year', '=', $workshop_year);
-            }
-            $this->layout->content = View::make('products.index', compact('products'))->with('heading', 'Product List');
+            } else { */
+                $workshop_year = 2014;   // ***TEMPORARY***
+                $query = Product::where('workshop_year', '=', $workshop_year);
+                $query->orderBy('workshop_year', 'DESC')
+                        ->orderBy('id', 'ASC');
+                
+                $results = $query->remember(5)->get();
+                
+                Log::info('ProductsController@index - Count of query results: ' . $results->count(), array($results));
+                
+                // Paginate the results of the custom query by using 'Paginator::make()'.
+                // http://stackoverflow.com/a/23881516
+                $paginator = json_decode($results);
+                $perPage = 20;
+                $page = Input::get('page', 1);
+                if ( $page > count($paginator) or $page < 1 ) { $page = 1; }
+                $offset = ($page * $perPage) - $perPage;
+                $dataSubset = array_slice($paginator, $offset, $perPage);
+                $products = Paginator::make($dataSubset, count($paginator), $perPage);   
+            //}
+            $this->layout->content = View::make('products.index', compact('products'))->with(array('heading' => 'Product List', 'search_criteria' => NULL));
 	}
 
 
