@@ -105,6 +105,72 @@ class ProductsController extends \BaseController {
 	{
 		//
 	}
+        
+        public function calculateDiscount() {
+            
+        }
+        
+        public function calculateShipping() {
+            
+        }
+        
+        public static function truncateStringWithEllipsis($string, $max_length) {
+            if (strlen($string) > ($max_length - 3)) {
+                // Truncate string on word or line break.
+                $parts = preg_split('/([\s\n\r]+)/', $string, null, PREG_SPLIT_DELIM_CAPTURE);
+                $parts_count = count($parts);
+
+                $length = 0;
+                $last_part = 0;
+                for (; $last_part < $parts_count; ++$last_part) {
+                  $length += strlen($parts[$last_part]);
+                  if ($length > ($max_length - 3)) { break; }
+                }
+
+                $string = implode(array_slice($parts, 0, $last_part)) . '...';
+            }
+            
+            return $string;
+        }        
+        
+        public function addToCart() {
+            $input = Input::all();
+            
+            // Check to see if item is already in cart.
+            // Don't add, if it already is.
+            if ( !Cart::find($input['session_id']) ) {
+                $cart_item = array(
+                    'id' => $input['session_id'],
+                    'name' => ProductsController::truncateStringWithEllipsis($input['session_title'], 35)
+                        . ' - ' . $input['speaker_first_name'] 
+                        . ' ' . $input['speaker_last_name']
+                        . ' - ' . $input['prod_code'],
+                    'price' => $input['price'],
+                    'quantity' => $input['qty'],
+                    'prod_type' => $input['prod_type'],
+                    'prod_code' => $input['prod_code'],
+                    'session_title' => ProductsController::truncateStringWithEllipsis($input['session_title'], 35),
+                    'speaker_name' => $input['speaker_first_name'] . ' ' . $input['speaker_last_name']
+                );
+                Cart::insert($cart_item);
+                
+                // Get cart contents and update pop-up (modal) cart window with 
+                // full cart details.
+                
+                $message = 'Item added to cart.';
+            } else {
+                      
+                $message = '<strong>Item already in cart.</strong>';
+            }
+            // Return user to previous page 
+            return Redirect::back()->with('message', $message);
+        }
+        
+        public function getCart() {
+            
+        }
+        
+
 
 
 }

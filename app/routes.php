@@ -60,6 +60,8 @@ Route::resource('customers.addresses', 'AddressesController');
 
 // If user includes 4-digit year, call the 'index' method (instead of the 'show' method).
 Route::get('products/{id}', 'ProductsController@index')->where('id', '^20[01][0-9]$');
+Route::post('products/addtocart', 'ProductsController@addToCart');
+Route::post('cart/add', array( 'as' => 'cart-add', 'uses' => 'ProductsController@addToCart'));
 Route::resource('products', 'ProductsController');
 
 Route::get('items/download', array( 'as' => 'download', 'uses' => 'ItemsController@download' ));
