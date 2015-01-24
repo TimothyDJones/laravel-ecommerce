@@ -3,6 +3,13 @@
         <div class="row">
             
             {{ Kint::dump(Cart::contents()) }}
+            <!-- Display shopping cart button if it has items. -->
+            @if ( Cart::contents() )
+                <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#shoppingCartModal">
+                    Show Cart
+                </button>
+            @endif
+            
             <div class="items-container">
                 <!-- Display "tile" (box) for each item with button to add to cart.  -->
                 @foreach ( $products as $product )
@@ -24,12 +31,13 @@
                             <div class="form-inline">
                                 {{ Form::open(array('route' => 'cart-add', 'method' => 'post', 'role' => 'form', 'class' => 'form-horizontal')) }}
                                     {{ Form::hidden('session_id', $product->id) }}
-                                    {{ Form::hidden('session_title', $product->session_title) }}
+                                    {{-- {{ Form::hidden('session_title', $product->session_title) }}
                                     {{ Form::hidden('speaker_last_name', $product->speaker_last_name) }}
                                     {{ Form::hidden('speaker_first_name', $product->speaker_first_name) }}
                                     {{ Form::hidden('prod_code', $product->prod_code) }}
                                     {{ Form::hidden('prod_type', $product->prod_type) }}
-                                    {{ Form::hidden('price', (int) $product->price) }}
+                                    {{ Form::hidden('form_id', $product->form_id) }}
+                                    {{ Form::hidden('price', (int) $product->price) }} --}}
                                     {{ Form::text('qty', '1', array('size' => 2, 'maxlength' => 2, 'class' => 'form-control input-sm')) }}
                                     {{ Form::submit('Add to Cart', array('class' => 'btn btn-sm btn-primary pull-right')) }}
                                 {{ Form::close() }}
@@ -49,5 +57,49 @@
                     @endif
                 </span>
                 @endif
+        </div>
+    
+        <!-- Modal dialog for shopping cart -->
+        <div id="shoppingCartModal" class="modal fade" tabindex="-1" role="dialog" aria-labeledby="shoppingCartModal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span aria-hidden="true">&times;</span>
+                            <span class="sr-only">Close</span>
+                        </button>
+                        <h4 class="modal-title" id="shoppingCartModalTitle">{{ $modal_title or 'Shopping Cart' }}</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Form ID</th>
+                                        <th>Title</th>
+                                        <th>Speaker</th>
+                                        <th>Qty</th>
+                                        <th>Price</th>
+                                        <th>Ext. Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ( Cart::contents() as $cartItem )
+                                    <tr>
+                                        <td>{{ $cartItem->form_id }}</td>
+                                        <td>{{ $cartItem->session_title }}</td>
+                                        <td>{{ $cartItem->speaker_name }}</td>
+                                        <td>{{ $cartItem->quantity }}</td>
+                                        <td>{{ $cartItem->price }}</td>
+                                        <td>{{ (float) $cartItem->quantity * $cartItem->price }}</td>
+                                    </tr>
+                                    @endforeach                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
         </div>
 @stop

@@ -135,11 +135,26 @@ class ProductsController extends \BaseController {
         
         public function addToCart() {
             $input = Input::all();
+            $product = Product::find($input['session_id']);
             
             // Check to see if item is already in cart.
             // Don't add, if it already is.
             if ( !Cart::find($input['session_id']) ) {
                 $cart_item = array(
+                    'id' => $product->id,
+                    'name' => ProductsController::truncateStringWithEllipsis($product->session_title, 35)
+                        . ' - ' . $product->speaker_first_name
+                        . ' ' . $product->speaker_last_name
+                        . ' - ' . $product->prod_code,
+                    'price' => $product->price,
+                    'quantity' => $input['qty'],
+                    'prod_type' => $product->prod_type,
+                    'prod_code' => $product->prod_code,
+                    'form_id' => $product->form_id,
+                    'session_title' => ProductsController::truncateStringWithEllipsis($product->session_title, 35),
+                    'speaker_name' => $product->speaker_first_name . ' ' . $product->speaker_last_name,
+                );
+/*                $cart_item = array(
                     'id' => $input['session_id'],
                     'name' => ProductsController::truncateStringWithEllipsis($input['session_title'], 35)
                         . ' - ' . $input['speaker_first_name'] 
@@ -149,9 +164,13 @@ class ProductsController extends \BaseController {
                     'quantity' => $input['qty'],
                     'prod_type' => $input['prod_type'],
                     'prod_code' => $input['prod_code'],
+                    'form_id' => $input['form_id'],
                     'session_title' => ProductsController::truncateStringWithEllipsis($input['session_title'], 35),
                     'speaker_name' => $input['speaker_first_name'] . ' ' . $input['speaker_last_name']
                 );
+ * 
+ */
+                
                 Cart::insert($cart_item);
                 
                 // Get cart contents and update pop-up (modal) cart window with 
@@ -168,6 +187,12 @@ class ProductsController extends \BaseController {
         
         public function getCart() {
             
+        }
+        
+        public function emptyCart() {
+            Cart::destroy();
+            
+            return Redirect::back()->with('message', 'Shopping cart emptied.');
         }
         
 
