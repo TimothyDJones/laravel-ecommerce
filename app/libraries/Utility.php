@@ -27,6 +27,18 @@ class Utility {
             }
             
             return $string;
-        }       
+        }
+        
+	/**
+	 * Format value as currency, with two decimal places and
+         * optional currency symbol.
+	 *
+	 * @param  float $value
+         * @param  string $currencySymbol
+	 * @return formatted string
+	 */        
+        public static function formatCurrency($value, $currencySymbol = '') {
+            
+        }
 }
 

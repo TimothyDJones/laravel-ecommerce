@@ -156,7 +156,7 @@ class ProductsController extends \BaseController {
         public function emptyCart() {
             Cart::destroy();
             
-            return Redirect::back()->with('message', 'Shopping cart emptied.');
+            return Redirect::route('products.index')->with('message', 'Shopping cart emptied.');
         }
         
 
