@@ -64,6 +64,7 @@ Route::get('products/{id}', 'ProductsController@index')->where('id', '^20[01][0-
 Route::post('products/addtocart', 'ProductsController@addToCart');
 Route::post('cart/add', array( 'as' => 'cart-add', 'uses' => 'ProductsController@addToCart'));
 Route::get('cart/empty', array( 'as' => 'cart-empty', 'uses' => 'ProductsController@emptyCart'));
+Route::get('cart/remove/{id}', array( 'as' => 'cart-remove', 'uses' => 'ProductsController@removeFromCart'));
 Route::resource('products', 'ProductsController');
 
 Route::get('items/download', array( 'as' => 'download', 'uses' => 'ItemsController@download' ));

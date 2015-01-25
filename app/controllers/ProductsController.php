@@ -153,6 +153,12 @@ class ProductsController extends \BaseController {
             
         }
         
+        public function removeFromCart($id) {
+            $cartItem = Cart::find($id);
+            $cartItem->remove();
+            return Redirect::back()->with('message', 'Item removed from cart.');
+        }
+        
         public function emptyCart() {
             Cart::destroy();
             
