@@ -31,13 +31,6 @@
                             <div class="form-inline">
                                 {{ Form::open(array('route' => 'cart-add', 'method' => 'post', 'role' => 'form', 'class' => 'form-horizontal')) }}
                                     {{ Form::hidden('session_id', $product->id) }}
-                                    {{-- {{ Form::hidden('session_title', $product->session_title) }}
-                                    {{ Form::hidden('speaker_last_name', $product->speaker_last_name) }}
-                                    {{ Form::hidden('speaker_first_name', $product->speaker_first_name) }}
-                                    {{ Form::hidden('prod_code', $product->prod_code) }}
-                                    {{ Form::hidden('prod_type', $product->prod_type) }}
-                                    {{ Form::hidden('form_id', $product->form_id) }}
-                                    {{ Form::hidden('price', (int) $product->price) }} --}}
                                     {{ Form::text('qty', '1', array('size' => 2, 'maxlength' => 2, 'class' => 'form-control input-sm')) }}
                                     {{ Form::submit('Add to Cart', array('class' => 'btn btn-sm btn-primary pull-right')) }}
                                 {{ Form::close() }}
@@ -89,14 +82,23 @@
                                         <td>{{ $cartItem->form_id }}</td>
                                         <td>{{ $cartItem->session_title }}</td>
                                         <td>{{ $cartItem->speaker_name }}</td>
-                                        <td>{{ $cartItem->quantity }}</td>
-                                        <td>{{ $cartItem->price }}</td>
-                                        <td>{{ (float) $cartItem->quantity * $cartItem->price }}</td>
+                                        <td class="table-align-right">{{ $cartItem->quantity }}</td>
+                                        <td class="table-align-right">{{ money_format("%.2n", $cartItem->price) }}</td>
+                                        <td class="table-align-right">{{ money_format("%.2n", $cartItem->quantity * $cartItem->price) }}</td>
                                     </tr>
-                                    @endforeach                                    
+                                    @endforeach
+                                    <tr>
+                                        <td colspan="3" class="table-align-right">Total (not including shipping, if any)</td>
+                                        <td class="table-align-right">{{ Cart::totalItems() }}</td>
+                                        <td colspan="2" class="table-align-right">{{ money_format("%.2n", Cart::total()) }}</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
+                    </div>
+                    <div class="modal-footer">
+                        {{ link_to_route('checkout', 'Checkout', NULL, array('class' => 'btn btn-lg btn-success')) }}
+                        <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>

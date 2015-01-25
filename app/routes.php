@@ -70,3 +70,6 @@ Route::get('items/download', array( 'as' => 'download', 'uses' => 'ItemsControll
 //Route::post('items/search', array('as' => 'search', 'uses' => 'ItemsController@search'));
 Route::get('items/search', array('as' => 'search', 'uses' => 'ItemsController@search'));
 Route::resource('items', 'ItemsController');
+
+Route::get('orders.checkout', array( 'as' => 'checkout', 'uses' => 'OrdersController@checkout'));
+Route::resource('orders', 'OrdersController');

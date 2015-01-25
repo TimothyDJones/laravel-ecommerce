@@ -82,5 +82,7 @@ class OrdersController extends \BaseController {
 		//
 	}
 
-
+        public function checkout() {
+            
+        }
 }

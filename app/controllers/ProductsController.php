@@ -114,25 +114,6 @@ class ProductsController extends \BaseController {
             
         }
         
-        public static function truncateStringWithEllipsis($string, $max_length) {
-            if (strlen($string) > ($max_length - 3)) {
-                // Truncate string on word or line break.
-                $parts = preg_split('/([\s\n\r]+)/', $string, null, PREG_SPLIT_DELIM_CAPTURE);
-                $parts_count = count($parts);
-
-                $length = 0;
-                $last_part = 0;
-                for (; $last_part < $parts_count; ++$last_part) {
-                  $length += strlen($parts[$last_part]);
-                  if ($length > ($max_length - 3)) { break; }
-                }
-
-                $string = implode(array_slice($parts, 0, $last_part)) . '...';
-            }
-            
-            return $string;
-        }        
-        
         public function addToCart() {
             $input = Input::all();
             $product = Product::find($input['session_id']);
@@ -142,7 +123,7 @@ class ProductsController extends \BaseController {
             if ( !Cart::find($input['session_id']) ) {
                 $cart_item = array(
                     'id' => $product->id,
-                    'name' => ProductsController::truncateStringWithEllipsis($product->session_title, 35)
+                    'name' => Utility::truncateStringWithEllipsis($product->session_title, 35)
                         . ' - ' . $product->speaker_first_name
                         . ' ' . $product->speaker_last_name
                         . ' - ' . $product->prod_code,
@@ -151,7 +132,7 @@ class ProductsController extends \BaseController {
                     'prod_type' => $product->prod_type,
                     'prod_code' => $product->prod_code,
                     'form_id' => $product->form_id,
-                    'session_title' => ProductsController::truncateStringWithEllipsis($product->session_title, 35),
+                    'session_title' => Utility::truncateStringWithEllipsis($product->session_title, 35),
                     'speaker_name' => $product->speaker_first_name . ' ' . $product->speaker_last_name,
                 );
                 Cart::insert($cart_item);
