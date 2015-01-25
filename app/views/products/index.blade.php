@@ -1,15 +1,18 @@
 @section('main')
     {{-- @include('items.partials._search') --}}
-        <div class="row">
+        
             
             {{ Kint::dump(Cart::contents()) }}
             <!-- Display shopping cart button if it has items. -->
             @if ( Cart::contents() )
-                <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#shoppingCartModal">
-                    Show Cart
+            <div class="row">
+                <button class="btn btn-primary btn-lg pull-right" data-toggle="modal" data-target="#shoppingCartModal">
+                    Show Cart <span class="badge">{{ money_format("%.2n", Cart::total()) }}&nbsp;({{ Cart::totalItems() }})</span>
                 </button>
+            </div>
             @endif
             
+        <div class="row">    
             <div class="items-container">
                 <!-- Display "tile" (box) for each item with button to add to cart.  -->
                 @foreach ( $products as $product )
