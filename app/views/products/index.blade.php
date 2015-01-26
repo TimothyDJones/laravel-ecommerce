@@ -8,6 +8,7 @@
             <div class="row">
                 <div class="form-horizontal pull-right">
                     <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#shoppingCartModal">
+                        <i class="fa fa-shopping-cart fa-fw"></i>
                         Show Cart <span class="badge">&nbsp;${{ money_format("%.2n", Cart::total()) }}&nbsp;({{ Cart::totalItems() }})&nbsp;</span>
                     </button>
                     {{ link_to_route('checkout', 'Checkout', NULL, array('class' => 'btn btn-lg btn-success')) }}
