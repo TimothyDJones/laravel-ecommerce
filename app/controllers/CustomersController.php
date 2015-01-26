@@ -29,7 +29,7 @@ class CustomersController extends BaseController {
                 if ( $loginValidator->passes() ) {
                     $inputCredentials = array(
                         'email'     => Input::get('email'),
-                        'password'  => Hash::make(Input::get('password')),
+                        'password'  => Input::get('password'),
                     );
                     
                     if ( Auth::attempt($inputCredentials) ) {
