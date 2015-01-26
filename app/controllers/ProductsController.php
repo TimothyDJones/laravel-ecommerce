@@ -130,6 +130,7 @@ class ProductsController extends \BaseController {
                     'price' => $product->price,
                     'quantity' => $input['qty'],
                     'prod_type' => $product->prod_type,
+                    'unit_count' => $product->unit_count,
                     'prod_code' => $product->prod_code,
                     'form_id' => $product->form_id,
                     'session_title' => Utility::truncateStringWithEllipsis($product->session_title, 35),
