@@ -75,6 +75,7 @@
                     </div>
                     <div class="modal-footer">
                         {{ link_to_route('checkout', 'Checkout', NULL, array('class' => 'btn btn-lg btn-success')) }}
+                        {{ link_to_route('cart-empty', 'Empty Cart', NULL, array('class' => 'btn btn-primary btn-lg')) }}
                         <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal">Close</button>
                     </div>
                 </div>
