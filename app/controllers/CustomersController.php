@@ -29,7 +29,7 @@ class CustomersController extends BaseController {
                 if ( $loginValidator->passes() ) {
                     $inputCredentials = array(
                         'email'     => Input::get('email'),
-                        'password'  => Input::get('password'),
+                        'password'  => Hash::make(Input::get('password')),
                     );
                     
                     if ( Auth::attempt($inputCredentials) ) {
@@ -101,14 +101,29 @@ class CustomersController extends BaseController {
 	public function store()
 	{
             $input = array_except(Input::all(), array('_token') );
-            $customer = new Customer($input);
+            $validator = Validator::make($input, Customer::$rules);
             
-            if ( $customer->save() ) {
-                return Redirect::route('customers.addresses.create', $customer->id)->with('message', 'Customer created.');
+            if ( $validator->passes()
+                    && ($input['password'] === $input['password_confirmation'])) {
+                $customer = new Customer($input); //new Customer(array_except($input, array('password_confirmation')));
+                $customer->password = Hash::make(Input::get('password'));
+                
+                if ( $customer->save() ) {
+                    return Redirect::route('customers.addresses.create', $customer->id)
+                            ->with('message', 'Customer created.');
+                } else {
+                    return Redirect::route('customers.create')
+                            ->withInput()
+                            ->withErrors( $customer->errors() )
+                            ->with('message', 'Error with saving.');
+                }
                 //return Redirect::route('customers.show', $customer->id);
             } else {
                 //return Redirect::route('customers.create')->withInput()->withErrors( $customer->errors() );
-                return Redirect::route('customers.create')->withInput()->withErrors( $customer->errors() );
+                return Redirect::route('customers.create')
+                        ->withInput()
+                        ->withErrors( $validator->errors() )
+                        ->with('message', 'Error with validation.');
             }
 	}
 
@@ -124,7 +139,8 @@ class CustomersController extends BaseController {
             //echo $id;
             //$customer = Customer::findOrFail($id);
             //echo $customer;
-            $this->layout->content = View::make('customers.show', compact('customer'))->with('heading', 'Show Customer');
+            $this->layout->content = View::make('customers.show', compact('customer'))
+                    ->with('heading', 'Show Customer');
 	}
 
 	/**

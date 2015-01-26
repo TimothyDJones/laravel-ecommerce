@@ -34,8 +34,8 @@ class Customer extends \LaravelBook\Ardent\Ardent
             'telephone1'        => 'required|phone',
             'telephone2'        => 'phone',
             'email'             => 'required|email|min:5|unique:customers',
-            'password'          => 'required|different:email|confirmed',
-            'password_confirmation' => 'required|same:password',
+            'password'          => 'required|different:email',
+            'password_confirmation' => 'required',
         );
         
         public $autoPurgeRedundantAttributes = true;
