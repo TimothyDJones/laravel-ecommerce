@@ -82,7 +82,22 @@ class OrdersController extends \BaseController {
 		//
 	}
 
+	/**
+	 * Process the user's order through to payment.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */        
         public function checkout() {
+            OrdersController::createShellOrder();
+            OrdersController::persistCart();
+        }
+        
+        private function persistCart() {
+            
+        }
+        
+        private function createShellOrder() {
             
         }
 }

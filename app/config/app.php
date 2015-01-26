@@ -125,6 +125,7 @@ return array(
                 'Cviebrock\EloquentSluggable\SluggableServiceProvider',
                 'Moltin\Cart\CartServiceProvider',
                 'Barryvdh\Debugbar\ServiceProvider',
+                'LogicalGrape\PayPalIpnLaravel\PayPalIpnServiceProvider',
 
 	),
 
@@ -194,6 +195,7 @@ return array(
 		'View'              => 'Illuminate\Support\Facades\View',
                 'Sluggable'         => 'Cviebrock\EloquentSluggable\Facades\Sluggable',
                 'Cart'              => 'Moltin\Cart\Facade',
+                'IPN'               => 'LogicalGrape\PayPalIpnLaravel\Facades\IPN',
 
 	),
 
