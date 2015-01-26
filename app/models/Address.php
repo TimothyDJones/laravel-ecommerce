@@ -7,7 +7,8 @@ class Address extends \LaravelBook\Ardent\Ardent {
         protected $table = 'addresses';
         
         protected $fillable = array(
-            'addr1', 'addr2', 'city', 'state', 'postal_code', 'country', 'primary_addr_ind',
+            'addr1', 'addr2', 'city', 'state', 'postal_code', 
+            'country', 'primary_addr_ind', 'customer_id',
         );
         
         protected $guarded = array();
