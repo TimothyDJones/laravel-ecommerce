@@ -98,6 +98,8 @@ class OrdersController extends \BaseController {
         }
         
         private function createShellOrder() {
-            
+            $order = new Order();
+            $order->customer_id = Input::get('customer_id');
+            $order->order_status = 'Created';
         }
 }
