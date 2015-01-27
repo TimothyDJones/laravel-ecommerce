@@ -14,14 +14,13 @@
         <div id="navbarCollapse" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 <li class="active">{{ link_to('/', 'Home') }}</li>
-                <li><a href="#">Profile</a></li>
+                <li>{{ link_to_route('products.index', 'Products') }}</li>
+                <li>{{ link_to_route('items.index', 'Free Downloads') }}</li>
                 <li class="dropdown">
                     <a data-toggle="dropdown" class="dropdown-toggle" href="#">Customers <b class="caret"></b></a>
                     <ul role="menu" class="dropdown-menu">
                         <li>{{ link_to('customers/create', 'Create') }}</li>
-                        @if ( Auth::check() )
-                            <li>{{ link_to('profile', 'Profile') }}</li>
-                        @endif
+                        @include('layouts.partials._loginout_menu')
                         <li><a href="#">Sent Items</a></li>
                         <li class="divider"></li>
                         <li><a href="#">Trash</a></li>
@@ -34,12 +33,13 @@
                 </div>
             {{ Form::close() }}
             <ul class="nav navbar-nav navbar-right">
-                @if ( Auth::check() )
-                    <li>{{ link_to('profile', 'Profile') }}</li>
-                    <li>{{ link_to('logout', 'Log Out') }}</li>
-                @else
-                    <li>{{ link_to('login', 'Log In') }}</li>
+                @if ( Cart::contents() )
+                    <a href="{{ route('show-cart') }}" class="btn btn-primary btn-sm">
+                        <i class="fa fa-shopping-cart fa-fw"></i>
+                        Show Cart <span class="badge">&nbsp;${{ money_format("%.2n", Cart::total()) }}&nbsp;({{ Cart::totalItems() }})&nbsp;</span>
+                    </a>
                 @endif
+                @include('layouts.partials._loginout_menu')
             </ul>
         </div>
     </nav>

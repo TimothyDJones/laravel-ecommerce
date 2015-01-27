@@ -19,7 +19,8 @@
 		"moltin/cart": "dev-master@dev",
 		"moltin/laravel-cart": "dev-master@dev",
 		"barryvdh/laravel-debugbar": "1.*",
-		"logicalgrape/paypal-ipn-laravel": "1.*"
+		"logicalgrape/paypal-ipn-laravel": "1.*",
+		"patricktalmadge/bootstrapper": "4.*"
 	},
 	"autoload": {
 		"classmap": [
