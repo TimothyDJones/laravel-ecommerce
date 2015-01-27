@@ -8,7 +8,7 @@ use Illuminate\Auth\Reminders\RemindableInterface;
 class Customer extends \LaravelBook\Ardent\Ardent 
         implements UserInterface, RemindableInterface {
 
-	use UserTrait, RemindableTrait;
+	//use UserTrait, RemindableTrait;
 
 	/**
 	 * The database table used by the model.
