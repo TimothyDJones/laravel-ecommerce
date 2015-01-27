@@ -106,6 +106,12 @@ class ProductsController extends \BaseController {
 		//
 	}
         
+        public function showCart() {
+            $cartContents = Cart::contents();
+            
+            $this->layout->contents = View::make('products.show-cart', compact('cartContents'));
+        }
+        
         public function calculateDiscount() {
             
         }
