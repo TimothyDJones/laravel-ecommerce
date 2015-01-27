@@ -24,7 +24,7 @@ Some of the core principles of this application include:
 
 ### Other Resources
 - [Twitter Bootstrap](http://getbootstrap.com/) - Integrated directly, rather than through a Laravel package.  (Sorry, I started using it before I knew about the various packages.)
-- [
+- [laravel-precise32-php5.4](https://github.com/TimothyDJones/laravel-precise32-php5.4) - This is my personal custom Vagrant box for Laravel development.  Essentially, it's an Apache/PHP 5.4/MySQL alternative to Laravel's [Homestead](http://laravel.com/docs/4.2/homestead) tool, since I prefer an environment closer to the shared hosting platforms that I typically use and since Homestead does NOT support version 4.1 of Laravel framework.
 
 
 ### Contributing To The Application
