@@ -14,7 +14,10 @@ class ProductsController extends \BaseController {
                 $products = Product::paginate(20);
                 //$products = Product::all();
             } else { */
-                $workshop_year = 2014;   // ***TEMPORARY***
+            if ( $workshop_year < 2008  || $workshop_year > Config::get('workshop.current_workshop_year') ) {
+                $workshop_year = Config::get('workshop.current_workshop_year');
+            }
+                
                 $query = Product::where('workshop_year', '=', $workshop_year);
                 $query->orderBy('workshop_year', 'DESC')
                         ->orderBy('id', 'ASC');
