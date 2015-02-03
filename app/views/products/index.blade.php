@@ -1,7 +1,26 @@
 @section('main')
-    {{-- @include('items.partials._search') --}}
-        
-            
+
+    {{-- @include('products.partials._workshop_year_select') --}}
+        <!-- jQuery script to auto-update product list when workshop year drop-down is changed. -->
+    <script type="text/javascript">
+        $(document).ready(
+            function() {
+                $("#workshop_year_select").change(
+                    function() {
+                        var year_text = $("#workshop_year_select").text();
+                        var year_val = $("#workshop_year_select").val();
+                        alert('change fired: ' + year_text + '\n' + year_val);
+                        $.get("http://localhost:8080/products/" + year_val);
+                    });
+                
+            });
+    </script>
+    
+    {{ Form::open(array('route' => 'products.index', 'method' => 'post', 'role' => 'form', 'class' => 'form-horizontal')) }}
+        {{ Form::label('workshop_year_select', 'Display Items for Workshop Year', array('class' => 'control-label control-label-reqd col-xs-5')) }}
+            {{ Form::select('workshop_year_select', $workshop_year_list, $workshop_year_selected, array('class' => 'form-control input-sm input-sm-reqd floatlabel')) }}
+    {{ Form::close() }}
+           
             {{ Kint::dump(Cart::contents()) }}
             <!-- Display shopping cart button if it has items. -->
             @if ( Cart::contents() )

@@ -9,13 +9,14 @@ class ProductsController extends \BaseController {
 	 */
 	public function index($workshop_year = NULL)
 	{
+            $current_workshop_year = (int) Config::get('workshop.current_workshop_year');
             /*
             if ( !$workshop_year ) {
                 $products = Product::paginate(20);
                 //$products = Product::all();
             } else { */
-            if ( $workshop_year < 2008  || $workshop_year > Config::get('workshop.current_workshop_year') ) {
-                $workshop_year = Config::get('workshop.current_workshop_year');
+            if ( $workshop_year < 2008  || $workshop_year > $current_workshop_year ) {
+                $workshop_year = $current_workshop_year;
             }
                 
                 $query = Product::where('workshop_year', '=', $workshop_year);
@@ -36,7 +37,13 @@ class ProductsController extends \BaseController {
                 $dataSubset = array_slice($paginator, $offset, $perPage);
                 $products = Paginator::make($dataSubset, count($paginator), $perPage);   
             //}
-            $this->layout->content = View::make('products.index', compact('products'))->with(array('heading' => 'Product List', 'search_criteria' => NULL));
+            $this->layout->content = View::make('products.index', compact('products'))
+                    ->with(array(
+                        'heading' => 'Product List', 
+                        'search_criteria' => NULL,
+                        'workshop_year_selected' => $workshop_year,
+                        'workshop_year_list' => ProductsController::getWorkshopYearList(),
+                    ));
 	}
 
 
@@ -173,6 +180,17 @@ class ProductsController extends \BaseController {
             Cart::destroy();
             
             return Redirect::route('products.index')->with('message', 'Shopping cart emptied.');
+        }
+        
+        private function getWorkshopYearList() {
+            $list = range(2008, Config::get('workshop.current_workshop_year'));
+            $return_list = array();
+            /* Use the year value as the key, as well as value, in list. */
+            foreach ( $list as $key => $value ) {
+                $return_list[$value] = $value;
+            }
+            
+            return $return_list;
         }
         
 
