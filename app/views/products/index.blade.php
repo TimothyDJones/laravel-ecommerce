@@ -9,9 +9,9 @@
                     function() {
                         var year_text = $("#workshop_year_select").text();
                         var year_val = $("#workshop_year_select").val();
-                        alert('change fired: ' + year_text + '\n' + year_val);
+                        //alert('change fired: ' + year_text + '\n' + year_val);
                         var url = "http://localhost:8080/products/" + year_val + "?ajax=1";
-                        alert('get URL: ' + url);
+                        //alert('get URL: ' + url);
                         $.get(url);
                     });
                 
