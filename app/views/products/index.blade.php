@@ -17,8 +17,13 @@
     </script>
     
     {{ Form::open(array('route' => 'products.index', 'method' => 'post', 'role' => 'form', 'class' => 'form-horizontal')) }}
-        {{ Form::label('workshop_year_select', 'Display Items for Workshop Year', array('class' => 'control-label control-label-reqd col-xs-5')) }}
+    <div class="form-group floating-label-form-group">
+        {{ Form::label('workshop_year_select', 'Display Items for Workshop Year', array('class' => 'control-label control-label-reqd col-xs-3')) }}
+        <div class="input-group col-xs-2">
+            <span class="input-group-addon"><i class="fa fa-calendar-o fa-fw"></i></span>
             {{ Form::select('workshop_year_select', $workshop_year_list, $workshop_year_selected, array('class' => 'form-control input-sm input-sm-reqd floatlabel')) }}
+        </div>
+    </div>
     {{ Form::close() }}
            
             {{ Kint::dump(Cart::contents()) }}
