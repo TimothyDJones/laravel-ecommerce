@@ -23,7 +23,13 @@ class CreateOrdersTable extends Migration {
                                 ->onUpdate('cascade');
 			$table->date('order_date');
                         $table->enum('order_status', array('Created', 'Pending', 'Completed'))->default('Created');
-                        $table->enum('delivery_terms', array('Pickup', 'Ship_CD', 'Ship_DVD', 'MP3_Only'))->default('Pickup');
+                        $table->enum('delivery_terms', array('ship_together', 
+                                                                'ship_separately', 
+                                                                'ship_dvd_only', 
+                                                                'ship_cd',
+                                                                'pickup',
+                                                                'ship_dvd',
+                                                                'mp3_only',))->default('pickup');
                         $table->string('order_notes')->nullable();
 			$table->float('subtotal_amt')->default(0.0);
 			$table->float('order_total')->default(0.0);
