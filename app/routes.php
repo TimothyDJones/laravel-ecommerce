@@ -63,6 +63,7 @@ Route::resource('customers.addresses', 'AddressesController');
 Route::get('products/{id}', 'ProductsController@index')->where('id', '^20[01][0-9]$');
 Route::post('products/addtocart', 'ProductsController@addToCart');
 Route::post('cart/add', array( 'as' => 'cart-add', 'uses' => 'ProductsController@addToCart'));
+Route::post('year/update', array( 'as' => 'year-update', 'uses' => 'ProductsController@changeWorkshopYear') );
 Route::get('cart/empty', array( 'as' => 'cart-empty', 'uses' => 'ProductsController@emptyCart'));
 Route::get('cart/remove/{id}', array( 'as' => 'cart-remove', 'uses' => 'ProductsController@removeFromCart'));
 Route::get('cart/show-cart', array( 'as' => 'show-cart', 'uses' => 'ProductsController@showCart'));

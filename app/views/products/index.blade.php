@@ -10,21 +10,25 @@
                         var year_text = $("#workshop_year_select").text();
                         var year_val = $("#workshop_year_select").val();
                         alert('change fired: ' + year_text + '\n' + year_val);
-                        $.get("http://localhost:8080/products/" + year_val);
+                        var url = "http://localhost:8080/products/" + year_val + "?ajax=1";
+                        alert('get URL: ' + url);
+                        $.get(url);
                     });
                 
             });
     </script>
-    
-    {{ Form::open(array('route' => 'products.index', 'method' => 'post', 'role' => 'form', 'class' => 'form-horizontal')) }}
+    <div class="row">
+    {{ Form::open(array('route' => 'year-update', 'method' => 'post', 'role' => 'form', 'class' => 'form-inline')) }}
     <div class="form-group floating-label-form-group">
-        {{ Form::label('workshop_year_select', 'Display Items for Workshop Year', array('class' => 'control-label control-label-reqd col-xs-3')) }}
-        <div class="input-group col-xs-2">
+        {{ Form::label('workshop_year_select', 'Display Items for Workshop Year', array('class' => 'control-label control-label-reqd ')) }}
+        <div class="input-group">
             <span class="input-group-addon"><i class="fa fa-calendar-o fa-fw"></i></span>
             {{ Form::select('workshop_year_select', $workshop_year_list, $workshop_year_selected, array('class' => 'form-control input-sm input-sm-reqd floatlabel')) }}
         </div>
     </div>
+     {{ Form::submit('Change Year', array('class' => 'btn btn-primary')) }}
     {{ Form::close() }}
+    </div>
            
             {{ Kint::dump(Cart::contents()) }}
             <!-- Display shopping cart button if it has items. -->

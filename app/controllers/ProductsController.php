@@ -18,25 +18,32 @@ class ProductsController extends \BaseController {
             if ( $workshop_year < 2008  || $workshop_year > $current_workshop_year ) {
                 $workshop_year = $current_workshop_year;
             }
-                
-                $query = Product::where('workshop_year', '=', $workshop_year);
-                $query->orderBy('workshop_year', 'DESC')
-                        ->orderBy('id', 'ASC');
-                
-                $results = $query->remember(5)->get();
-                
-                Log::info('ProductsController@index - Count of query results: ' . $results->count(), array($results));
-                
-                // Paginate the results of the custom query by using 'Paginator::make()'.
-                // http://stackoverflow.com/a/23881516
-                $paginator = json_decode($results);
-                $perPage = 20;
-                $page = Input::get('page', 1);
-                if ( $page > count($paginator) or $page < 1 ) { $page = 1; }
-                $offset = ($page * $perPage) - $perPage;
-                $dataSubset = array_slice($paginator, $offset, $perPage);
-                $products = Paginator::make($dataSubset, count($paginator), $perPage);   
-            //}
+            
+            // If this is an AJAX request from the workshop year drop-down
+            // on the product page, then refresh the display using the new
+            // year passed in.
+            if ( Input::get('ajax') == 1 ) {
+                return Redirect::route('products.index', array('workshop_year' => $workshop_year));
+            }
+            
+            // Get products for the specified workshop year.
+            $query = Product::where('workshop_year', '=', $workshop_year);
+            $query->orderBy('workshop_year', 'DESC')
+                    ->orderBy('id', 'ASC');
+            $results = $query->remember(5)->get();
+
+            Log::info('ProductsController@index - Count of query results: ' . $results->count(), array($results));
+
+            // Paginate the results of the custom query by using 'Paginator::make()'.
+            // http://stackoverflow.com/a/23881516
+            $paginator = json_decode($results);
+            $perPage = 20;
+            $page = Input::get('page', 1);
+            if ( $page > count($paginator) or $page < 1 ) { $page = 1; }
+            $offset = ($page * $perPage) - $perPage;
+            $dataSubset = array_slice($paginator, $offset, $perPage);
+            $products = Paginator::make($dataSubset, count($paginator), $perPage);   
+            
             $this->layout->content = View::make('products.index', compact('products'))
                     ->with(array(
                         'heading' => 'Product List', 
@@ -115,6 +122,11 @@ class ProductsController extends \BaseController {
 	{
 		//
 	}
+        
+        public function changeWorkshopYear() {
+            $workshop_year = Input::get('workshop_year_select');
+            return Redirect::to('products/' . $workshop_year);
+        }
         
         public function showCart() {
             $cartContents = Cart::contents();
