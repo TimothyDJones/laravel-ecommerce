@@ -27,6 +27,8 @@ class OrdersController extends \BaseController {
                 $cartContents = Cart::contents();
                 $shipping_options = OrdersController::getShippingOptions();
                 $this->layout->content = View::make('orders.create', compact('cartContents', 'shipping_options'));
+            } else { // Redirect to login page
+                return Redirect::route('login')->with('message', 'Please log in to complete your order.');
             }
             
 	}
@@ -39,19 +41,33 @@ class OrdersController extends \BaseController {
 	 */
 	public function store()
 	{
-		//
+            $order = new Order();
+            $order->delivery_terms = Input::get('shipping_option');
+            $order->order_notes = Input::get('order_notes');
+            if ( $order->order_notes == 'Order Notes' ) $order->order_notes = NULL;
+            $order->customer_id = Auth::id();
+            $order->order_date = date('Y-m-d');
+            
+            if ( $order->save() ) {
+                Redirect::route('order.show', $order->id)
+                        ->with('message', 'Order created.');
+            } else {
+                Redirect::route('orders.create')
+                        ->withInput()
+                        ->withErrors( $order->errors() );
+            }
 	}
 
 
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param  int  $id
+	 * @param  Order $order
 	 * @return Response
 	 */
-	public function show($id)
+	public function show(Order $order)
 	{
-		//
+            //$shipping_
 	}
 
 
@@ -141,8 +157,8 @@ class OrdersController extends \BaseController {
             $count = OrdersController::getCountOfItems();
             
             if ( $count['CD'] > 0 && $count['DVD'] > 0 ) {
-                $shipping_options['ship_separately'] = 'Ship CDs and DVDs <strong>separately</strong>';
-                $shipping_options['ship_together'] = 'Ship CDs and DVDs <strong>together</strong>';
+                $shipping_options['ship_together'] = 'Ship CDs and DVDs together';
+                $shipping_options['ship_separately'] = 'Ship CDs and DVDs separately';
                 
                 // If this is before last day to order and pick up at workshop,
                 // add that item to the array.
