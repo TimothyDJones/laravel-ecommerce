@@ -49,8 +49,14 @@
             <div class="items-container">
                 <!-- Display "tile" (box) for each item with button to add to cart.  -->
                 @foreach ( $products as $product )
-                    {{-- @if ( (int) $product->available_ind > 0 ) --}}
+                    @if ( (int) $product->available_ind > 0 )
+                        @if ( $product->prod_type == 'DVD' )
+                        <div class="item item-12">
+                        @elseif ( $product->prod_type == 'SET' )
+                        <div class="item item-13">
+                        @else
                         <div class="item item-6">
+                        @endif
                             <h3>
                                 @if ( $product->prod_type == 'DVD' )
                                     <strong>{{ $product->form_id }}</strong>
@@ -72,7 +78,7 @@
                                 {{ Form::close() }}
                             </div>
                         </div>
-                    {{-- @endif --}}
+                    @endif
                 @endforeach
         
             </div>
