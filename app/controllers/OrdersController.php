@@ -49,7 +49,7 @@ class OrdersController extends \BaseController {
             $order->order_date = date('Y-m-d');
             
             if ( $order->save() ) {
-                Redirect::route('order.show', $order->id)
+                Redirect::route('orders.show', $order->id)
                         ->with('message', 'Order created.');
             } else {
                 Redirect::route('orders.create')
