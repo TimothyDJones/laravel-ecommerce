@@ -51,11 +51,11 @@
                 @foreach ( $products as $product )
                     @if ( (int) $product->available_ind > 0 )
                         @if ( $product->prod_type == 'DVD' )
-                        <div class="item item-12">
+                        <div class="item item-15">
                         @elseif ( $product->prod_type == 'SET' )
-                        <div class="item item-13">
+                        <div class="item item-16">
                         @else
-                        <div class="item item-6">
+                        <div class="item item-14">
                         @endif
                             <h3>
                                 @if ( $product->prod_type == 'DVD' )
