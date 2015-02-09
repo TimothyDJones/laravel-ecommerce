@@ -55,7 +55,7 @@ class Customer extends \LaravelBook\Ardent\Ardent
             $this->attributes['email'] = strtolower($value);
         }
         
-        public function addresses() {
+        public function address() {
             return $this->hasOne('Address');
         }
         
