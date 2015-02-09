@@ -13,5 +13,7 @@ return array(
         'ship_dvd',
         'mp3_only',
     ),
+    'minimum_shipping_charge' => 5.0,
+    'maximum_shipping_charge' => 10.0,
 );
 
