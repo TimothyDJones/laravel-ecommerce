@@ -22,7 +22,7 @@ class CreateOrdersTable extends Migration {
                                 ->onDelete('cascade')
                                 ->onUpdate('cascade');
 			$table->date('order_date');
-                        $table->enum('order_status', array('Created', 'Pending', 'Completed'))->default('Created');
+                        $table->enum('order_status', array('Created', 'Pending', 'Completed', 'Payment Received'))->default('Created');
                         $table->enum('delivery_terms', array('ship_together', 
                                                                 'ship_separately', 
                                                                 'ship_dvd_only', 
@@ -34,6 +34,7 @@ class CreateOrdersTable extends Migration {
 			$table->float('subtotal_amt')->default(0.0);
 			$table->float('order_total')->default(0.0);
 			$table->float('discounts')->default(0.0);
+                        $table->float('shipping_charge')->default(0.0);
 			$table->timestamps();
 		});
                 
