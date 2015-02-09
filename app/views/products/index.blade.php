@@ -34,13 +34,25 @@
             <!-- Display shopping cart button if it has items. -->
             @if ( Cart::contents() )
             <div class="row">
+                <div class="col-xs-4">
+                    <!-- Display pagination links -->
+                    @if ( $products->links() )
+                    <span style="text-align: center;">
+                        @if ( $search_criteria )
+                            {{ $products->appends(array('search' => $search_criteria))->links() }}
+                        @else
+                            {{ $products->links() }}
+                        @endif
+                    </span>
+                    @endif                    
+                </div>
                 <div class="form-horizontal pull-right">
                     <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#shoppingCartModal">
                         <i class="fa fa-shopping-cart fa-fw"></i>
                         Show Cart <span class="badge">&nbsp;${{ money_format("%.2n", Cart::total()) }}&nbsp;({{ Cart::totalItems() }})&nbsp;</span>
                     </button>
                     @if ( Auth::user() )
-                    {{ link_to_route('checkout', 'Checkout', NULL, array('class' => 'btn btn-lg btn-success')) }}
+                    {{ link_to_route('checkout', 'Check Out', NULL, array('class' => 'btn btn-lg btn-success')) }}
                     @else
                     {{ link_to_route('login', 'Log In', NULL, array('class' => 'btn btn-lg btn-primary')) }}
                     @endif
@@ -113,7 +125,11 @@
                         @include('products/partials/_cart', array('cartContents' => Cart::contents()))
                     </div>
                     <div class="modal-footer">
-                        {{ link_to_route('checkout', 'Checkout', NULL, array('class' => 'btn btn-lg btn-success')) }}
+                        @if ( Auth::user() )
+                        {{ link_to_route('checkout', 'Check Out', NULL, array('class' => 'btn btn-lg btn-success')) }}
+                        @else
+                        {{ link_to_route('login', 'Log In', NULL, array('class' => 'btn btn-lg btn-primary')) }}
+                        @endif
                         {{ link_to_route('cart-empty', 'Empty Cart', NULL, array('class' => 'btn btn-primary btn-lg')) }}
                         <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal">Close</button>
                     </div>
