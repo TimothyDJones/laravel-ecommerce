@@ -67,7 +67,10 @@ class OrdersController extends \BaseController {
 	 */
 	public function show(Order $order)
 	{
-            //$shipping_
+            $order = OrdersController::getOrderCharges($order);
+            $customer = Customer::find($order->customer_id);
+            
+            $this->layout->content = View::make('orders.show', compact('order', 'customer'));
 	}
 
 
@@ -101,9 +104,12 @@ class OrdersController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function destroy($id)
+	public function destroy(Order $order)
 	{
-		//
+            $order->orderItems()->delete();
+            $order->delete();
+            // Empty cart, just in case it is still populated.
+            Redirect::route('cart-empty');
 	}
 
 	/**
@@ -145,6 +151,18 @@ class OrdersController extends \BaseController {
             
         }
         
+        private function getOrderCharges(Order $order) {
+            $itemSummary = OrdersController::getCountOfItems();
+            
+            $order->subtotal_amt = $itemSummary['CD']['sub_total_amt']
+                    + $itemSummary['DVD']['sub_total_amt']
+                    + $itemSummary['MP3']['sub_total_amt'];
+            $order->shipping_charge = OrdersController::calculateShipping($order->delivery_terms);
+            $order->discounts = OrdersController::calculateDiscounts();
+                    
+            return $order;
+        }
+        
         private function createShellOrder() {
             $order = new Order();
             $order->customer_id = Input::get('customer_id');
@@ -179,26 +197,33 @@ class OrdersController extends \BaseController {
             return $shipping_options;          
         }
         
-        private function getCountOfItems() {
+        private function getCountOfItems($excludeSets = FALSE, $currentWorkshopYearOnly = FALSE) {
             $count = array(
-                'CD' => 0,
-                'DVD' => 0,
-                'MP3' => 0,
+                'CD' => array('count' => 0, 'sub_total_amt' => 0.0),
+                'DVD' => array('count' => 0, 'sub_total_amt' => 0.0),
+                'MP3' => array('count' => 0, 'sub_total_amt' => 0.0),
             );
+            $currentWorkshopYear = Config::get('workshop.current_workshop_year');
             
             // Use shopping cart, if still populated...
             if ( Cart::contents() ) {
                 $cartContents = Cart::contents();
 
                 foreach ( $cartContents as $cartItem ) {
-                    if ( $cartItem->prod_type == 'SET' ) {
-                        if ( substr($cartItem->form_id, 0, 1) == 'C' ) {
-                            $count['CD'] += $cartItem->unit_count * $cartItem->quantity;
+                    if ( !$currentWorkshopYearOnly || 
+                            ( $currentWorkshopYear && $cartItem->workshop_year == $currentWorkshopYear ) ) {
+                        if ( $cartItem->prod_type == 'SET' && !$excludeSets ) {
+                            if ( substr($cartItem->form_id, 0, 1) == 'C' ) {
+                                $count['CD']['count'] += $cartItem->unit_count * $cartItem->quantity;
+                                $count['CD']['sub_total_amt'] += $cartItem->price * $cartItem->quantity;
+                            } else {
+                                $count[substr($cartItem->form_id, 0, 3)]['count'] += $cartItem->unit_count * $cartItem->quantity;
+                                $count[substr($cartItem->form_id, 0, 3)]['sub_total_amt'] += $cartItem->price * $cartItem->quantity;
+                            }
                         } else {
-                            $count[substr($cartItem->form_id, 0, 3)] += $cartItem->unit_count * $cartItem->quantity;
+                            $count[$cartItem->prod_type]['count'] += $cartItem->unit_count * $cartItem->quantity;
+                            $count[$cartItem->prod_type]['sub_total_amt'] += $cartItem->price * $cartItem->quantity;
                         }
-                    } else {
-                        $count[$cartItem->prod_type] += $cartItem->unit_count * $cartItem->quantity;
                     }
                 }
             // ... Otherwise, use order items.
@@ -208,19 +233,91 @@ class OrdersController extends \BaseController {
                     
                     foreach ( $orderItems as $orderItem ) {
                         $product = $orderItem->product();
-                        if ( $product->prod_type == 'SET' ) {
-                            if ( substr($product->form_id, 0, 1) == 'C' ) {
-                                $count['CD'] += $product->unit_count * $cartItem->quantity;
+                        if ( !$currentWorkshopYearOnly || 
+                            ( $currentWorkshopYear && $product->workshop_year == $currentWorkshopYear ) ) {
+                            if ( $product->prod_type == 'SET' && !$excludeSets ) {
+                                if ( substr($product->form_id, 0, 1) == 'C' ) {
+                                    $count['CD']['count'] += $product->unit_count * $orderItem->quantity;
+                                    $count['CD']['sub_total_amt'] += $product->price * $orderItem->quantity;
+                                } else {
+                                    $count[substr($product->form_id, 0, 3)]['count'] += $product->unit_count * $orderItem->quantity;
+                                    $count[substr($product->form_id, 0, 3)]['sub_total_amt'] += $product->price * $orderItem->quantity;
+                                }
                             } else {
-                                $count[substr($cartItem->form_id, 0, 3)] += $cartItem->unit_count * $cartItem->quantity;
+                                $count[$product->prod_type]['count'] += $product->unit_count * $orderItem->quantity;
+                                $count[$product->prod_type]['sub_total_amt'] += $product->price * $orderItem->quantity;
                             }
-                        } else {
-                            $count[$cartItem->prod_type] += $cartItem->unit_count * $cartItem->quantity;
                         }
                     }
                 }
             }
             
             return $count;
+        }
+        
+        private function calculateShipping($shipping_option) {
+            $numDisks = 0;
+            $shippingCharge = 0.0;
+            $itemCount = OrdersController::getCountOfItems();
+            
+            switch ( $shipping_option ) {
+                case 'ship_together':
+                    $numDisks = $itemCount['CD']['count'] + $itemCount['DVD']['count'];
+                    break;
+                case 'ship_dvd':
+                case 'ship_dvd_only':
+                    $numDisks = $itemCount['DVD']['count'];
+                    break;
+                case 'ship_cd':
+                    $numDisks = $itemCount['CD']['count'];
+                    break;
+            }
+            
+            if ( $shipping_option == 'ship_separately' 
+                    && $numDisks > 0) {
+                $shippingCharge = OrdersController::calculateShippingFee($numDisks);
+            } else {
+                $shippingCharge += OrdersController::calculateShippingFee($itemCount['CD']['count']);
+                $shippingCharge += OrdersController::calculateShippingFee($itemCount['DVD']['count']);
+            }
+            
+            return $shippingCharge;            
+        }
+        
+        private function calculateShippingFee($numDisks) {
+            $fee = 0.0;
+            
+            $fee = (float) Config::get('workshop.minimum_shipping_charge') 
+                    + ($numDisks - 1) * 1.0;   
+            
+            $max_shipping_charge = (float) Config::get('workshop.maximum_shipping_charge');
+            if ( $fee > $max_shipping_charge ) {
+                $fee = $max_shipping_charge; 
+            }
+            
+            return $fee;
+        }
+        
+        private function calculateDiscounts() {
+            $freeCDDiscount = 0.0;
+            $preorderDiscount = 0.0;
+            
+            $unit_price_list = array();
+            $unit_price_list = Config::get('workshop.unit_price_array');
+            
+            $itemCount = OrdersController::getCountOfItems(TRUE, TRUE);  // Exclude count of disks from sets and only CDs from current workshop year.
+            
+            $numberFreeCDs = (int) floor($itemCount['CD']['count']/((float) Config::get('workshop.free_cd_count')));
+            $freeCDDiscount = ((float) $unit_price_list['CD']) * $numberFreeCDs;
+            
+            // Pre-order discount applies ***ONLY*** to CDs/DVDs from current year's workshop!
+            if ( strtotime(date('Y-m-d')) < strtotime(Config::get('workshop.last_preorder_discount_date')) ) {
+                $preorderDiscount = ((float) Config::get('workshop.preorder_discount')) *
+                        (($itemCount['CD']['sub_total_amt'] - $freeCDDiscount)
+                            + $itemCount['DVD']['sub_total_amt']
+                            + $itemCount['MP3']['sub_total_amt']);
+            }
+            
+            return ($freeCDDiscount + $preorderDiscount);
         }
 }
