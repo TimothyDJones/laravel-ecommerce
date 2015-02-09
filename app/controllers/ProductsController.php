@@ -161,6 +161,7 @@ class ProductsController extends \BaseController {
                     'unit_count' => $product->unit_count,
                     'prod_code' => $product->prod_code,
                     'form_id' => $product->form_id,
+                    'workshop_year' => $product->workshop_year,
                     'session_title' => Utility::truncateStringWithEllipsis($product->session_title, 35),
                     'speaker_name' => $product->speaker_first_name . ' ' . $product->speaker_last_name,
                 );
