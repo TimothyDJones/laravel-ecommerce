@@ -39,7 +39,11 @@
                         <i class="fa fa-shopping-cart fa-fw"></i>
                         Show Cart <span class="badge">&nbsp;${{ money_format("%.2n", Cart::total()) }}&nbsp;({{ Cart::totalItems() }})&nbsp;</span>
                     </button>
+                    @if ( Auth::user() )
                     {{ link_to_route('checkout', 'Checkout', NULL, array('class' => 'btn btn-lg btn-success')) }}
+                    @else
+                    {{ link_to_route('login', 'Log In', NULL, array('class' => 'btn btn-lg btn-primary')) }}
+                    @endif
                     {{ link_to_route('cart-empty', 'Empty Cart', NULL, array('class' => 'btn btn-primary btn-lg')) }}
                 </div>
             </div>
