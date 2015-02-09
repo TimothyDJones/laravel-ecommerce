@@ -17,7 +17,7 @@ return array(
     'minimum_shipping_charge' => 5.0,
     'maximum_shipping_charge' => 10.0,
     'free_cd_count' => 6,
-    'unit_price' => array(
+    'unit_price_list' => array(
         'CD' => 7.0,
         'DVD' => 12.0,
         'MP3' => 3.0,
