@@ -26,7 +26,8 @@ class OrdersController extends \BaseController {
             if ( Auth::check() ) {
                 $cartContents = Cart::contents();
                 $shipping_options = OrdersController::getShippingOptions();
-                $this->layout->content = View::make('orders.create', compact('cartContents', 'shipping_options'));
+                $this->layout->content = View::make('orders.create', compact('cartContents', 'shipping_options'))
+                        ->with(array('orderVerification' => FALSE));
             } else { // Redirect to login page
                 return Redirect::route('login')->with('message', 'Please log in to complete your order.');
             }
@@ -110,7 +111,8 @@ class OrdersController extends \BaseController {
             $order->orderItems()->delete();
             $order->delete();
             // Empty cart, just in case it is still populated.
-            Redirect::route('cart-empty');
+            return Redirect::route('cart-empty');
+            //return Redirect::route('products');
 	}
 
 	/**

@@ -50,6 +50,7 @@ class ProductsController extends \BaseController {
                         'search_criteria' => NULL,
                         'workshop_year_selected' => $workshop_year,
                         'workshop_year_list' => ProductsController::getWorkshopYearList(),
+                        'orderVerification' => FALSE,
                     ));
 	}
 

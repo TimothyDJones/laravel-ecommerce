@@ -88,8 +88,10 @@
                         </div>            
         </div>
         <div>
-            {{ link_to_route('make-payment', 'Make Payment', NULL, array('class' => 'btn btn-lg btn-success')) }}
-            {{ link_to_route('orders.destroy', 'Cancel Order', NULL, array('class' => 'btn btn-lg btn-danger')) }}
+            {{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('orders.destroy', $order->id))) }}
+                    {{ link_to_route('make-payment', 'Make Payment', NULL, array('class' => 'btn btn-lg btn-success')) }}&nbsp;
+                    {{ Form::submit('Cancel Order', array('class' => 'btn btn-danger')) }}
+            {{ Form::close() }}
         </div>
 @stop
 
