@@ -52,32 +52,33 @@
                                     @endforeach
                                     @if ( $orderVerification == TRUE )
                                     <tr>
-                                        <td colspan="4" class="table-align-right">Subtotal</td>
+                                        <td colspan="3" class="table-align-right">Subtotal</td>
+                                        <td class="table-align-right">{{ $order->product_count }}</td>
                                         <td colspan="2" class="table-align-right">{{ money_format("%.2n", $order->subtotal_amt) }}</td>
                                         <td></td>
                                     </tr>
                                         @if ( $order->shipping_charge > 0.0 )
                                         <tr>
-                                            <td colspan="4" class="table-align-right">Shipping & Handling</td>
-                                            <td colspan="2" class="table-align-right">{{ money_format("%.2n", $order->shipping_charge) }}</td>
+                                            <td colspan="3" class="table-align-right">Shipping & Handling</td>
+                                            <td colspan="3" class="table-align-right">{{ money_format("%.2n", $order->shipping_charge) }}</td>
                                             <td></td>
                                         </tr>
                                         @endif
                                         @if ( $order->discounts > 0.0 )
                                         <tr>
-                                            <td colspan="4" class="table-align-right">Discounts</td>
-                                            <td colspan="2" class="table-align-right">({{ money_format("%.2n", $order->discounts) }})</td>
+                                            <td colspan="3" class="table-align-right">Discounts</td>
+                                            <td colspan="3" class="table-align-right">({{ money_format("%.2n", $order->discounts) }})</td>
                                             <td></td>
                                         </tr>
                                         @endif
                                     <tr>
-                                        <td colspan="4" class="table-align-right">Total</td>
-                                        <td colspan="2" class="table-align-right"><strong>{{ money_format("%.2n", $order->order_total) }}</strong></td>
+                                        <td colspan="3" class="table-align-right">Total</td>
+                                        <td colspan="3" class="table-align-right"><strong>{{ money_format("%.2n", $order->order_total) }}</strong></td>
                                         <td></td>
                                     </tr>
                                     @else
                                     <tr>
-                                        <td colspan="3" class="table-align-right">Total (not including shipping, if any)</td>
+                                        <td colspan="3" class="table-align-right">Total (<em><strong>not</strong> including shipping and/or discounts, if any</em>)</td>
                                         <td class="table-align-right">{{ Cart::totalItems() }}</td>
                                         <td colspan="2" class="table-align-right">{{ money_format("%.2n", Cart::total()) }}</td>
                                         <td></td>
@@ -88,9 +89,9 @@
                         </div>            
         </div>
         <div>
-            {{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('orders.destroy', $order->id))) }}
-                    {{ link_to_route('make-payment', 'Make Payment', NULL, array('class' => 'btn btn-lg btn-success')) }}&nbsp;
-                    {{ Form::submit('Cancel Order', array('class' => 'btn btn-danger')) }}
+            {{ Form::open(array('class' => 'inline pull-right', 'method' => 'DELETE', 'route' => array('orders.destroy', $order->id))) }}
+                    {{ link_to_route('make-payment', 'Make Payment', NULL, array('class' => 'btn btn-success')) }}&nbsp;
+                    {{ Form::submit('Cancel Order', array('class' => 'btn btn-sm btn-danger')) }}
             {{ Form::close() }}
         </div>
 @stop
