@@ -175,6 +175,9 @@ class OrdersController extends \BaseController {
         private function getOrderCharges(Order $order) {
             $itemSummary = OrdersController::getCountOfItems();
             
+            $order->product_count = $itemSummary['CD']['count']
+                    + $itemSummary['DVD']['count']
+                    + $itemSummary['MP3']['count'];
             $order->subtotal_amt = $itemSummary['CD']['sub_total_amt']
                     + $itemSummary['DVD']['sub_total_amt']
                     + $itemSummary['MP3']['sub_total_amt'];
