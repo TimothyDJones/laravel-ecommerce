@@ -25,12 +25,39 @@
                                         </td>
                                     </tr>
                                     @endforeach
+                                    @if ( $orderVerification == TRUE )
+                                    <tr>
+                                        <td colspan="4" class="table-align-right">Subtotal</td>
+                                        <td colspan="2" class="table-align-right">{{ money_format("%.2n", $order->subtotal_amt) }}</td>
+                                        <td></td>
+                                    </tr>
+                                        @if ( $order->shipping_charge > 0.0 )
+                                        <tr>
+                                            <td colspan="4" class="table-align-right">Shipping & Handling</td>
+                                            <td colspan="2" class="table-align-right">{{ money_format("%.2n", $order->shipping_charge) }}</td>
+                                            <td></td>
+                                        </tr>
+                                        @endif
+                                        @if ( $order->discounts > 0.0 )
+                                        <tr>
+                                            <td colspan="4" class="table-align-right">Discounts</td>
+                                            <td colspan="2" class="table-align-right">({{ money_format("%.2n", $order->discounts) }})</td>
+                                            <td></td>
+                                        </tr>
+                                        @endif
+                                    <tr>
+                                        <td colspan="4" class="table-align-right">Total</td>
+                                        <td colspan="2" class="table-align-right"><strong>{{ money_format("%.2n", $order->order_total) }}</strong></td>
+                                        <td></td>
+                                    </tr>
+                                    @else
                                     <tr>
                                         <td colspan="3" class="table-align-right">Total (not including shipping, if any)</td>
                                         <td class="table-align-right">{{ Cart::totalItems() }}</td>
                                         <td colspan="2" class="table-align-right">{{ money_format("%.2n", Cart::total()) }}</td>
                                         <td></td>
                                     </tr>
+                                    @endif
                                 </tbody>
                             </table>
                         </div>

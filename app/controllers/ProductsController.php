@@ -131,7 +131,7 @@ class ProductsController extends \BaseController {
         public function showCart() {
             $cartContents = Cart::contents();
             
-            $this->layout->contents = View::make('products.show-cart', compact('cartContents'));
+            $this->layout->contents = View::make('products.show-cart', compact('cartContents'))->with(array('orderVerification' => FALSE));
         }
         
         public function calculateDiscount() {

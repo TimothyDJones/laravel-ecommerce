@@ -68,9 +68,10 @@ class OrdersController extends \BaseController {
 	public function show(Order $order)
 	{
             $order = OrdersController::getOrderCharges($order);
-            $customer = Customer::find($order->customer_id);
+            //$customer = Customer::find($order->customer_id);
+            $cartContents = Cart::contents();
             
-            $this->layout->content = View::make('orders.show', compact('order', 'customer'));
+            $this->layout->content = View::make('orders.show', compact('order', 'cartContents'))->with(array('orderVerification' => TRUE));
 	}
 
 
