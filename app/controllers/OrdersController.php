@@ -68,11 +68,15 @@ class OrdersController extends \BaseController {
 	 */
 	public function show(Order $order)
 	{
-            $order = OrdersController::getOrderCharges($order);
-            //$customer = Customer::find($order->customer_id);
-            $cartContents = Cart::contents();
-            
-            $this->layout->content = View::make('orders.show', compact('order', 'cartContents'))->with(array('orderVerification' => TRUE));
+            if ( OrdersController::checkAdminOrOrderUser($order) ) {
+                $order = OrdersController::getOrderCharges($order);
+                //$customer = Customer::find($order->customer_id);
+                $cartContents = Cart::contents();
+
+                $this->layout->content = View::make('orders.show', compact('order', 'cartContents'))->with(array('orderVerification' => TRUE));
+            } else {
+                return Redirect::route('login');
+            }
 	}
 
 
@@ -82,9 +86,11 @@ class OrdersController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function edit($id)
+	public function edit(Order $order)
 	{
-		//
+            if ( OrdersController::checkAdminOrOrderUser($order) ) {
+                
+            }
 	}
 
 
@@ -108,11 +114,12 @@ class OrdersController extends \BaseController {
 	 */
 	public function destroy(Order $order)
 	{
-            $order->orderItems()->delete();
-            $order->delete();
-            // Empty cart, just in case it is still populated.
-            return Redirect::route('cart-empty');
-            //return Redirect::route('products');
+            if ( OrdersController::checkAdminOrOrderUser($order) ) {
+                $order->orderItems()->delete();
+                $order->delete();
+                // Empty cart, just in case it is still populated.
+                return Redirect::route('cart-empty');
+            }
 	}
 
 	/**
@@ -148,6 +155,17 @@ class OrdersController extends \BaseController {
             
             //OrdersController::createShellOrder();
             //OrdersController::persistCart();
+        }
+        /*
+         * Determine if logged in user is either an administrator
+         * or the user who owns the current order.
+         */
+        private function checkAdminOrOrderUser(Order $order) {
+            if ( Customer::find(Auth::id())->admin_ind || Auth::id() == $order->customer->id ) {
+                return TRUE;
+            }
+            
+            return FALSE;
         }
         
         private function persistCart() {
