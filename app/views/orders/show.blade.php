@@ -5,7 +5,7 @@
         {{ Kint::dump($order) }}
         
         <div class="row">
-            <div class="col-xs-7">
+            <div class="col-xs-6">
                 <h3>Ordered By</h3>
                 <p>{{ $order->customer->first_name }} {{ $order->customer->last_name }}</p>
                 <p>{{ $order->customer->email }}</p>
@@ -15,7 +15,7 @@
                 @endif
                 <p>{{ $order->customer->address->city }}, {{ $order->customer->address->state }} {{ $order->customer->address->postal_code }} {{ $order->customer->address->country }}</p>
             </div>
-            <div class="col-xs-4">
+            <div class="col-xs-6">
                 <h3>Order Options</h3>
                 <p><strong>Shipping Option</strong>: {{ $order->delivery_terms }}</p>
                 <p><strong>Order Notes</strong>: {{ $order->order_notes }}</p>
@@ -77,7 +77,7 @@
                                         <td></td>
                                     </tr>
                                     @else
-                                    <tr>
+                                    <tr class="info">
                                         <td colspan="3" class="table-align-right">Total (<em><strong>not</strong> including shipping and/or discounts, if any</em>)</td>
                                         <td class="table-align-right">{{ Cart::totalItems() }}</td>
                                         <td colspan="2" class="table-align-right">{{ money_format("%.2n", Cart::total()) }}</td>
@@ -90,8 +90,8 @@
         </div>
         <div>
             {{ Form::open(array('class' => 'inline pull-right', 'method' => 'DELETE', 'route' => array('orders.destroy', $order->id))) }}
-                    {{ link_to_route('make-payment', 'Make Payment', NULL, array('class' => 'btn btn-success')) }}&nbsp;
-                    {{ Form::submit('Cancel Order', array('class' => 'btn btn-sm btn-danger')) }}
+                    {{ link_to_route('make-payment', 'Make Payment', NULL, array('class' => 'btn btn-success')) }}<i class="fa fa-paypal fa-lg"></i>&nbsp;
+                    {{ Form::submit('Cancel Order', array('class' => 'btn btn-sm btn-danger')) }}<i class="fa fa-trash-o fa-lg"></i>
             {{ Form::close() }}
         </div>
 @stop
