@@ -21,7 +21,9 @@
                                         <td class="table-align-right">{{ money_format("%.2n", $cartItem->price) }}</td>
                                         <td class="table-align-right">{{ money_format("%.2n", $cartItem->quantity * $cartItem->price) }}</td>
                                         <td>
+                                            @if ( !$orderVerification )
                                             {{ link_to_route('cart-remove', 'Remove', array('id' => $cartItem->id), array('class' => 'btn btn-info btn-sm')) }}
+                                            @endif
                                         </td>
                                     </tr>
                                     @endforeach
