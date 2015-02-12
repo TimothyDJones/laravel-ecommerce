@@ -5,6 +5,18 @@ class OrdersController extends \BaseController {
         private $order_id = 0;
         private $customer_id = 0;
         
+        private $shipping_options_master = array();
+
+        public function __construct() {
+           /**
+            * Prevent CSRF for 'POST' actions.
+            */
+            $this->beforeFilter('csrf', array('on' => 'post'));
+            
+            // Populate master list of shipping options from configuration file.
+            $shipping_options_master = Config::get('workshop.shipping_options');
+        }            
+            
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -199,23 +211,23 @@ class OrdersController extends \BaseController {
             $count = OrdersController::getCountOfItems();
             
             if ( $count['CD'] > 0 && $count['DVD'] > 0 ) {
-                $shipping_options['ship_together'] = 'Ship CDs and DVDs together';
-                $shipping_options['ship_separately'] = 'Ship CDs and DVDs separately';
+                $shipping_options['ship_together'] = OrdersController::$shipping_options_master['ship_together'];
+                $shipping_options['ship_separately'] = OrdersController::$shipping_options_master['ship_separately'];
                 
                 // If this is before last day to order and pick up at workshop,
                 // add that item to the array.
                 if ( strtotime(date('Y-m-d')) < strtotime(Config::get('workshop.last_pickup_order_date')) ) {
-                    $shipping_options['ship_dvd_only'] = 'Pick up CDs at Workshop/Ship DVDs';
+                    $shipping_options['ship_dvd_only'] = OrdersController::$shipping_options_master['ship_dvd_only'];
                 }
             } elseif ( $count['CD'] > 0 ) {
                 $shipping_options['ship_cd'] = 'Ship CDs';
                 if ( strtotime(date('Y-m-d')) < strtotime(Config::get('workshop.last_pickup_order_date')) ) {        
-                    $shipping_options['pickup'] = 'Pick up CDs at Workshop';
+                    $shipping_options['pickup'] = OrdersController::$shipping_options_master['pickup'];
                 }
             } elseif ( $count['DVD'] > 0 ) {
-                $shipping_options['ship_dvd'] = 'Ship DVDs';
+                $shipping_options['ship_dvd'] = OrdersController::$shipping_options_master['ship_dvd'];
             } elseif ( $count['MP3'] > 0 ) {
-                $shipping_options['mp3_only'] = 'MP3s only';
+                $shipping_options['mp3_only'] = OrdersController::$shipping_options_master['mp3_only'];
             }
             
             return $shipping_options;          
