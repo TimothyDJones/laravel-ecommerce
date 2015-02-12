@@ -5,7 +5,15 @@ class OrdersController extends \BaseController {
         private $order_id = 0;
         private $customer_id = 0;
         
-        private $shipping_options_master = array();
+        private static $shipping_options_master = array(
+                'ship_together' => 'Ship CDs and DVDs together', 
+                'ship_separately' => 'Ship CDs and DVDs separately', 
+                'ship_dvd_only' => 'Pick up CDs at Workshop/Ship DVDs', 
+                'ship_cd' => 'Ship CDs',
+                'pickup' => 'Pick up CDs at Workshop',
+                'ship_dvd' => 'Ship DVDs',
+                'mp3_only' => 'MP3s only',
+            );
 
         public function __construct() {
            /**
@@ -14,7 +22,7 @@ class OrdersController extends \BaseController {
             $this->beforeFilter('csrf', array('on' => 'post'));
             
             // Populate master list of shipping options from configuration file.
-            $shipping_options_master = Config::get('workshop.shipping_options');
+            //$shipping_options_master = Config::get('workshop.shipping_options');
         }            
             
 	/**
@@ -82,6 +90,7 @@ class OrdersController extends \BaseController {
 	{
             if ( OrdersController::checkAdminOrOrderUser($order) ) {
                 $order = OrdersController::getOrderCharges($order);
+                $order->shipping_option_display = OrdersController::$shipping_options_master[$order->delivery_terms];
                 //$customer = Customer::find($order->customer_id);
                 $cartContents = Cart::contents();
 
@@ -95,7 +104,7 @@ class OrdersController extends \BaseController {
 	/**
 	 * Show the form for editing the specified resource.
 	 *
-	 * @param  int  $id
+	 * @param  Order $order
 	 * @return Response
 	 */
 	public function edit(Order $order)
@@ -141,13 +150,12 @@ class OrdersController extends \BaseController {
 	 * @return Response
 	 */        
         public function checkout() {
-            // If user is not logged in, then re-direct to create account and
-            // address, if necessary.
+            // If user is not logged in, then re-direct to log in.
             if ( Auth::guest() ) {
                 // Set a session variable to indicate that we are in the
                 // checkout process.
                 Session::put('checkOutInProgress', TRUE);
-                Redirect::route('customers.create');
+                Redirect::route('login');
             }
             
             // If user is logged in, but doesn't have address and is ordering
@@ -168,9 +176,13 @@ class OrdersController extends \BaseController {
             //OrdersController::createShellOrder();
             //OrdersController::persistCart();
         }
+        
         /*
          * Determine if logged in user is either an administrator
          * or the user who owns the current order.
+         * 
+	 * @param  Order $order
+	 * @return Response
          */
         private function checkAdminOrOrderUser(Order $order) {
             if ( Customer::find(Auth::id())->admin_ind || Auth::id() == $order->customer->id ) {
@@ -296,25 +308,24 @@ class OrdersController extends \BaseController {
             $shippingCharge = 0.0;
             $itemCount = OrdersController::getCountOfItems();
             
-            switch ( $shipping_option ) {
-                case 'ship_together':
-                    $numDisks = $itemCount['CD']['count'] + $itemCount['DVD']['count'];
-                    break;
-                case 'ship_dvd':
-                case 'ship_dvd_only':
-                    $numDisks = $itemCount['DVD']['count'];
-                    break;
-                case 'ship_cd':
-                    $numDisks = $itemCount['CD']['count'];
-                    break;
-            }
-            
-            if ( $shipping_option == 'ship_separately' 
-                    && $numDisks > 0) {
-                $shippingCharge = OrdersController::calculateShippingFee($numDisks);
-            } else {
+            if ( $shipping_option == 'ship_separately' ) {
                 $shippingCharge += OrdersController::calculateShippingFee($itemCount['CD']['count']);
                 $shippingCharge += OrdersController::calculateShippingFee($itemCount['DVD']['count']);
+            } else {
+                switch ( $shipping_option ) {
+                    case 'ship_together':
+                        $numDisks = $itemCount['CD']['count'] + $itemCount['DVD']['count'];
+                        break;
+                    case 'ship_dvd':
+                    case 'ship_dvd_only':
+                        $numDisks = $itemCount['DVD']['count'];
+                        break;
+                    case 'ship_cd':
+                        $numDisks = $itemCount['CD']['count'];
+                        break;
+                }
+                
+                $shippingCharge = OrdersController::calculateShippingFee($numDisks);
             }
             
             return $shippingCharge;            
@@ -323,12 +334,14 @@ class OrdersController extends \BaseController {
         private function calculateShippingFee($numDisks) {
             $fee = 0.0;
             
-            $fee = (float) Config::get('workshop.minimum_shipping_charge') 
-                    + ($numDisks - 1) * 1.0;   
-            
-            $max_shipping_charge = (float) Config::get('workshop.maximum_shipping_charge');
-            if ( $fee > $max_shipping_charge ) {
-                $fee = $max_shipping_charge; 
+            if ( $numDisks > 0 ) {
+                $fee = (float) Config::get('workshop.minimum_shipping_charge') 
+                        + ($numDisks - 1) * 1.0;   
+
+                $max_shipping_charge = (float) Config::get('workshop.maximum_shipping_charge');
+                if ( $fee > $max_shipping_charge ) {
+                    $fee = $max_shipping_charge; 
+                }
             }
             
             return $fee;

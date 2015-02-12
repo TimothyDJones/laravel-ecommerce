@@ -25,9 +25,11 @@
                     <div class="col-md-10">
 
 			@if (Session::has('message'))
-				<div class="flash alert alert-info">
+                            <div class="row">
+				<div class="col-md-6 flash alert alert-info">
 					<p>{{ Session::get('message') }}</p>
 				</div>
+                            </div>
 			@endif
                         
                         @if ($errors->any() )

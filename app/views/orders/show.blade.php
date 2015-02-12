@@ -1,8 +1,19 @@
 @section('main')
         <h2>Order Confirmation</h2>
-        <p>Please review your order below.  After you are satisfied that the order is correct, press the <span class="btn btn-success">Make Payment</span> button.  You will be transferred to the PayPal site to <strong>securely</strong> make your payment.  You do <strong>not</strong> need a PayPal account, as PayPal accepts all major credit cards.  (Of course, you can use a PayPal account, if you prefer.)</p>
-
-        {{ Kint::dump($order) }}
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
+                <p>
+                    Please review your order below.  After you are satisfied that the order is correct, press the <span class="btn btn-success">Make Payment</span> button.  
+                    You will be transferred to the PayPal site to <strong>securely</strong> make your payment.  
+                    You do <strong>not</strong> need a PayPal account, as PayPal accepts all major credit cards.  
+                    (Of course, you can use a PayPal account, if you prefer.)
+                </p>
+            </div>
+            <div class="col-md-2"></div>
+        </div>
+        
+        {{-- Kint::dump($order) --}}
         
         <div class="row">
             <div class="col-xs-6">
@@ -17,7 +28,7 @@
             </div>
             <div class="col-xs-6">
                 <h3>Order Options</h3>
-                <p><strong>Shipping Option</strong>: {{ $order->delivery_terms }}</p>
+                <p><strong>Shipping Option</strong>: {{ $order->shipping_option_display }}</p>
                 <p><strong>Order Notes</strong>: {{ $order->order_notes }}</p>
             </div>            
         </div>
