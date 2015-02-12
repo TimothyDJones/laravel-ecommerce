@@ -18,7 +18,7 @@ class AddressesController extends BaseController {
 	 */
 	public function index(Customer $customer)
 	{
-            $address = $customer->addresses();
+            $address = $customer->address;
             $this->layout->content = View::make('addresses.index', compact('customer'));
 	}
 
@@ -30,8 +30,8 @@ class AddressesController extends BaseController {
 	 */
 	public function create(Customer $customer)
 	{
-            if ( $customer->addresses()->count() > 0 ) {
-                return Redirect::route('customers.addresses.show', array($customer->id, $customer->addresses()->first()->id))->with('message', '<strong>Customer already has address.  See below.</strong>');
+            if ( $customer->address <> NULL ) {
+                return Redirect::route('customers.addresses.show', array($customer->id, $customer->address->id))->with('message', '<strong>Customer already has address.  See below.</strong>');
             } else {
                 $this->layout->content = View::make('addresses.create', compact('customer'));
             }
