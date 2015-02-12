@@ -74,6 +74,6 @@ Route::get('items/download', array( 'as' => 'download', 'uses' => 'ItemsControll
 Route::get('items/search', array('as' => 'search', 'uses' => 'ItemsController@search'));
 Route::resource('items', 'ItemsController');
 
-Route::get('orders/checkout', array( 'as' => 'checkout', 'uses' => 'OrdersController@checkout'));
-Route::get('orders/make-payment', array('as' => 'make-payment', 'uses' => 'OrdersController@makePayment'));
-Route::resource('orders', 'OrdersController');
+Route::get('orders/checkout', array( 'as' => 'checkout', 'uses' => 'OrdersController@checkout'))->before('auth');
+Route::get('orders/make-payment', array('as' => 'make-payment', 'uses' => 'OrdersController@makePayment'))->before('auth');
+Route::resource('orders', 'OrdersController')->before('auth');
