@@ -76,4 +76,4 @@ Route::resource('items', 'ItemsController');
 
 Route::get('orders/checkout', array( 'as' => 'checkout', 'uses' => 'OrdersController@checkout'))->before('auth');
 Route::get('orders/make-payment', array('as' => 'make-payment', 'uses' => 'OrdersController@makePayment'))->before('auth');
-Route::resource('orders', 'OrdersController')->before('auth');
+Route::resource('orders', 'OrdersController');

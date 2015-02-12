@@ -16,11 +16,11 @@
                     </div>
                 </div>                
                 <div class="form-group floating-label-form-group">
-                    {{ Form::label('email', 'E-mail Address', ['class' => 'control-label control-label-reqd col-xs-5']) }}
+                    {{ Form::label('email_address', 'E-mail Address', ['class' => 'control-label control-label-reqd col-xs-5']) }}
                     <div class="input-group col-xs-6">
                         <!--<span class="hovertext">You must enter a valid e-mail address in the format 'name@example.com'.<div class="triangle"></div></span> -->
                         <span class="input-group-addon"><i class="fa fa-envelope-o fa-fw"></i></span>
-                        {{ Form::email('email', null, ['class' => 'form-control input-sm input-sm-reqd floatlabel', 'placeholder' => 'E-Mail Address', 'data-label' => 'You must enter a valid e-mail address in the format \'name@example.com\'.']) }}
+                        {{ Form::email('email_address', null, ['class' => 'form-control input-sm input-sm-reqd floatlabel', 'placeholder' => 'E-Mail Address', 'data-label' => 'You must enter a valid e-mail address in the format \'name@example.com\'.']) }}
                     </div>
                 </div>
                 <div class="form-group floating-label-form-group">
@@ -40,19 +40,19 @@
                     </div>
                 </div>
                 <div class="form-group floating-label-form-group">
-                    {{ Form::label('telephone1', 'Primary Telephone', ['class' => 'control-label control-label-reqd col-xs-5']) }}
+                    {{ Form::label('primary_telephone', 'Primary Telephone', ['class' => 'control-label control-label-reqd col-xs-5']) }}
                     <div class="input-group col-xs-6">
                         <!--<span class="hovertext">Your telephone number is <em>only</em> used if we have questions about your order.<div class="triangle"></div></span> -->
                         <span class="input-group-addon"><i class="fa fa-phone fa-fw"></i></span>
-                        {{ Form::text('telephone1', null, ['class' => 'form-control input-sm floatlabel', 'placeholder' => 'Primary Telephone']) }}
+                        {{ Form::text('primary_telephone', null, ['class' => 'form-control input-sm floatlabel', 'placeholder' => 'Primary Telephone']) }}
                     </div>
                 </div>
                 <div class="form-group floating-label-form-group">
-                    {{ Form::label('telephone2', 'Other Telephone', ['class' => 'control-label col-xs-5']) }}
+                    {{ Form::label('other_telephone', 'Other Telephone', ['class' => 'control-label col-xs-5']) }}
                     <div class="input-group col-xs-6">
                         <!--<span class="hovertext">If you have a secondary telephone number that you would like us to use, if necessary, enter it here.<div class="triangle"></div></span> -->
                         <span class="input-group-addon"><i class="fa fa-phone-square fa-fw"></i></span>
-                        {{ Form::text('telephone2', null, ['class' => 'form-control input-sm floatlabel', 'placeholder' => 'Secondary Telephone']) }}
+                        {{ Form::text('other_telephone', null, ['class' => 'form-control input-sm floatlabel', 'placeholder' => 'Secondary Telephone']) }}
                     </div>
                 </div>
                 {{ Form::submit($submit_button_label, ['class' => 'btn btn-primary pull-right']) }}

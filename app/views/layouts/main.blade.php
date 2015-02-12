@@ -25,15 +25,17 @@
                     <div class="col-md-10">
 
 			@if (Session::has('message'))
-				<div class="flash alert">
+				<div class="flash alert alert-info">
 					<p>{{ Session::get('message') }}</p>
 				</div>
 			@endif
                         
                         @if ($errors->any() )
-                        <ul>
-                            {{ implode('', $errors->all('<li class="error">:message</li>')) }}
+                        <div class="flash alert alert-danger">
+                        <ul class="list-group">
+                            {{ implode('', $errors->all('<li class="list-group-item">:message</li>')) }}
                         </ul>
+                        </div>
                         @endif
 			
 			@yield('main')	

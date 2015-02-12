@@ -101,6 +101,9 @@ class CustomersController extends BaseController {
 	public function store()
 	{
             $input = array_except(Input::all(), array('_token') );
+            $input['email'] = Input::get('email_address');
+            $input['telephone1'] = Input::get('primary_telephone');
+            $input['telephone2'] = Input::get('other_telephone');
             $validator = Validator::make($input, Customer::$rules);
             
             if ( $validator->passes()
