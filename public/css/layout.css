@@ -279,6 +279,17 @@ a {
     //margin-top: 120px;
 }
 
+.item-btn {
+    background-color: #89558C;
+    color: #F3F3F3;
+    font-weight: 700;
+}
+
+.item-checkbox {
+    color: #F3F3F3;
+    font-weight: 600;
+}
+
 #shoppingCartModal .modal-dialog {
     width: 85%;
     /* margin-left: -100px; */
