@@ -6,20 +6,11 @@
         {{ HTML::script('js/bootstrap.min.js') }}
         {{ HTML::script('js/jquery-match-height/jquery.matchHeight-min.js') }}
 	
-        <script>
-            (function () {
-            $.ready( {
-                /*$(function () {
-                    $('[data-toggle="tooltip"]').tooltip()
-                });*/
-                
-                // apply matchHeight to each item container's items
-                //var byRow = true;
-                (function() {
-                    $('.items-container').each(function() {
-                        $(this).children('.item').matchHeight();
-                    });
+        <script type="text/javascript">
+            $(document).ready(
+                function() {
+                // Display tooltip on hover.
+                $('[data-toggle="tooltip"]').tooltip();
                 });
-            });
-        });
+
         </script>
