@@ -272,6 +272,13 @@ a {
     margin-right: auto;
 }
 
+.item-form {
+    position: absolute;
+    background-color: #EDC951;
+    bottom: 10px;
+    //margin-top: 120px;
+}
+
 #shoppingCartModal .modal-dialog {
     width: 85%;
     /* margin-left: -100px; */

@@ -14,8 +14,10 @@
                         //alert('get URL: ' + url);
                         $.get(url);
                     });
-                
+            // Display tooltip on hover.
+            $('[data-toggle="tooltip"]').tooltip();
             });
+
     </script>
     <div class="row">
     {{ Form::open(array('route' => 'year-update', 'method' => 'post', 'role' => 'form', 'class' => 'form-inline')) }}
@@ -90,7 +92,10 @@
                                 {{ Form::open(array('route' => 'cart-add', 'method' => 'post', 'role' => 'form', 'class' => 'form-horizontal')) }}
                                     {{ Form::hidden('session_id', $product->id) }}
                                     {{ Form::text('qty', '1', array('size' => 2, 'maxlength' => 2, 'class' => 'form-control input-sm')) }}
-                                    {{ Form::submit('Add to Cart', array('class' => 'btn btn-sm btn-primary pull-right')) }}
+                                    {{ Form::submit('Add', array('class' => 'btn btn-sm btn-primary pull-right',
+                                                                            'data-toggle' => 'tooltip',
+                                                                            'data-placement' => 'bottom',
+                                                                            'data-original-title' => 'Add item to shopping cart.')) }}
                                 {{ Form::close() }}
                             </div>
                         </div>
