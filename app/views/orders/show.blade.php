@@ -1,16 +1,15 @@
 @section('main')
         <h2>Order Confirmation</h2>
         <div class="row">
-            <div class="col-md-2"></div>
-            <div class="col-md-8">
+            <div class="col-md-8 alert alert-info">
                 <p>
-                    Please review your order below.  After you are satisfied that the order is correct, press the <span class="btn btn-success">Make Payment</span> button.  
+                    <strong>Thank you for your order!</strong>
+                    Please carefully review the order details below.  After you are satisfied that the order is correct, press the <em><strong>Pay Now</strong></em> button.  
                     You will be transferred to the PayPal site to <strong>securely</strong> make your payment.  
                     You do <strong>not</strong> need a PayPal account, as PayPal accepts all major credit cards.  
-                    (Of course, you can use a PayPal account, if you prefer.)
+                    (Of course, you <em>can</em> use a PayPal account, if you prefer.)
                 </p>
             </div>
-            <div class="col-md-2"></div>
         </div>
         
         {{-- Kint::dump($order) --}}
@@ -103,8 +102,15 @@
         </div>
         <div>
             {{ Form::open(array('class' => 'inline pull-right', 'method' => 'DELETE', 'route' => array('orders.destroy', $order->id))) }}
-                    {{ link_to_route('make-payment', 'Make Payment', NULL, array('class' => 'btn btn-success')) }}<i class="fa fa-paypal fa-lg"></i>&nbsp;
-                    {{ Form::submit('Cancel Order', array('class' => 'btn btn-sm btn-danger')) }}<i class="fa fa-trash-o fa-lg"></i>
+                    {{ HTML::decode(Form::fa_icon_button('make-payment', 'Pay Now', NULL, array('class' => 'btn btn-success',
+                                                                                    'icon' => 'fa-paypal fa-lg',
+                                                                                    'data-toggle' => 'tooltip',
+                                                                                    'data-placement' => 'top',
+                                                                                    'data-original-title' => 'Go to PayPal to securely make payment.'))) }}&nbsp;
+                    {{ Form::submit('Cancel Order', array('class' => 'btn btn-sm btn-danger',
+                                                                    'data-toggle' => 'tooltip',
+                                                                    'data-placement' => 'top',
+                                                                    'data-original-title' => 'Cancel order and remove all items from shopping cart.')) }}
             {{ Form::close() }}
         </div>
 @stop
