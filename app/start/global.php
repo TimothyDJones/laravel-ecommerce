@@ -88,3 +88,8 @@ Validator::resolver(function($translator, $data, $rules, $messages)
 {
     return new CustomValidator($translator, $data, $rules, $messages);
 });
+
+/*
+ * Load form macros
+ */
+require app_path() . '/libraries/FormMacros.php';
