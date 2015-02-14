@@ -33,7 +33,7 @@ class CustomersController extends BaseController {
                     );
                     
                     if ( Auth::attempt($inputCredentials) ) {
-                        if ( is_null(Auth::id()->address) ) {  // If customer does not have address, redirect to create address.
+                        if ( is_null(Customer::find(Auth::id())->address) ) {  // If customer does not have address, redirect to create address.
                             return Redirect::route('customer.address.create', Auth::id())
                                 ->with('message', 'No address found for account.  Please enter a valid address.');
                         }
