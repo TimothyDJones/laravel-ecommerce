@@ -28,12 +28,12 @@ class Customer extends \LaravelBook\Ardent\Ardent
         
         protected $guarded = array();
         
-        public static $rules = array(
+        public static $validation_rules = array(
             'last_name'         => 'required',
             'first_name'        => 'required',
             'telephone1'        => 'required|phone',
             'telephone2'        => 'phone',
-            'email'             => 'required|email|min:5|unique:customers,email,{{$id}}',
+            'email'             => 'required|email|min:5|unique:customers,email',
             'password'          => 'required|different:email',
             'password_confirmation' => 'required',
         );

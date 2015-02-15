@@ -110,7 +110,7 @@ class CustomersController extends BaseController {
 	public function store()
 	{
             $input = array_except(Input::all(), array('_token') );
-            $validator = Validator::make($input, Customer::$rules);
+            $validator = Validator::make($input, Customer::$validation_rules);
             
             if ( $validator->passes()
                     && ($input['password'] === $input['password_confirmation'])) {
@@ -174,17 +174,19 @@ class CustomersController extends BaseController {
 	{
             $input = array_except(Input::all(), array( '_method', 'password', 'password_confirmation', ) );
             $customer->fill($input);
-            $customer->rules = array_except(Customer::$rules, array('password', 'password_confirmation'));
-            //$validator = Validator::make($input, $rules);
+            $validation_rules = array_except(Customer::$validation_rules, array('password', 'password_confirmation'));
+            $validation_rules['email'] = $validation_rules['email'] . ',' . $customer->id;
+            Log::debug('customer - update - validation rule', $validation_rules);
+            $validator = Validator::make($input, $validation_rules);
             
-            //if ( $validator->passes() ) {
+            if ( $validator->passes() ) {
                 if ( $customer->update() )
                     return Redirect::route('customers.show', $customer->id)->with('message', 'Customer updated.');
                 else
                     return Redirect::route('customers.edit', array_get($customer->getOriginal(), 'id'))->withInput()->withErrors( $customer->errors() );
-            //} else {
-            //    return Redirect::route('customers.edit', array_get($customer->getOriginal(), 'id'))->withInput()->withErrors( $validator->errors() );
-            //}
+            } else {
+                return Redirect::route('customers.edit', array_get($customer->getOriginal(), 'id'))->withInput()->withErrors( $validator->errors() );
+            }
 	}
 
 
