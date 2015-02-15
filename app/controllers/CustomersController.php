@@ -148,7 +148,8 @@ class CustomersController extends BaseController {
             //echo $id;
             //$customer = Customer::findOrFail($id);
             //echo $customer;
-            $this->layout->content = View::make('customers.show', compact('customer'))
+            //return Redirect::route('profile', array($customer->id));
+            $this->layout->content = View::make('customers.profile', compact('customer'))
                     ->with('heading', 'Show Customer');
 	}
 
