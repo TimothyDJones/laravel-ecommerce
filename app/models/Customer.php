@@ -33,7 +33,7 @@ class Customer extends \LaravelBook\Ardent\Ardent
             'first_name'        => 'required',
             'telephone1'        => 'required|phone',
             'telephone2'        => 'phone',
-            'email'             => 'required|email|min:5|unique:customers',
+            'email'             => 'required|email|min:5|unique:customers,email,{{$id}}',
             'password'          => 'required|different:email',
             'password_confirmation' => 'required',
         );

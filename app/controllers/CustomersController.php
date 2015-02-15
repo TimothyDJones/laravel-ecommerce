@@ -53,14 +53,19 @@ class CustomersController extends BaseController {
         /**
          * Display the customer's profile page after successful login.
          */
-        public function profile() {
+        public function profile(Customer $customer = NULL) {
             
-            if (Auth::check())
-                //echo Auth::user()->email;
-                $this->layout->content = View::make('customers.profile');
-            else
-                return Redirect::to('login');
-            //echo "This is the 'profile' function of CustomersController.";
+            if ( is_null($customer) ) {
+                if (Auth::check()) {
+                    //echo Auth::user()->email;
+                    $customer = Customer::find(Auth::id());
+                    $this->layout->content = View::make('customers.profile', compact('customer'));
+                } else {
+                    return Redirect::to('login');
+                }
+            } else {
+                $this->layout->content = View::make('customers.profile', compact('customer'));
+            }
         }
         
         /**
@@ -91,7 +96,7 @@ class CustomersController extends BaseController {
 	public function create()
 	{
             if ( !Auth::check() )
-                $this->layout->content = View::make('customers.create');
+                $this->layout->content = View::make('customers.create')->with('updateFlag', FALSE);
             else
                 return Redirect::to('profile')->with('message', 'You are already a customer!');
 	}
@@ -105,9 +110,6 @@ class CustomersController extends BaseController {
 	public function store()
 	{
             $input = array_except(Input::all(), array('_token') );
-            $input['email'] = Input::get('email_address');
-            $input['telephone1'] = Input::get('primary_telephone');
-            $input['telephone2'] = Input::get('other_telephone');
             $validator = Validator::make($input, Customer::$rules);
             
             if ( $validator->passes()
@@ -122,7 +124,7 @@ class CustomersController extends BaseController {
                     return Redirect::route('customers.create')
                             ->withInput()
                             ->withErrors( $customer->errors() )
-                            ->with('message', 'Error with saving.');
+                            ->with(array('message' => 'Error with saving.', 'updateFlag' => FALSE));
                 }
                 //return Redirect::route('customers.show', $customer->id);
             } else {
@@ -130,7 +132,7 @@ class CustomersController extends BaseController {
                 return Redirect::route('customers.create')
                         ->withInput()
                         ->withErrors( $validator->errors() )
-                        ->with('message', 'Error with validation.');
+                        ->with(array('message' => 'Error with validation.', 'updateFlag' => FALSE));
             }
 	}
 
@@ -156,9 +158,9 @@ class CustomersController extends BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function edit($id)
+	public function edit(Customer $customer)
 	{
-		//
+            $this->layout->content = View::make('customers.edit', compact('customer'))->with('updateFlag', TRUE);
 	}
 
 
@@ -168,9 +170,21 @@ class CustomersController extends BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
+	public function update(Customer $customer)
 	{
-		//
+            $input = array_except(Input::all(), array( '_method', 'password', 'password_confirmation', ) );
+            $customer->fill($input);
+            $customer->rules = array_except(Customer::$rules, array('password', 'password_confirmation'));
+            //$validator = Validator::make($input, $rules);
+            
+            //if ( $validator->passes() ) {
+                if ( $customer->update() )
+                    return Redirect::route('customers.show', $customer->id)->with('message', 'Customer updated.');
+                else
+                    return Redirect::route('customers.edit', array_get($customer->getOriginal(), 'id'))->withInput()->withErrors( $customer->errors() );
+            //} else {
+            //    return Redirect::route('customers.edit', array_get($customer->getOriginal(), 'id'))->withInput()->withErrors( $validator->errors() );
+            //}
 	}
 
 
