@@ -4,21 +4,7 @@ class OrdersController extends \BaseController {
         
         private $order_id = 0;
         private $customer_id = 0;
-        
-        // Define static values for PayPal.
-        // Other values are specified before sending.
-        private $paypal_attrs = array(
-            'cmd'           => '_xclick',
-            'charset'       => 'utf-8',
-            'currency_code' => 'USD',
-            'bn'            => 'WorkshopMultimedia_BuyNow_WPS_US',
-            'lc'            => 'US',
-            'cn'            => 'Please add any notes or instructions for Workshop Multimedia about your order.',
-            'no_shipping'   => 1,
-            'rm'            => 0,   // Return method is 'POST'
-            'cbt'           => 'Return to Workshop Multimedia to complete order.',
-        );
-        
+
         private static $shipping_options_master = array(
                 'ship_together' => 'Ship CDs and DVDs together', 
                 'ship_separately' => 'Ship CDs and DVDs separately', 
@@ -107,7 +93,7 @@ class OrdersController extends \BaseController {
                 $order->shipping_option_display = OrdersController::$shipping_options_master[$order->delivery_terms];
                 //$customer = Customer::find($order->customer_id);
                 $cartContents = Cart::contents();
-                OrdersController::getPaypalAttributes($order);
+                $paypal_attrs = OrdersController::getPaypalAttributes($order);
 
                 $this->layout->content = View::make('orders.show', compact('order', 'cartContents', 'paypal_attrs'))->with(array('orderVerification' => TRUE));
             } else {
@@ -192,6 +178,16 @@ class OrdersController extends \BaseController {
             //OrdersController::persistCart();
         }
         
+        public function complete(Order $order) {
+            
+        }
+        
+        public function cancel(Order $order) {
+            if ( OrdersController::checkAdminOrOrderUser($order) ) {
+                return Redirect::route('orders.destroy', $order->id);
+            }
+        }
+        
         /*
          * Determine if logged in user is either an administrator
          * or the user who owns the current order.
@@ -238,7 +234,7 @@ class OrdersController extends \BaseController {
             
             $count = OrdersController::getCountOfItems();
             
-            if ( $count['CD'] > 0 && $count['DVD'] > 0 ) {
+            if ( $count['CD']['count'] > 0 && $count['DVD']['count'] > 0 ) {
                 $shipping_options['ship_together'] = OrdersController::$shipping_options_master['ship_together'];
                 $shipping_options['ship_separately'] = OrdersController::$shipping_options_master['ship_separately'];
                 
@@ -247,14 +243,14 @@ class OrdersController extends \BaseController {
                 if ( strtotime(date('Y-m-d')) < strtotime(Config::get('workshop.last_pickup_order_date')) ) {
                     $shipping_options['ship_dvd_only'] = OrdersController::$shipping_options_master['ship_dvd_only'];
                 }
-            } elseif ( $count['CD'] > 0 ) {
+            } elseif ( $count['CD']['count'] > 0 ) {
                 $shipping_options['ship_cd'] = 'Ship CDs';
                 if ( strtotime(date('Y-m-d')) < strtotime(Config::get('workshop.last_pickup_order_date')) ) {        
                     $shipping_options['pickup'] = OrdersController::$shipping_options_master['pickup'];
                 }
-            } elseif ( $count['DVD'] > 0 ) {
+            } elseif ( $count['DVD']['count'] > 0 ) {
                 $shipping_options['ship_dvd'] = OrdersController::$shipping_options_master['ship_dvd'];
-            } elseif ( $count['MP3'] > 0 ) {
+            } elseif ( $count['MP3']['count'] > 0 ) {
                 $shipping_options['mp3_only'] = OrdersController::$shipping_options_master['mp3_only'];
             }
             
@@ -387,19 +383,54 @@ class OrdersController extends \BaseController {
         }
         
         private function getPaypalAttributes(Order $order) {
-            $this->paypal_attrs['item_name'] = 'Workshop Multimedia CD/DVD/MP3 Order #' . $order->id;
-            $this->paypal_attrs['item_number'] = $order->id;
+            $paypal_attrs = array(
+                'cmd'           => '_xclick',
+                'charset'       => 'utf-8',
+                'currency_code' => 'USD',
+                'bn'            => 'WorkshopMultimedia_BuyNow_WPS_US',
+                'lc'            => 'US',
+                'cn'            => 'Please add any notes or instructions for Workshop Multimedia about your order.',
+                'no_shipping'   => 1,
+                'rm'            => 0,   // Return method is 'GET'
+                'cbt'           => 'Return to Workshop Multimedia to complete order.',
+            );
+            
+            
+            $paypal_attrs['item_name'] = 'Workshop Multimedia CD/DVD/MP3 Order #' . $order->id;
+            $paypal_attrs['item_number'] = $order->id;
             
             $order = OrdersController::getOrderCharges($order);
-            $this->paypal_attrs['amount'] = ($order->subtotal_amt - $order->discounts);
-            $this->paypal_attrs['shipping'] = $order->shipping_charge;
+            $paypal_attrs['amount'] = $order->subtotal_amt;
+            $paypal_attrs['discount_amount'] = $order->discounts;
+            $paypal_attrs['shipping'] = $order->shipping_charge;
             
-            $this->paypal_attrs['business'] = Config::get('workshop.paypal_acct_email');                    
+            $paypal_attrs['business'] = Config::get('workshop.paypal_acct_email');
+                    
+            // Attributes for customer and customer address
+            // https://developer.paypal.com/webapps/developer/docs/classic/paypal-payments-standard/integration-guide/Appx_websitestandard_htmlvariables/#id08A6HI0J0VU
+            // https://developer.paypal.com/webapps/developer/docs/classic/paypal-payments-standard/integration-guide/formbasics/#id08A6F0SJ04Y
+            $paypal_attrs['email'] = $order->customer->email;
+            $paypal_attrs['first_name'] = $order->customer->first_name;
+            $paypal_attrs['last_name'] = $order->customer->last_name;
+            $paypal_attrs['night_phone_a'] = $order->customer->telephone1;
+            
+            $paypal_attrs['address1'] = urlencode($order->customer->address->addr1);
+            $paypal_attrs['address2'] = $order->customer->address->addr2;
+            $paypal_attrs['city'] = $order->customer->address->city;
+            $paypal_attrs['state'] = $order->customer->address->state;
+            $paypal_attrs['zip'] = $order->customer->address->postal_code;
+            $paypal_attrs['country'] = substr($order->customer->address->addr1, 0, 2);
+            
+            // URLs for processing Paypal transaction
+            $paypal_attrs['return'] = route('order-complete', $order->id);
+            $paypal_attrs['cancel_return'] = route('order-cancel', $order->id);
                     
             if ( Config::get('app.debug') ) {
-                $this->paypal_attrs['form_action_url'] = 'https://www.sandbox.paypal.com/';
+                $paypal_attrs['form_action_url'] = 'https://www.sandbox.paypal.com/';
             } else {
-                $this->paypal_attrs['form_action_url'] = 'https://www.paypal.com/';
+                $paypal_attrs['form_action_url'] = 'https://www.paypal.com/';
             }
+            
+            return $paypal_attrs;
         }
 }

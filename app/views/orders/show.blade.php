@@ -32,6 +32,7 @@
             </div>            
         </div>
         <div class="row">
+            <h3>Order Summary</h3>
             {{-- @include('products/partials/_cart') --}}
                         <div class="table-responsive">
                             <table class="table">
@@ -100,14 +101,11 @@
                             </table>
                         </div>            
         </div>
-        <div>
-            {{ Form::open(array('class' => 'inline pull-right', 'method' => 'DELETE', 'route' => array('orders.destroy', $order->id))) }}
-                    {{ HTML::decode(Form::fa_icon_button('make-payment', 'Pay Now', NULL, array('class' => 'btn btn-success',
-                                                                                    'icon' => 'fa-paypal fa-lg',
-                                                                                    'data-toggle' => 'tooltip',
-                                                                                    'data-placement' => 'top',
-                                                                                    'data-original-title' => 'Go to PayPal to securely make payment.'))) }}&nbsp;
-                    {{ Form::submit('Cancel Order', array('class' => 'btn btn-sm btn-danger',
+        <div class="row pull-right">
+                    @include('orders/partials/_paypal')
+                    &nbsp;            
+            {{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('orders.destroy', $order->id))) }}
+                    {{ Form::submit('Cancel Order', array('class' => 'btn btn-sm btn-danger outline',
                                                                     'data-toggle' => 'tooltip',
                                                                     'data-placement' => 'top',
                                                                     'data-original-title' => 'Cancel order and remove all items from shopping cart.')) }}

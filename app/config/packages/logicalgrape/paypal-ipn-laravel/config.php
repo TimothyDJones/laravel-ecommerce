@@ -12,7 +12,8 @@ return array(
     |
     | Supported: 'production', 'sandbox'
     */
-    'environment' => 'production',
+    //'environment' => 'production',
+    'environment' => 'sandbox',
 
     /*
     |--------------------------------------------------------------------------
