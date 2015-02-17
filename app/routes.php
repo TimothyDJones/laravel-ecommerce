@@ -76,4 +76,9 @@ Route::resource('items', 'ItemsController');
 
 Route::get('orders/checkout', array( 'as' => 'checkout', 'uses' => 'OrdersController@checkout'))->before('auth');
 Route::get('orders/make-payment', array('as' => 'make-payment', 'uses' => 'OrdersController@makePayment'))->before('auth');
+Route::get('orders/complete', array('as' => 'order-complete', 'uses' => 'OrdersController@complete'))->before('auth');
+Route::get('orders/cancel', array('as' => 'order-cancel', 'uses' => 'OrdersController@cancel'))->before('auth');
 Route::resource('orders', 'OrdersController');
+
+// Route for automated Paypal IPN processing
+Route::post('ipn', array('uses' => 'IpnController@store', 'as' => 'ipn'));
