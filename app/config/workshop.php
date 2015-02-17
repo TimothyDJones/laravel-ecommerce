@@ -22,5 +22,6 @@ return array(
         'DVD' => 12.0,
         'MP3' => 3.0,
     ),
+    'paypal_acct_email' => 'orders@workshopmultimedia.com',
 );
 
