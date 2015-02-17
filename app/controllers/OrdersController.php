@@ -412,9 +412,12 @@ class OrdersController extends \BaseController {
             $paypal_attrs['email'] = $order->customer->email;
             $paypal_attrs['first_name'] = $order->customer->first_name;
             $paypal_attrs['last_name'] = $order->customer->last_name;
-            $paypal_attrs['night_phone_a'] = $order->customer->telephone1;
             
-            $paypal_attrs['address1'] = urlencode($order->customer->address->addr1);
+            $paypal_attrs['night_phone_a'] = substr(preg_replace("/[^0-9]/", "", $order->customer->telephone1), 0, 3);
+            $paypal_attrs['night_phone_b'] = substr(preg_replace("/[^0-9]/", "", $order->customer->telephone1), 3, 3);
+            $paypal_attrs['night_phone_c'] = substr(preg_replace("/[^0-9]/", "", $order->customer->telephone1), 6, 4);
+            
+            $paypal_attrs['address1'] = $order->customer->address->addr1;
             $paypal_attrs['address2'] = $order->customer->address->addr2;
             $paypal_attrs['city'] = $order->customer->address->city;
             $paypal_attrs['state'] = $order->customer->address->state;
