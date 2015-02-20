@@ -46,8 +46,9 @@ class OrdersController extends \BaseController {
             if ( Auth::check() ) {
                 $cartContents = Cart::contents();
                 $shipping_options = OrdersController::getShippingOptions();
+                $shipping_charge_note = 'Shipping charges are $1 per disk, with a minimum of $'. Config::get('workshop.minimum_shipping_charge') . ' and maximum of $' . Config::get('workshop.maximum_shipping_charge') . ' per order.';
                 $this->layout->content = View::make('orders.create', compact('cartContents', 'shipping_options'))
-                        ->with(array('orderVerification' => FALSE));
+                        ->with(array('orderVerification' => FALSE, 'shipping_charge_note' => $shipping_charge_note));
             } else { // Redirect to login page
                 return Redirect::route('login')->with('message', 'Please log in to complete your order.');
             }
@@ -68,11 +69,19 @@ class OrdersController extends \BaseController {
             if ( $order->order_notes == 'Order Notes' ) $order->order_notes = NULL;
             $order->customer_id = Auth::id();
             $order->order_date = date('Y-m-d');
+            $order = OrdersController::getOrderCharges($order);
             
             if ( $order->save() ) {
                 Log::debug('New order #' . $order->id . ' saved.');
-                return Redirect::route('orders.show', array('order' => $order->id))
-                        ->with('message', 'Order #' . $order->id . ' created.');
+                $this->order_id = $order->id;
+                $this->customer_id = $order->customer_id;
+                
+                if ( OrdersController::persistCart($order) ) {
+                    return Redirect::route('orders.show', array('order' => $order->id))
+                            ->with('message', 'Order #' . $order->id . ' created.');
+                } else {
+                    // Error!
+                }
             } else {
                 return Redirect::route('orders.create')
                         ->withInput()
@@ -89,11 +98,21 @@ class OrdersController extends \BaseController {
 	 */
 	public function show(Order $order)
 	{
+            $this->order_id = $order->id;
+            $this->customer_id = $order->customer_id;
+            
             if ( OrdersController::checkAdminOrOrderUser($order) ) {
                 $order = OrdersController::getOrderCharges($order);
                 $order->shipping_option_display = OrdersController::$shipping_options_master[$order->delivery_terms];
                 //$customer = Customer::find($order->customer_id);
-                $cartContents = Cart::contents();
+                if ( Cart::totalItems() > 0 ) {
+                    $cartContents = Cart::contents();
+                } else {
+                    foreach ( $order->orderItems() as $orderItem ) {
+                        $cartContents[] = OrdersController::mapOrderItemToCartItem($orderItem);
+                    }
+                }
+                    
                 $paypal_attrs = OrdersController::getPaypalAttributes($order);
 
                 $this->layout->content = View::make('orders.show', compact('order', 'cartContents', 'paypal_attrs'))->with(array('orderVerification' => TRUE));
@@ -204,8 +223,27 @@ class OrdersController extends \BaseController {
             return FALSE;
         }
         
-        private function persistCart() {
+        private function persistCart(Order $order) {
             
+            if ( OrdersController::checkAdminOrOrderUser($order)
+                    && Cart::totalItems() > 0) {
+                $orderItemBatch = array();
+                foreach ( Cart::contents() as $item ) {
+                    $orderItem = array();
+                    $orderItem['order_id'] = $order->id;
+                    $orderItem['product_id'] = $item->id;
+                    $orderItem['qty'] = $item->quantity;
+                    //$orderItemBatch[] = new OrderItem($orderItem);
+                    $oi = new OrderItem($orderItem);
+                    $oi->save();
+                    Log::debug('persistCart - Order->id = ' . $order->id . '  OrderItem->id = ' . $oi->id);
+                }
+                
+                // Empty cart
+                Cart::destroy();
+            }
+            
+            return TRUE;
         }
         
         private function getOrderCharges(Order $order) {
@@ -270,7 +308,7 @@ class OrdersController extends \BaseController {
             if ( Cart::contents() ) {
                 $cartContents = Cart::contents();
 
-                foreach ( $cartContents as $cartItem ) {
+/*                foreach ( $cartContents as $cartItem ) {
                     if ( !$currentWorkshopYearOnly || 
                             ( $currentWorkshopYear && $cartItem->workshop_year == $currentWorkshopYear ) ) {
                         if ( $cartItem->prod_type == 'SET' && !$excludeSets ) {
@@ -287,12 +325,17 @@ class OrdersController extends \BaseController {
                         }
                     }
                 }
+ * 
+ */
             // ... Otherwise, use order items.
             } else {
-                if ( $order_id > 0 ) {
-                    $orderItems = Order::find($order_id)->orderItems();
-                    
+                if ( $this->order_id > 0 ) {
+                    $orderItems = Order::find($this->order_id)->orderItems();
                     foreach ( $orderItems as $orderItem ) {
+                        $cartContents[] = OrdersController::mapOrderItemToCartItem($orderItem);
+                    }
+                    
+/*                    foreach ( $orderItems as $orderItem ) {
                         $product = $orderItem->product();
                         if ( !$currentWorkshopYearOnly || 
                             ( $currentWorkshopYear && $product->workshop_year == $currentWorkshopYear ) ) {
@@ -310,8 +353,28 @@ class OrdersController extends \BaseController {
                             }
                         }
                     }
+ * 
+ */
                 }
             }
+            
+                foreach ( $cartContents as $cartItem ) {
+                    if ( !$currentWorkshopYearOnly || 
+                            ( $currentWorkshopYear && $cartItem->workshop_year == $currentWorkshopYear ) ) {
+                        if ( $cartItem->prod_type == 'SET' && !$excludeSets ) {
+                            if ( substr($cartItem->form_id, 0, 1) == 'C' ) {
+                                $count['CD']['count'] += $cartItem->unit_count * $cartItem->quantity;
+                                $count['CD']['sub_total_amt'] += $cartItem->price * $cartItem->quantity;
+                            } else {
+                                $count[substr($cartItem->form_id, 0, 3)]['count'] += $cartItem->unit_count * $cartItem->quantity;
+                                $count[substr($cartItem->form_id, 0, 3)]['sub_total_amt'] += $cartItem->price * $cartItem->quantity;
+                            }
+                        } else {
+                            $count[$cartItem->prod_type]['count'] += $cartItem->unit_count * $cartItem->quantity;
+                            $count[$cartItem->prod_type]['sub_total_amt'] += $cartItem->price * $cartItem->quantity;
+                        }
+                    }
+                }
             
             return $count;
         }
@@ -364,8 +427,8 @@ class OrdersController extends \BaseController {
             $freeCDDiscount = 0.0;
             $preorderDiscount = 0.0;
             
-            $unit_price_list = array();
-            $unit_price_list = Config::get('workshop.unit_price_array');
+            //$unit_price_list = array();
+            $unit_price_list = Config::get('workshop.unit_price_list');
             
             $itemCount = OrdersController::getCountOfItems(TRUE, TRUE);  // Exclude count of disks from sets and only CDs from current workshop year.
             
@@ -394,8 +457,7 @@ class OrdersController extends \BaseController {
                 'no_shipping'   => 1,
                 'rm'            => 0,   // Return method is 'GET'
                 'cbt'           => 'Return to Workshop Multimedia to complete order.',
-            );
-            
+            );            
             
             $paypal_attrs['item_name'] = 'Workshop Multimedia CD/DVD/MP3 Order #' . $order->id;
             $paypal_attrs['item_number'] = $order->id;
@@ -423,7 +485,7 @@ class OrdersController extends \BaseController {
             $paypal_attrs['city'] = $order->customer->address->city;
             $paypal_attrs['state'] = $order->customer->address->state;
             $paypal_attrs['zip'] = $order->customer->address->postal_code;
-            $paypal_attrs['country'] = substr($order->customer->address->addr1, 0, 2);
+            $paypal_attrs['country'] = substr($order->customer->address->country, 0, 2);
             
             // URLs for processing Paypal transaction
             $paypal_attrs['return'] = route('order-complete', $order->id);
@@ -435,6 +497,35 @@ class OrdersController extends \BaseController {
                 $paypal_attrs['form_action_url'] = 'https://www.paypal.com/';
             }
             
+            Log::debug('Paypal attributes for order #' . $order->id . ':  ' . print_r($paypal_attrs, TRUE));
+            
             return $paypal_attrs;
+        }
+        
+        private function mapOrderItemToCartItem(OrderItem $orderItem) {
+            $product = Product::find($orderItem->product_id);
+            $cartItemArray = array(
+                    'id' => $product->id,
+                    'name' => Utility::truncateStringWithEllipsis($product->session_title, 35)
+                        . ' - ' . $product->speaker_first_name
+                        . ' ' . $product->speaker_last_name
+                        . ' - ' . $product->prod_code,
+                    'price' => $product->price,
+                    'quantity' => $orderItem->qty,
+                    'prod_type' => $product->prod_type,
+                    'unit_count' => $product->unit_count,
+                    'prod_code' => $product->prod_code,
+                    'form_id' => $product->form_id,
+                    'workshop_year' => $product->workshop_year,
+                    'session_title' => Utility::truncateStringWithEllipsis($product->session_title, 35),
+                    'speaker_name' => $product->speaker_first_name . ' ' . $product->speaker_last_name,  
+                );
+            
+            $cartItem = new stdClass();
+            foreach ( $cartItemArray as $key => $value ) {
+                $cartItem->$key = $value;
+            }
+            
+            return $cartItem;
         }
 }
