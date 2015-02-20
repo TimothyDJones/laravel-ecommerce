@@ -70,10 +70,11 @@ class OrdersController extends \BaseController {
             $order->order_date = date('Y-m-d');
             
             if ( $order->save() ) {
-                Redirect::route('orders.show', $order->id)
-                        ->with('message', 'Order created.');
+                Log::debug('New order #' . $order->id . ' saved.');
+                return Redirect::route('orders.show', array('order' => $order->id))
+                        ->with('message', 'Order #' . $order->id . ' created.');
             } else {
-                Redirect::route('orders.create')
+                return Redirect::route('orders.create')
                         ->withInput()
                         ->withErrors( $order->errors() );
             }
