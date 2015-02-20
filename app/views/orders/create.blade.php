@@ -14,7 +14,10 @@
                     <div class="input-group col-xs-6">
                         <!--<span class="hovertext">Please enter your first (given) name.<div class="triangle"></div></span> -->
                         <span class="input-group-addon"><i class="fa fa-plane fa-fw"></i></span> 
-                        {{ Form::select('shipping_option', $shipping_options, NULL, array('class' => 'form-control input-sm input-sm-reqd floatlabel')) }}
+                        {{ Form::select('shipping_option', $shipping_options, NULL, array('class' => 'form-control input-sm input-sm-reqd floatlabel',
+                                                                                            'data-toggle' => 'tooltip',
+                                                                                            'data-placement' => 'top',
+                                                                                            'data-original-title' => $shipping_charge_note)) }}
                     </div>
                 </div>                
                 <div class="form-group floating-label-form-group">
@@ -30,6 +33,11 @@
                     </div>
                 </div>
                 {{ Form::submit('Submit', array('class' => 'btn btn-primary pull-right')) }}
+            </div>
+            <div class="col-xs-3">
+                <div class="alert alert-info">
+                    <p><strong>{{ $shipping_charge_note }}</strong></p>
+                </div>
             </div>
         {{ Form::close() }}
     </div>
