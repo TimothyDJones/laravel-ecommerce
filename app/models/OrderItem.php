@@ -6,6 +6,8 @@ class OrderItem extends \LaravelBook\Ardent\Ardent {
     
         protected $table = 'order_items';
         
+        public $timestamps = FALSE;
+        
         protected $fillable = array('product_id', 'order_id', 'qty');
         
         protected $guarded = array();
