@@ -4,7 +4,7 @@
             @endforeach
             {{ Form::submit('Pay Now', array('class' => 'btn btn-lg btn-success',
                                                     'data-toggle' => 'tooltip',
-                                                    'data-placement' => 'top',
+                                                    'data-placement' => 'left',
                                                     'data-original-title' => 'Go to PayPal to securely make payment.')) }}
         {{ Form::close() }} 
 
