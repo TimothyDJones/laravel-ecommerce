@@ -1,4 +1,6 @@
 @section('main')
+    <h2>Log In To Your Account</h2>
+    <p>&nbsp;</p>
     {{ Form::open(array('action' => 'CustomersController@login')) }}
         {{ Form::label('email', 'E-mail Address:') }}
         {{ Form::text('email', null, array('placeholder' => 'E-mail Address')) }}
