@@ -108,7 +108,7 @@ class OrdersController extends \BaseController {
                 if ( Cart::totalItems() > 0 ) {
                     $cartContents = Cart::contents();
                 } else {
-                    foreach ( $order->orderItems() as $orderItem ) {
+                    foreach ( $order->orderItems as $orderItem ) {
                         $cartContents[] = OrdersController::mapOrderItemToCartItem($orderItem);
                     }
                 }
@@ -330,7 +330,7 @@ class OrdersController extends \BaseController {
             // ... Otherwise, use order items.
             } else {
                 if ( $this->order_id > 0 ) {
-                    $orderItems = Order::find($this->order_id)->orderItems();
+                    $orderItems = Order::find($this->order_id)->orderItems;
                     foreach ( $orderItems as $orderItem ) {
                         $cartContents[] = OrdersController::mapOrderItemToCartItem($orderItem);
                     }
