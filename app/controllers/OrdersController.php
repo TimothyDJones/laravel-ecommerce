@@ -490,6 +490,7 @@ class OrdersController extends \BaseController {
             // URLs for processing Paypal transaction
             $paypal_attrs['return'] = route('order-complete', $order->id);
             $paypal_attrs['cancel_return'] = route('order-cancel', $order->id);
+            $paypal_attrs['notify_url'] = route('ipn');
                     
             if ( Config::get('app.debug') ) {
                 $paypal_attrs['form_action_url'] = 'https://www.sandbox.paypal.com/';
