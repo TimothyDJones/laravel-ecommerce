@@ -28,7 +28,7 @@ class IpnController extends \BaseController {
             // After the order is persisted to IPN tables,
             // we redirect to the main order processing passing
             // the txn_id as the key.
-            return Redirect::route('orders-complete', $order->id);
+            return Redirect::route('order-complete', $order->id);
 	}
 
 
