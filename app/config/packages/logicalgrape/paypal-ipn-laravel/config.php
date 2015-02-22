@@ -27,6 +27,7 @@ return array(
     | Supported: 'auto', 'curl', 'fsock'
     |
     */
-    'request_handler' => 'auto',
+    //'request_handler' => 'auto',
+    'request_handler' => 'fsock',
 
 );
