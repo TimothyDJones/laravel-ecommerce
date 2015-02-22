@@ -1,5 +1,5 @@
 @section('main')
-    <h2>{{ $heading or 'Show Address' }}</h2>
+    <h2>Address for {{ $customer->first_name }}&nbsp{{ $customer->last_name }}</h2>
     <h3>{{ $address->addr1 }}</h3>
     <h3>{{ $address->addr2 or "***No 'addr2' data.***" }}</h3>
     <h3>{{ $address->city }}, {{ $address->state }} {{ $address->postal_code }}</h3>
