@@ -59,12 +59,14 @@ class CustomersController extends BaseController {
                 if (Auth::check()) {
                     //echo Auth::user()->email;
                     $customer = Customer::find(Auth::id());
-                    $this->layout->content = View::make('customers.profile', compact('customer'));
+                    $orders = Order::where('customer_id', '=', Auth::id())->get();
+                    $this->layout->content = View::make('customers.profile', compact('customer', 'orders'));
                 } else {
                     return Redirect::to('login');
                 }
             } else {
-                $this->layout->content = View::make('customers.profile', compact('customer'));
+                $orders = Order::where('customer_id', '=', Auth::id())->get();
+                $this->layout->content = View::make('customers.profile', compact('customer', 'orders'));
             }
         }
         
