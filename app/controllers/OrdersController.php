@@ -46,7 +46,7 @@ class OrdersController extends \BaseController {
             if ( Auth::check() ) {
                 $cartContents = Cart::contents();
                 $shipping_options = OrdersController::getShippingOptions();
-                $shipping_charge_note = 'Shipping charges are $1 per disk, with a minimum of $'. Config::get('workshop.minimum_shipping_charge') . ' and maximum of $' . Config::get('workshop.maximum_shipping_charge') . ' per order.';
+                $shipping_charge_note = 'Shipping charges are $1 per disk, with a minimum of $'. Config::get('workshop.minimum_shipping_charge') . ' and maximum of $' . Config::get('workshop.maximum_shipping_charge') . ' per shipment.';
                 $this->layout->content = View::make('orders.create', compact('cartContents', 'shipping_options'))
                         ->with(array('orderVerification' => FALSE, 'shipping_charge_note' => $shipping_charge_note));
             } else { // Redirect to login page
@@ -199,6 +199,7 @@ class OrdersController extends \BaseController {
         }
         
         public function complete(Order $order) {
+            Log::debug('In OrdersController::complete()...  order.id: ' . $order->id);
             
         }
         
