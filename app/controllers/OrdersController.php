@@ -223,6 +223,18 @@ class OrdersController extends \BaseController {
             }
         }
         
+        public function resendConfirmationEmail(Order $order) {
+            if ( OrdersController::checkAdminOrOrderUser($order) ) {
+                OrdersController::sendEmailConfirmation($order);
+            }
+            
+            if ( isset($_SERVER['HTTP_REFERER']) ) {
+                return Redirect::back()->with('message', 'Confirmation e-mail re-sent.');
+            } else {
+                return Redirect::route('orders.show', $order->id)->with('message', 'Confirmation e-mail re-sent.');
+            }
+        }
+        
         /**
          * Determine if logged in user is either an administrator
          * or the user who owns the current order.
@@ -237,6 +249,7 @@ class OrdersController extends \BaseController {
             
             return FALSE;
         }
+        
         
         
         private function sendEmailConfirmation(Order $order) {
