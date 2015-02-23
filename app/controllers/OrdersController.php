@@ -257,6 +257,8 @@ class OrdersController extends \BaseController {
             $orderVerification = TRUE;
             $cartContents = OrdersController::convertOrderItemsToCartItems($order->orderItems);
             
+            $order->shipping_option_display = OrdersController::$shipping_options_master[$order->delivery_terms];
+            
             // Since we are using a closure in the Mail::send() method,
             // we must use the 'use' method to pass in parameters array.
             // Reference:  http://forumsarchive.laravel.io/viewtopic.php?id=8264
