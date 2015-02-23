@@ -46,7 +46,7 @@ class OrdersController extends \BaseController {
             if ( Auth::check() ) {
                 $cartContents = Cart::contents();
                 $shipping_options = OrdersController::getShippingOptions();
-                $shipping_charge_note = 'Shipping charges are $1 per disk, with a minimum of $'. Config::get('workshop.minimum_shipping_charge') . ' and maximum of $' . Config::get('workshop.maximum_shipping_charge') . ' per order.';
+                $shipping_charge_note = 'Shipping charges are $1 per disk, with a minimum of $'. Config::get('workshop.minimum_shipping_charge') . ' and maximum of $' . Config::get('workshop.maximum_shipping_charge') . ' per shipment.';
                 $this->layout->content = View::make('orders.create', compact('cartContents', 'shipping_options'))
                         ->with(array('orderVerification' => FALSE, 'shipping_charge_note' => $shipping_charge_note));
             } else { // Redirect to login page
@@ -83,6 +83,7 @@ class OrdersController extends \BaseController {
                     // Error!
                 }
             } else {
+                Log::error('Error saving order for customer ID ' . $order->customer_id . '. Error message: ' . print_r($order->errors(), TRUE));
                 return Redirect::route('orders.create')
                         ->withInput()
                         ->withErrors( $order->errors() );
@@ -102,20 +103,20 @@ class OrdersController extends \BaseController {
             $this->customer_id = $order->customer_id;
             
             if ( OrdersController::checkAdminOrOrderUser($order) ) {
-                $order = OrdersController::getOrderCharges($order);
                 $order->shipping_option_display = OrdersController::$shipping_options_master[$order->delivery_terms];
-                //$customer = Customer::find($order->customer_id);
                 if ( Cart::totalItems() > 0 ) {
                     $cartContents = Cart::contents();
                 } else {
-                    foreach ( $order->orderItems as $orderItem ) {
-                        $cartContents[] = OrdersController::mapOrderItemToCartItem($orderItem);
-                    }
-                }
-                    
-                $paypal_attrs = OrdersController::getPaypalAttributes($order);
+                    $cartContents = OrdersController::convertOrderItemsToCartItems($order->orderItems);
+                }                
+                
+                if ( $order->order_status == 'Created' ) {
+                    $paypal_attrs = OrdersController::getPaypalAttributes($order);
 
-                $this->layout->content = View::make('orders.show', compact('order', 'cartContents', 'paypal_attrs'))->with(array('orderVerification' => TRUE));
+                    $this->layout->content = View::make('orders.show-verification', compact('order', 'cartContents', 'paypal_attrs'))->with(array('orderVerification' => TRUE));
+                } else {
+                    $this->layout->content = View::make('orders.show-complete', compact('order', 'cartContents'))->with(array('orderVerification' => TRUE));
+                }
             } else {
                 return Redirect::route('login');
             }
@@ -199,7 +200,21 @@ class OrdersController extends \BaseController {
         }
         
         public function complete(Order $order) {
+            Log::debug('In OrdersController::complete()...  order.id: ' . $order->id);
             
+            // Send e-mail of order summary
+            // Only send e-mail if order is beyond 'Created' status.
+            if ( !$order->email_sent_ind 
+                    && $order->order_status <> 'Created' ) {
+                $email_result = OrdersController::sendEmailConfirmation($order);
+            }
+            
+            // Display completed order if launched from GUI
+            if ( OrdersController::checkAdminOrOrderUser($order) ) {
+                return Redirect::route('orders.show', $order->id);
+            } else {
+                return Redirect::route('login')->with('message', 'Please log in to view order.');
+            }            
         }
         
         public function cancel(Order $order) {
@@ -208,7 +223,7 @@ class OrdersController extends \BaseController {
             }
         }
         
-        /*
+        /**
          * Determine if logged in user is either an administrator
          * or the user who owns the current order.
          * 
@@ -221,6 +236,40 @@ class OrdersController extends \BaseController {
             }
             
             return FALSE;
+        }
+        
+        
+        private function sendEmailConfirmation(Order $order) {
+            
+            $orderVerification = TRUE;
+            $cartContents = OrdersController::convertOrderItemsToCartItems($order->orderItems);
+            
+            // Since we are using a closure in the Mail::send() method,
+            // we must use the 'use' method to pass in parameters array.
+            // Reference:  http://forumsarchive.laravel.io/viewtopic.php?id=8264
+            $params = array('email' => $order->customer->email,
+                            'name' => $order->customer->first_name . ' ' . $order->customer->last_name,
+                            'order_id' => $order->id);
+            $mail_result = Mail::send('orders.email', compact('cartContents', 'orderVerification', 'order'),
+                function($message) use ($params) {
+                    $message->to($params['email'], $params['name']);
+                    $message->bcc('orders@workshopmultimedia.com');
+                    $message->bcc('tdjones74021@yahoo.com');
+                    $message->from('orders@workshopmultimedia.com', 'Workshop Multimedia');
+                    $message->subject('Workshop Multimedia CD/DVD/MP3 Order #' . $params['order_id']);
+                });
+
+            if ( $mail_result ) {
+                // Update 'email sent' flag in database.
+                $order = Order::find($order->id);
+                $order->email_sent_ind = TRUE;
+                $order->save();
+            } else {
+                Log::error('Error sending notification e-mail for order #' . $order->id . ' - Result of send: ' . print_r($mail_result, TRUE));
+                return FALSE;
+            }
+            
+            return TRUE;
         }
         
         private function persistCart(Order $order) {
@@ -331,9 +380,7 @@ class OrdersController extends \BaseController {
             } else {
                 if ( $this->order_id > 0 ) {
                     $orderItems = Order::find($this->order_id)->orderItems;
-                    foreach ( $orderItems as $orderItem ) {
-                        $cartContents[] = OrdersController::mapOrderItemToCartItem($orderItem);
-                    }
+                    $cartContents = OrdersController::convertOrderItemsToCartItems($orderItems);
                     
 /*                    foreach ( $orderItems as $orderItem ) {
                         $product = $orderItem->product();
@@ -503,6 +550,12 @@ class OrdersController extends \BaseController {
             return $paypal_attrs;
         }
         
+        /**
+         * Convert an individual OrderItem to Cart Item.
+         * 
+         * @param OrderItem $orderItem
+         * @return \stdClass $cartItem
+         */
         private function mapOrderItemToCartItem(OrderItem $orderItem) {
             $product = Product::find($orderItem->product_id);
             $cartItemArray = array(
@@ -528,5 +581,21 @@ class OrdersController extends \BaseController {
             }
             
             return $cartItem;
+        }
+        
+        /**
+         * Convert a list (array) of 'OrderItem' objects into
+         * list (array) of Cart Items.
+         * 
+         * @param array of OrderItem $orderItemArray
+         * @return array of Cart Items $cartContents
+         */
+        private function convertOrderItemsToCartItems($orderItemArray = array()) {
+            $cartContents = array();
+            foreach ( $orderItemArray as $orderItem ) {
+                $cartContents[] = OrdersController::mapOrderItemToCartItem($orderItem);
+            }
+            
+            return $cartContents;
         }
 }
