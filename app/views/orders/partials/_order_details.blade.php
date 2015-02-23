@@ -13,7 +13,7 @@
                 <h3>Order Options</h3>
                 <p><strong>Order Number</strong>: {{ $order->id }}</p>
                 <p><strong>Shipping Option</strong>: {{ $order->shipping_option_display }}</p>
-                <p><strong>Order Notes</strong>: {{ '[None]' or $order->order_notes }}</p>
+                <p><strong>Order Notes</strong>: {{ $order->order_notes or '[None]' }}</p>
             </div>            
         </div>
         <div class="clear"></div>
