@@ -36,6 +36,15 @@ class CreateOrdersTable extends Migration {
 			$table->float('discounts')->default(0.0);
                         $table->float('shipping_charge')->default(0.0);
                         $table->unsignedInteger('product_count')->default(0);
+                        $table->string('paypal_txn_id', 25)->nullable();
+                        $table->float('paypal_fee')->default(0.0);
+                        $table->unsignedInteger('ipn_order_id')->nullable();
+                        $table->foreign('ipn_order_id')
+                                ->references('id')
+                                ->on('ipn_orders')
+                                ->onDelete('cascade')
+                                ->onUpdate('cascade');
+                        $table->boolean('email_sent_ind')->default(FALSE);
 			$table->timestamps();
 		});
                 
