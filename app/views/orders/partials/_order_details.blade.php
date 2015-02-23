@@ -11,6 +11,7 @@
             </div>
             <div class="col-xs-6">
                 <h3>Order Options</h3>
+                <p><strong>Order #</strong>: {{ $order->id }}</p>
                 <p><strong>Shipping Option</strong>: {{ $order->shipping_option_display }}</p>
                 <p><strong>Order Notes</strong>: {{ $order->order_notes }}</p>
             </div>            
