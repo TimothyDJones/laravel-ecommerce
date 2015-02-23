@@ -27,6 +27,7 @@ class CreateOrderItemsTable extends Migration {
                                 ->onDelete('cascade')
                                 ->onUpdate('cascade'); 
                         $table->unsignedInteger('qty')->default(1);
+                        $table->boolean('mp3_ind')->default(FALSE);
                 });
                 
                 // Re-enable FK constraints...  Just in case!  :)
