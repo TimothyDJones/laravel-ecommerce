@@ -102,20 +102,24 @@ class OrdersController extends \BaseController {
             $this->customer_id = $order->customer_id;
             
             if ( OrdersController::checkAdminOrOrderUser($order) ) {
-                $order = OrdersController::getOrderCharges($order);
-                $order->shipping_option_display = OrdersController::$shipping_options_master[$order->delivery_terms];
-                //$customer = Customer::find($order->customer_id);
-                if ( Cart::totalItems() > 0 ) {
-                    $cartContents = Cart::contents();
-                } else {
-                    foreach ( $order->orderItems as $orderItem ) {
-                        $cartContents[] = OrdersController::mapOrderItemToCartItem($orderItem);
+                if ( $order->order_status == 'Created' ) {
+                    $order = OrdersController::getOrderCharges($order);
+                    $order->shipping_option_display = OrdersController::$shipping_options_master[$order->delivery_terms];
+                    //$customer = Customer::find($order->customer_id);
+                    if ( Cart::totalItems() > 0 ) {
+                        $cartContents = Cart::contents();
+                    } else {
+                        foreach ( $order->orderItems as $orderItem ) {
+                            $cartContents[] = OrdersController::mapOrderItemToCartItem($orderItem);
+                        }
                     }
-                }
-                    
-                $paypal_attrs = OrdersController::getPaypalAttributes($order);
 
-                $this->layout->content = View::make('orders.show', compact('order', 'cartContents', 'paypal_attrs'))->with(array('orderVerification' => TRUE));
+                    $paypal_attrs = OrdersController::getPaypalAttributes($order);
+
+                    $this->layout->content = View::make('orders.show', compact('order', 'cartContents', 'paypal_attrs'))->with(array('orderVerification' => TRUE));
+                } else {
+                    return Redirect::route('complete', $order->id);
+                }
             } else {
                 return Redirect::route('login');
             }
@@ -200,6 +204,54 @@ class OrdersController extends \BaseController {
         
         public function complete(Order $order) {
             Log::debug('In OrdersController::complete()...  order.id: ' . $order->id);
+            
+            // Send e-mail of order summary
+            foreach ( $order->orderItems as $orderItem ) {
+                $cartContents[] = OrdersController::mapOrderItemToCartItem($orderItem);
+            }
+
+            $orderVerification = TRUE;
+            
+            // Only send e-mail if order is beyond 'Created' status.
+            if ( !$order->email_sent_ind 
+                    && $order->order_status <> 'Created' ) {
+                $email_flag = TRUE;
+                
+                // Since we are using a closure in the Mail::send() method,
+                // we must use the 'use' method to pass in parameters array.
+                // Reference:  http://forumsarchive.laravel.io/viewtopic.php?id=8264
+                $params = array('email' => $order->customer->email,
+                                'name' => $order->customer->first_name . ' ' . $order->customer->last_name,
+                                'order_id' => $order->id);
+                $mail_result = Mail::send('orders.email', compact('cartContents', 'orderVerification', 'email_flag', 'order'),
+                    function($message) use ($params) {
+                        $message->to($params['email'], $params['name']);
+                        $message->bcc('orders@workshopmultimedia.com');
+                        $message->bcc('tdjones74021@yahoo.com');
+                        $message->from('orders@workshopmultimedia.com', 'Workshop Multimedia');
+                        $message->subject('Workshop Multimedia CD/DVD/MP3 Order #' . $params['order_id']);
+                    });
+                
+                if ( $mail_result ) {
+                    // Update 'email sent' flag in database.
+                    $order = Order::find($order->id);
+                    $order->email_sent_ind = TRUE;
+                    $order->save();
+                } else {
+                    Log::debug('Error sending notification e-mail for order #' . $order->id . ' - Result of send: ' . print_r($mail_result, TRUE));
+                }
+            }
+            
+            // Display completed order if launched from GUI
+            if ( OrdersController::checkAdminOrOrderUser($order) ) {
+                Log::debug('After sending e-mail...  Trying to display order completion notice for order #' . $order->id);
+                $email_flag = FALSE;
+                
+                $this->layout->content = View::make('orders.email', compact('cartContents', 'orderVerification', 'email_flag', 'order'));
+            
+            } else {
+                return Redirect::route('login')->with('message', 'Please log in to view order.');
+            }
             
         }
         
