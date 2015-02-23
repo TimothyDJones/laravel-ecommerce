@@ -33,7 +33,11 @@ class CustomersController extends BaseController {
                     );
                     
                     if ( Auth::attempt($inputCredentials) ) {
-                        if ( is_null(Customer::find(Auth::id())->address) ) {  // If customer does not have address, redirect to create address.
+                        $customer = Customer::find(Auth::id());
+                        if ( $customer->admin_ind ) {
+                            Session::put('AdminUser', TRUE);
+                        }
+                        if ( is_null($customer->address) ) {  // If customer does not have address, redirect to create address.
                             return Redirect::route('customer.address.create', Auth::id())
                                 ->with('message', 'No address found for account.  Please enter a valid address.');
                         }
@@ -73,6 +77,7 @@ class CustomersController extends BaseController {
          */
         public function logout() {
             Auth::logout();
+            Session::flush();   // Clear *ALL* session data!
             
             return Redirect::to('login')->with('message', 'You have logged out.');
         }
