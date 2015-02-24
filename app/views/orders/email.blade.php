@@ -313,6 +313,7 @@ table th[class*="col-"] {
                             <table class="table">
                                 <thead>
                                     <tr>
+                                        <th>Year</th>
                                         <th>Form ID</th>
                                         <th>Title</th>
                                         <th>Speaker</th>
@@ -325,6 +326,7 @@ table th[class*="col-"] {
                                 <tbody>
                                     @foreach ( $cartContents as $cartItem )
                                     <tr>
+                                        <td>{{ $cartItem->workshop_year }}</td>
                                         <td>{{ $cartItem->form_id }}</td>
                                         <td>{{ $cartItem->session_title }}</td>
                                         <td>{{ $cartItem->speaker_name }}</td>
@@ -340,7 +342,7 @@ table th[class*="col-"] {
                                     @endforeach
                                     @if ( $orderVerification == TRUE )
                                     <tr>
-                                        <td colspan="3" class="text-right">Subtotal</td>
+                                        <td colspan="4" class="text-right">Subtotal</td>
                                         <td class="text-right">{{ $order->product_count }}</td>
                                         <td>&nbsp;</td>
                                         <td class="text-right">{{ money_format("%.2n", $order->subtotal_amt) }}</td>
@@ -348,7 +350,7 @@ table th[class*="col-"] {
                                     </tr>
                                         @if ( $order->shipping_charge > 0.0 )
                                         <tr>
-                                            <td colspan="3" class="text-right">Shipping & Handling</td>
+                                            <td colspan="4" class="text-right">Shipping & Handling</td>
                                             <td colspan="2">&nbsp;</td>
                                             <td class="text-right">{{ money_format("%.2n", $order->shipping_charge) }}</td>
                                             <td></td>
@@ -356,21 +358,21 @@ table th[class*="col-"] {
                                         @endif
                                         @if ( $order->discounts > 0.0 )
                                         <tr>
-                                            <td colspan="3" class="text-right">Discounts</td>
+                                            <td colspan="4" class="text-right">Discounts</td>
                                             <td colspan="2">&nbsp;</td>
                                             <td class="text-right">({{ money_format("%.2n", $order->discounts) }})</td>
                                             <td></td>
                                         </tr>
                                         @endif
                                     <tr>
-                                        <td colspan="3" class="text-right"><em>Total</em></td>
+                                        <td colspan="4" class="text-right"><em><strong>Total</strong></em></td>
                                         <td colspan="2">&nbsp;</td>
                                         <td class="text-right"><strong>{{ money_format("%.2n", $order->order_total) }}</strong></td>
                                         <td></td>
                                     </tr>
                                     @else
                                     <tr class="info">
-                                        <td colspan="3" class="text-right">Total (<em><strong>not</strong> including shipping and/or discounts, if any</em>)</td>
+                                        <td colspan="4" class="text-right">Total (<em><strong>not</strong> including shipping and/or discounts, if any</em>)</td>
                                         <td class="text-right">{{ Cart::totalItems() }}</td>
                                         <td>&nbsp;</td>
                                         <td class="text-right">{{ money_format("%.2n", Cart::total()) }}</td>
