@@ -1,5 +1,6 @@
 @section('main')
         <h2>Order Confirmation</h2>
+        <h3>Workshop Multimedia CD/DVD/MP3 Order #{{ $order->id }}</h3>
         <div class="row">
             <div class="col-md-8 alert alert-info">
                 <p>
