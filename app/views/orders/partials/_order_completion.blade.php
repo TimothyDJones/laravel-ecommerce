@@ -16,11 +16,6 @@
 
         @include('orders/partials/_order_details')
         
-        <div class="row">
-            <p>Regards,</p>
-            <p><a href="http://www.workshopmultimedia.com">Workshop Multimedia</a></p>
-        </div>
-        
         @if ( Session::get('AdminUser') )
         <div class="row pull-right">
             {{ link_to_route('resend-order-email', 'Resend E-mail', $order->id, array('class' => 'btn btn-sm btn-danger outline',
