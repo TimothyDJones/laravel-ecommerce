@@ -89,3 +89,5 @@ Route::resource('orders', 'OrdersController');
 Route::post('ipn', array('uses' => 'IpnController@store', 'as' => 'ipn'));
 
 Route::resource('admin', 'AdminController');
+Route::get('admin/search-order', array('as' => 'search-order', 'uses' => 'AdminController@searchOrder'));
+Route::get('admin/search-customer', array('as' => 'search-customer', 'uses' => 'AdminController@searchCustomer'));
