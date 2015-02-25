@@ -89,3 +89,25 @@ Route::filter('csrf', function()
 		throw new Illuminate\Session\TokenMismatchException;
 	}
 });
+
+/*
+|--------------------------------------------------------------------------
+| Admin Filter
+|--------------------------------------------------------------------------
+|
+| Check to determine if currently logged in user is an Administrator,
+| based on the 'admin_ind' database flag.
+|
+*/
+
+Route::filter('admin', function() {
+    if ( Auth::guest() ) {
+        return Redirect::route('login')->with('message', 'You must log in to access admin area of site.');
+    } else {
+        $customer = Customer::find(Auth::id());
+        Log::debug('Admin filter - customer: ' . print_r($customer, TRUE));
+        if ( !$customer->admin_ind ) {
+            return Redirect::route('home')->with('message', '<strong>You are not authorized to access admin area of site.</strong>');
+        }
+    }
+});
