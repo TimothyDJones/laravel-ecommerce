@@ -11,10 +11,14 @@
 |
 */
 
-Route::get('/', function()
+/* Route::get('/', function()
 {
 	return View::make('hello');
 });
+ * 
+ */
+
+Route::get('/', array('as' => 'home', 'uses' => 'ProductsController@home'));
 
 Route::get('/user', function()
 {
@@ -84,4 +88,4 @@ Route::resource('orders', 'OrdersController');
 // Route for automated Paypal IPN processing
 Route::post('ipn', array('uses' => 'IpnController@store', 'as' => 'ipn'));
 
-Route::resource('admin', 'AdminController')->before('admin');
+Route::resource('admin', 'AdminController');
