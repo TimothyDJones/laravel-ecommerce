@@ -83,3 +83,5 @@ Route::resource('orders', 'OrdersController');
 
 // Route for automated Paypal IPN processing
 Route::post('ipn', array('uses' => 'IpnController@store', 'as' => 'ipn'));
+
+Route::resource('admin', 'AdminController')->before('admin');
