@@ -124,6 +124,10 @@ class ProductsController extends \BaseController {
 		//
 	}
         
+        public function home() {
+            $this->layout->content = View::make('home');
+        }
+        
         public function changeWorkshopYear() {
             $workshop_year = Input::get('workshop_year_select');
             return Redirect::to('products/' . $workshop_year);
