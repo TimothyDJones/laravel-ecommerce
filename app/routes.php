@@ -53,8 +53,8 @@ Route::resource('projects', 'ProjectsController');
 Route::resource('projects.tasks', 'TasksController');
 
 //Route::resource('customers/profile', 'CustomersController@profile');
-Route::get('profile', array( 'as' => 'profile', 'uses' => 'CustomersController@profile' ))->before('auth');
-Route::post('profile', array( 'as' => 'profile', 'uses' => 'CustomersController@profile' ));
+Route::get('profile/{customers?}', array( 'as' => 'profile', 'uses' => 'CustomersController@profile' ))->before('auth');
+Route::post('profile/{customers?}', array( 'as' => 'profile', 'uses' => 'CustomersController@profile' ));
 Route::get('logout', 'CustomersController@logout')->before('auth');
 Route::get('login', array( 'as' => 'login', 'uses' => 'CustomersController@login'))->before('guest');
 Route::post('login', array( 'as' => 'login', 'uses' => 'CustomersController@login'));
@@ -83,6 +83,7 @@ Route::get('orders/make-payment', array('as' => 'make-payment', 'uses' => 'Order
 Route::get('orders/{orders}/complete', array('as' => 'order-complete', 'uses' => 'OrdersController@complete'))->before('auth');
 Route::get('orders/{orders}/cancel', array('as' => 'order-cancel', 'uses' => 'OrdersController@cancel'))->before('auth');
 Route::get('orders/{orders}/resend-email', array('as' => 'resend-order-email', 'uses' => 'OrdersController@resendConfirmationEmail'));
+Route::get('orders/{customers}/admin-order-create', array('as' => 'admin-order-create', 'uses' => 'OrdersController@adminOrderCreate'));
 Route::resource('orders', 'OrdersController');
 
 // Route for automated Paypal IPN processing
