@@ -97,7 +97,7 @@ class AddressesController extends BaseController {
                 $address->fill($input);
                 
                 if ( $address->updateUniques() ) {
-                    return Redirect::route('customers.addresses.show', array($customer->id, $address->id))
+                    return Redirect::route('profile', array($customer->id))
                             ->with('message', 'Address updated.');
                 } else {
                     return Redirect::route('customers.addresses.edit', array($customer->id, array_get($address->getOriginal(), 'id')))
