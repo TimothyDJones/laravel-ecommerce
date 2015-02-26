@@ -100,7 +100,7 @@ class CustomersController extends BaseController {
 	 */
 	public function create()
 	{
-            if ( !Auth::check() )
+            if ( (Auth::check() && Auth::user()->admin_ind) || !Auth::check() )
                 $this->layout->content = View::make('customers.create')->with('updateFlag', FALSE);
             else
                 return Redirect::to('profile')->with('message', 'You are already a customer!');
@@ -115,12 +115,22 @@ class CustomersController extends BaseController {
 	public function store()
 	{
             $input = array_except(Input::all(), array('_token') );
-            $validator = Validator::make($input, Customer::$validation_rules);
+            $validation_rules = Customer::$validation_rules;
+            // If the currently logged in user is admin, then password
+            // verification is not required.
+            if ( Auth::user()->admin_ind ) {
+                $validation_rules = array_except(Customer::$validation_rules, array('password', 'password_confirmation'));
+            }
+            $validator = Validator::make($input, $validation_rules);
             
-            if ( $validator->passes()
-                    && ($input['password'] === $input['password_confirmation'])) {
+            if ( $validator->passes() ) {
                 $customer = new Customer($input); //new Customer(array_except($input, array('password_confirmation')));
-                $customer->password = Hash::make(Input::get('password'));
+                
+                if (isset($validation_rules['password']) && ($input['password'] === $input['password_confirmation'])) {
+                    $customer->password = Hash::make(Input::get('password'));
+                } else {
+                    $customer->password = Config::get('workshop.dummy_customer_password');
+                }
                 
                 if ( $customer->save() ) {
                     return Redirect::route('customers.addresses.create', $customer->id)
