@@ -23,5 +23,6 @@ return array(
         'MP3' => 3.0,
     ),
     'paypal_acct_email' => 'orders@workshopmultimedia.com',
+    'dummy_customer_password' => '-999',
 );
 
