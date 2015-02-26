@@ -235,6 +235,16 @@ class OrdersController extends \BaseController {
             }
         }
         
+        public function adminOrderCreate(Customer $customer) {
+            if ( Auth::check() && Auth::user()->admin_ind ) {
+                
+                
+                $this->layout->content = View::make('orders.admin-create', compact('customer'));
+            } else {
+                return Redirect::route('login');
+            }
+        }
+        
         /**
          * Determine if logged in user is either an administrator
          * or the user who owns the current order.
