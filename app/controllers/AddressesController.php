@@ -51,7 +51,7 @@ class AddressesController extends BaseController {
             
             if ( $address->save() ) {
                 //return Redirect::route('customers.show', $customer)->with('message', 'Customer created.');
-                return Redirect::route('customers.addresses.show', array($customer->id, $address->id))->with('message', 'Address created.');
+                return Redirect::route('profile', array($customer->id))->with('message', 'Address created.');
             } else {
                 //return Redirect::route('customers.create')->withInput()->withErrors( $customer->errors() );
                 return Redirect::route('customers.addresses.create', $customer->id)->withInput()->withErrors( $address->errors() );
