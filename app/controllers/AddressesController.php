@@ -47,6 +47,17 @@ class AddressesController extends BaseController {
 	{
             $input = array_except(Input::all(), array('_token') );
             $input['customer_id'] = $customer->id;
+            
+            // Use postal code-to-locality lookup to find city/state to standardize...
+            if ( isset($input['postal_code']) ) {
+                $location_data = Utility::getLocalityFromPostalCode($input['postal_code']);
+                if ( $location_data ) {
+                    $input['postal_code'] = $location_data['post code'];
+                    $input['city'] = $location_data['places'][0]['place name'];
+                    $input['state'] = $location_data['places'][0]['state'];
+                }
+            }
+            
             $address = new Address($input);
             
             if ( $address->save() ) {
