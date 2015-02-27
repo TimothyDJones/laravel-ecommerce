@@ -32,7 +32,7 @@
     {{ Form::close() }}
     </div>
            
-            {{ Kint::dump(Cart::contents()) }}
+            {{-- Kint::dump(Cart::contents()) --}}
             <!-- Display shopping cart button if it has items. -->
             @if ( Cart::contents() )
             <div class="row">
@@ -88,7 +88,7 @@
                             <h2>{{ $product->session_title }}</h2>
                             <h3>{{ $product->speaker_first_name }} {{ $product->speaker_last_name }}</h3>
                             <h3>Price: ${{ (int) $product->price }} ea.</h3>
-                            <div class="form-inline">
+                            <div class="form-inline item-form">
                                 {{ Form::open(array('route' => 'cart-add', 'method' => 'post', 'role' => 'form', 'class' => 'form-horizontal')) }}
                                     {{ Form::hidden('session_id', $product->id) }}
                                     {{ Form::text('qty', '1', array('size' => 2, 'maxlength' => 2, 'class' => 'form-control input-sm',
@@ -105,6 +105,7 @@
                                                                             data-original-title="Enable/check to order MP3 instead of CD.">MP3</span>
                                     </div>
                                     @endif
+                                    &nbsp;&nbsp;
                                     {{ Form::submit('Add', array('class' => 'btn btn-sm item-btn pull-right',
                                                                             'data-toggle' => 'tooltip',
                                                                             'data-placement' => 'bottom',
