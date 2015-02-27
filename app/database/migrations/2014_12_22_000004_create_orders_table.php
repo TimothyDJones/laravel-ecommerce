@@ -36,6 +36,7 @@ class CreateOrdersTable extends Migration {
 			$table->float('discounts')->default(0.0);
                         $table->float('shipping_charge')->default(0.0);
                         $table->unsignedInteger('product_count')->default(0);
+                        $table->boolean('online_order_ind')->default(TRUE);
 			$table->timestamps();
 		});
                 
