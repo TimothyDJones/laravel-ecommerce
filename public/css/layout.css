@@ -217,16 +217,16 @@ a {
     margin: 0 0 1em 0;
     font-weight: normal;
     text-align: center;
-    font-size: 10px;
+    font-size: 12px;
 }
 
 .item h2 {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;  /* semi-bold */
 }
 
 .item h3 {
-    font-size: 10px;
+    font-size: 11px;
 }
 
 .item h4 {
@@ -423,4 +423,8 @@ box-shadow: none;
   color: #fff;
   background-color: #404d1f;
   border-color: #21360d;
+}
+
+.aqua {
+    background: #7FDBFF;
 }
