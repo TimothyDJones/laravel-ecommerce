@@ -69,6 +69,7 @@ class OrdersController extends \BaseController {
             if ( $order->order_notes == 'Order Notes' ) $order->order_notes = NULL;
             $order->customer_id = Auth::id();
             $order->order_date = date('Y-m-d');
+            $order->online_order_ind = TRUE;
             $order = OrdersController::getOrderCharges($order);
             
             if ( $order->save() ) {
@@ -164,6 +165,34 @@ class OrdersController extends \BaseController {
                 return Redirect::route('cart-empty');
             }
 	}
+        
+        public function adminOrderSave(Customer $customer) {
+            // First, save the order header.
+            $order = new Order();
+            $order->delivery_terms = Input::get('shipping_option');
+            $order->order_notes = Input::get('order_notes');
+            if ( $order->order_notes == 'Order Notes' ) $order->order_notes = NULL;
+            $order->customer_id = $customer->id;
+            $order->order_date = date('Y-m-d');
+            $order->online_order_ind = FALSE;
+            
+            
+            $formIdList = Input::get('form_id');
+            $qtyList = Input::get('qty');
+            
+            for ( $i = 0; $i < count($formIdList); $i++ ) {
+                if ( !in_array(substr($formIdList[$i], 0, 1), array('C', 'D'))
+                        && !strstr($formIdList, 'SET') ) {
+                    $formIdList[$i] = 'CD' . str_pad($formIdList[$i], 2, '0', STR_PAD_LEFT);
+                }
+                $query = Product::where('form_id', '=', $formIdList[$i]);
+                $query->where('workshop_year', '=', Config::get('workshop.curent_workshop_year'));
+                $product = $query->get()->first();
+                
+                
+            }
+        }
+        
 
 	/**
 	 * Process the user's order through to payment.
@@ -237,9 +266,10 @@ class OrdersController extends \BaseController {
         
         public function adminOrderCreate(Customer $customer) {
             if ( Auth::check() && Auth::user()->admin_ind ) {
+                $shipping_options = OrdersController::getShippingOptions();
                 
-                
-                $this->layout->content = View::make('orders.admin-create', compact('customer'));
+                $this->layout->content = View::make('orders.admin-create', compact('customer', 'shipping_options'))
+                                            ->with(array('shipping_charge_note' => ''));
             } else {
                 return Redirect::route('login');
             }
