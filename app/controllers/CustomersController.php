@@ -118,7 +118,7 @@ class CustomersController extends BaseController {
             $validation_rules = Customer::$validation_rules;
             // If the currently logged in user is admin, then password
             // verification is not required.
-            if ( Auth::user()->admin_ind ) {
+            if ( Utility::isAdminUser() ) {
                 $validation_rules = array_except(Customer::$validation_rules, array('password', 'password_confirmation'));
             }
             $validator = Validator::make($input, $validation_rules);

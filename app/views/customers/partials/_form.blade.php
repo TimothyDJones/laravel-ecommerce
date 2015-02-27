@@ -23,7 +23,7 @@
                         {{ Form::email('email', null, array('class' => 'form-control input-sm input-sm-reqd floatlabel', 'placeholder' => 'E-Mail Address', 'data-label' => 'You must enter a valid e-mail address in the format \'name@example.com\'.')) }}
                     </div>
                 </div>
-                @if ( !$updateFlag && !(Auth::check() && Auth::user()->admin_ind) )
+                @if ( !$updateFlag && !Utility::isAdminUser() )
                 <div class="form-group floating-label-form-group">
                     {{ Form::label('password', 'Password', array('class' => 'control-label control-label-reqd col-xs-5')) }}
                     <div class="input-group col-xs-6">
