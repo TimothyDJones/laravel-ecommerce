@@ -31,6 +31,8 @@
      {{ Form::submit('Change Year', array('class' => 'btn btn-primary')) }}
     {{ Form::close() }}
     </div>
+    
+    <div class="row">&nbsp;</div>
            
             {{-- Kint::dump(Cart::contents()) --}}
             <!-- Display shopping cart button if it has items. -->
