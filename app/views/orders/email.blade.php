@@ -254,6 +254,9 @@ table th[class*="col-"] {
                 <td></td>
                 <td></td>
             </tr>
+            <tr style="color: #fff; background-color: #033649; font-family: 'Open Sans', sans-serif; font-weight: 700;">
+                <td colspan="2"><h2><span style="font-weight: 700; margin: 10px 10px 10px 10px;">Workshop Multimedia<span></h2></td>
+            </tr>            
             <tr>
                 <td colspan="2">
                     <h2>Order Confirmation</h2>
