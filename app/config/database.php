@@ -54,10 +54,10 @@ return array(
 
 		'mysql' => array(
 			'driver'    => 'mysql',
-			'host'      => 'localhost', //getenv('DB_HOST'),
-			'database'  => 'laravel', //getenv('DB_NAME'),
-			'username'  => 'root', //getenv('DB_USER'),
-			'password'  => '', //getenv('DB_PASS'),
+			'host'      => getenv('LARAVEL_DB_HOST'),
+			'database'  => getenv('LARAVEL_DB_NAME'),
+			'username'  => getenv('LARAVEL_DB_USER'),
+			'password'  => getenv('LARAVEL_DB_PASS'),
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
 			'prefix'    => '',
