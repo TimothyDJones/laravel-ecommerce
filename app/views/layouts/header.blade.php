@@ -27,7 +27,7 @@
                     </ul>
                 </li>
             </ul>
-            {{ Form::open(array('route' => 'search', 'method' => 'get', 'role' => 'search', 'class' => 'navbar-form navbar-left')) }}
+            {{ Form::open(array('route' => 'search-order', 'method' => 'get', 'role' => 'search', 'class' => 'navbar-form navbar-left')) }}
                 <div class="form-group">
                     {{ Form::text('nav-search', null, array('placeholder' => 'Search', 'class' => 'form-control')) }}
                 </div>

@@ -217,16 +217,16 @@ a {
     margin: 0 0 1em 0;
     font-weight: normal;
     text-align: center;
-    font-size: 10px;
+    font-size: 12px;
 }
 
 .item h2 {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;  /* semi-bold */
 }
 
 .item h3 {
-    font-size: 10px;
+    font-size: 11px;
 }
 
 .item h4 {
@@ -412,4 +412,19 @@ color: #f26d6d;
 border-color: #bf4343;
 color: #bf4343;
 box-shadow: none;
+}
+
+.btn-search,
+.btn-search:hover,
+.btn-search:focus,
+.btn-search.focus,
+.btn-search:active,
+.btn-search.active {
+  color: #fff;
+  background-color: #404d1f;
+  border-color: #21360d;
+}
+
+.aqua {
+    background: #7FDBFF;
 }

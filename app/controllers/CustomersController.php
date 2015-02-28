@@ -33,7 +33,11 @@ class CustomersController extends BaseController {
                     );
                     
                     if ( Auth::attempt($inputCredentials) ) {
-                        if ( is_null(Customer::find(Auth::id())->address) ) {  // If customer does not have address, redirect to create address.
+                        $customer = Customer::find(Auth::id());
+                        if ( $customer->admin_ind ) {
+                            Session::put('AdminUser', TRUE);
+                        }
+                        if ( is_null($customer->address) ) {  // If customer does not have address, redirect to create address.
                             return Redirect::route('customer.address.create', Auth::id())
                                 ->with('message', 'No address found for account.  Please enter a valid address.');
                         }
@@ -75,6 +79,7 @@ class CustomersController extends BaseController {
          */
         public function logout() {
             Auth::logout();
+            Session::flush();   // Clear *ALL* session data!
             
             return Redirect::to('login')->with('message', 'You have logged out.');
         }
@@ -97,7 +102,7 @@ class CustomersController extends BaseController {
 	 */
 	public function create()
 	{
-            if ( !Auth::check() )
+            if ( (Auth::check() && Auth::user()->admin_ind) || !Auth::check() )
                 $this->layout->content = View::make('customers.create')->with('updateFlag', FALSE);
             else
                 return Redirect::to('profile')->with('message', 'You are already a customer!');
@@ -112,12 +117,22 @@ class CustomersController extends BaseController {
 	public function store()
 	{
             $input = array_except(Input::all(), array('_token') );
-            $validator = Validator::make($input, Customer::$validation_rules);
+            $validation_rules = Customer::$validation_rules;
+            // If the currently logged in user is admin, then password
+            // verification is not required.
+            if ( Utility::isAdminUser() ) {
+                $validation_rules = array_except(Customer::$validation_rules, array('password', 'password_confirmation'));
+            }
+            $validator = Validator::make($input, $validation_rules);
             
-            if ( $validator->passes()
-                    && ($input['password'] === $input['password_confirmation'])) {
+            if ( $validator->passes() ) {
                 $customer = new Customer($input); //new Customer(array_except($input, array('password_confirmation')));
-                $customer->password = Hash::make(Input::get('password'));
+                
+                if (isset($validation_rules['password']) && ($input['password'] === $input['password_confirmation'])) {
+                    $customer->password = Hash::make(Input::get('password'));
+                } else {
+                    $customer->password = Config::get('workshop.dummy_customer_password');
+                }
                 
                 if ( $customer->save() ) {
                     return Redirect::route('customers.addresses.create', $customer->id)

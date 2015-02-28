@@ -1,5 +1,14 @@
 @section('main')
-    <h2>Customer Profile</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Customer Profile</h2>
+        </div>
+        <div class="col-md-6">
+            @if ( Auth::check() && Auth::user()->admin_ind )
+                {{ link_to_route('admin-order-create', 'Create Order', $customer->id, array('class' => 'btn btn-primary')) }}
+            @endif
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-4">
             <h3>Account Details</h3>
@@ -10,7 +19,7 @@
             <p>{{ $customer->telephone2 }}</p>
             @endif
             
-            @if ( Auth::id() == $customer->id || (int) $customer->admin_ind > 0 )
+            @if ( (Auth::check() && Auth::user()->admin_ind) || Auth::id() == $customer->id )
             {{ link_to_route('customers.edit', 'Edit', $customer->id, array('class' => 'btn btn-info')) }}
             @endif
         </div>
@@ -23,7 +32,7 @@
             @endif
             <p>{{ $customer->address->city }}, {{ $customer->address->state }} {{ $customer->address->postal_code }} {{ $customer->address->country }}</p>
             
-            @if ( Auth::id() == $customer->id || (int) $customer->admin_ind > 0 )
+            @if ( (Auth::check() && Auth::user()->admin_ind) || Auth::id() == $customer->id )
             {{ link_to_route('customers.addresses.edit',
                         'Edit', array($customer->id, $customer->address->id), array('class' => 'btn btn-info')) }}
             @endif            

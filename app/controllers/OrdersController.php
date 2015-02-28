@@ -69,6 +69,7 @@ class OrdersController extends \BaseController {
             if ( $order->order_notes == 'Order Notes' ) $order->order_notes = NULL;
             $order->customer_id = Auth::id();
             $order->order_date = date('Y-m-d');
+            $order->online_order_ind = TRUE;
             $order = OrdersController::getOrderCharges($order);
             
             if ( $order->save() ) {
@@ -83,6 +84,7 @@ class OrdersController extends \BaseController {
                     // Error!
                 }
             } else {
+                Log::error('Error saving order for customer ID ' . $order->customer_id . '. Error message: ' . print_r($order->errors(), TRUE));
                 return Redirect::route('orders.create')
                         ->withInput()
                         ->withErrors( $order->errors() );
@@ -167,6 +169,34 @@ class OrdersController extends \BaseController {
                 return Redirect::route('cart-empty');
             }
 	}
+        
+        public function adminOrderSave(Customer $customer) {
+            // First, save the order header.
+            $order = new Order();
+            $order->delivery_terms = Input::get('shipping_option');
+            $order->order_notes = Input::get('order_notes');
+            if ( $order->order_notes == 'Order Notes' ) $order->order_notes = NULL;
+            $order->customer_id = $customer->id;
+            $order->order_date = date('Y-m-d');
+            $order->online_order_ind = FALSE;
+            
+            
+            $formIdList = Input::get('form_id');
+            $qtyList = Input::get('qty');
+            
+            for ( $i = 0; $i < count($formIdList); $i++ ) {
+                if ( !in_array(substr($formIdList[$i], 0, 1), array('C', 'D'))
+                        && !strstr($formIdList, 'SET') ) {
+                    $formIdList[$i] = 'CD' . str_pad($formIdList[$i], 2, '0', STR_PAD_LEFT);
+                }
+                $query = Product::where('form_id', '=', $formIdList[$i]);
+                $query->where('workshop_year', '=', Config::get('workshop.curent_workshop_year'));
+                $product = $query->get()->first();
+                
+                
+            }
+        }
+        
 
 	/**
 	 * Process the user's order through to payment.
@@ -253,6 +283,12 @@ class OrdersController extends \BaseController {
                 return Redirect::route('login')->with('message', 'Please log in to view order.');
             }
             
+            // Display completed order if launched from GUI
+            if ( OrdersController::checkAdminOrOrderUser($order) ) {
+                return Redirect::route('orders.show', $order->id);
+            } else {
+                return Redirect::route('login')->with('message', 'Please log in to view order.');
+            }            
         }
         
         public function cancel(Order $order) {
@@ -261,7 +297,30 @@ class OrdersController extends \BaseController {
             }
         }
         
-        /*
+        public function resendConfirmationEmail(Order $order) {
+            if ( OrdersController::checkAdminOrOrderUser($order) ) {
+                OrdersController::sendEmailConfirmation($order);
+            }
+            
+            if ( isset($_SERVER['HTTP_REFERER']) ) {
+                return Redirect::back()->with('message', 'Confirmation e-mail re-sent.');
+            } else {
+                return Redirect::route('orders.show', $order->id)->with('message', 'Confirmation e-mail re-sent.');
+            }
+        }
+        
+        public function adminOrderCreate(Customer $customer) {
+            if ( Auth::check() && Auth::user()->admin_ind ) {
+                $shipping_options = OrdersController::getShippingOptions();
+                
+                $this->layout->content = View::make('orders.admin-create', compact('customer', 'shipping_options'))
+                                            ->with(array('shipping_charge_note' => ''));
+            } else {
+                return Redirect::route('login');
+            }
+        }
+        
+        /**
          * Determine if logged in user is either an administrator
          * or the user who owns the current order.
          * 
@@ -274,6 +333,43 @@ class OrdersController extends \BaseController {
             }
             
             return FALSE;
+        }
+        
+        
+        
+        private function sendEmailConfirmation(Order $order) {
+            
+            $orderVerification = TRUE;
+            $cartContents = OrdersController::convertOrderItemsToCartItems($order->orderItems);
+            
+            $order->shipping_option_display = OrdersController::$shipping_options_master[$order->delivery_terms];
+            
+            // Since we are using a closure in the Mail::send() method,
+            // we must use the 'use' method to pass in parameters array.
+            // Reference:  http://forumsarchive.laravel.io/viewtopic.php?id=8264
+            $params = array('email' => $order->customer->email,
+                            'name' => $order->customer->first_name . ' ' . $order->customer->last_name,
+                            'order_id' => $order->id);
+            $mail_result = Mail::send('orders.email', compact('cartContents', 'orderVerification', 'order'),
+                function($message) use ($params) {
+                    $message->to($params['email'], $params['name']);
+                    $message->bcc('orders@workshopmultimedia.com');
+                    $message->bcc('tdjones74021@yahoo.com');
+                    $message->from('orders@workshopmultimedia.com', 'Workshop Multimedia');
+                    $message->subject('Workshop Multimedia CD/DVD/MP3 Order #' . $params['order_id']);
+                });
+
+            if ( $mail_result ) {
+                // Update 'email sent' flag in database.
+                $order = Order::find($order->id);
+                $order->email_sent_ind = TRUE;
+                $order->save();
+            } else {
+                Log::error('Error sending notification e-mail for order #' . $order->id . ' - Result of send: ' . print_r($mail_result, TRUE));
+                return FALSE;
+            }
+            
+            return TRUE;
         }
         
         private function persistCart(Order $order) {
@@ -384,9 +480,7 @@ class OrdersController extends \BaseController {
             } else {
                 if ( $this->order_id > 0 ) {
                     $orderItems = Order::find($this->order_id)->orderItems;
-                    foreach ( $orderItems as $orderItem ) {
-                        $cartContents[] = OrdersController::mapOrderItemToCartItem($orderItem);
-                    }
+                    $cartContents = OrdersController::convertOrderItemsToCartItems($orderItems);
                     
 /*                    foreach ( $orderItems as $orderItem ) {
                         $product = $orderItem->product();
@@ -556,6 +650,12 @@ class OrdersController extends \BaseController {
             return $paypal_attrs;
         }
         
+        /**
+         * Convert an individual OrderItem to Cart Item.
+         * 
+         * @param OrderItem $orderItem
+         * @return \stdClass $cartItem
+         */
         private function mapOrderItemToCartItem(OrderItem $orderItem) {
             $product = Product::find($orderItem->product_id);
             $cartItemArray = array(
@@ -571,7 +671,7 @@ class OrdersController extends \BaseController {
                     'prod_code' => $product->prod_code,
                     'form_id' => $product->form_id,
                     'workshop_year' => $product->workshop_year,
-                    'session_title' => Utility::truncateStringWithEllipsis($product->session_title, 35),
+                    'session_title' => $product->session_title, //Utility::truncateStringWithEllipsis($product->session_title, 35),
                     'speaker_name' => $product->speaker_first_name . ' ' . $product->speaker_last_name,  
                 );
             
@@ -581,5 +681,21 @@ class OrdersController extends \BaseController {
             }
             
             return $cartItem;
+        }
+        
+        /**
+         * Convert a list (array) of 'OrderItem' objects into
+         * list (array) of Cart Items.
+         * 
+         * @param array of OrderItem $orderItemArray
+         * @return array of Cart Items $cartContents
+         */
+        private function convertOrderItemsToCartItems($orderItemArray = array()) {
+            $cartContents = array();
+            foreach ( $orderItemArray as $orderItem ) {
+                $cartContents[] = OrdersController::mapOrderItemToCartItem($orderItem);
+            }
+            
+            return $cartContents;
         }
 }

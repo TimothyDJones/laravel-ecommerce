@@ -47,11 +47,22 @@ class AddressesController extends BaseController {
 	{
             $input = array_except(Input::all(), array('_token') );
             $input['customer_id'] = $customer->id;
+            
+            // Use postal code-to-locality lookup to find city/state to standardize...
+            if ( isset($input['postal_code']) ) {
+                $location_data = Utility::getLocalityFromPostalCode($input['postal_code']);
+                if ( $location_data ) {
+                    $input['postal_code'] = $location_data['post code'];
+                    $input['city'] = $location_data['places'][0]['place name'];
+                    $input['state'] = $location_data['places'][0]['state'];
+                }
+            }
+            
             $address = new Address($input);
             
             if ( $address->save() ) {
                 //return Redirect::route('customers.show', $customer)->with('message', 'Customer created.');
-                return Redirect::route('customers.addresses.show', array($customer->id, $address->id))->with('message', 'Address created.');
+                return Redirect::route('profile', array($customer->id))->with('message', 'Address created.');
             } else {
                 //return Redirect::route('customers.create')->withInput()->withErrors( $customer->errors() );
                 return Redirect::route('customers.addresses.create', $customer->id)->withInput()->withErrors( $address->errors() );
@@ -97,7 +108,7 @@ class AddressesController extends BaseController {
                 $address->fill($input);
                 
                 if ( $address->updateUniques() ) {
-                    return Redirect::route('customers.addresses.show', array($customer->id, $address->id))
+                    return Redirect::route('profile', array($customer->id))
                             ->with('message', 'Address updated.');
                 } else {
                     return Redirect::route('customers.addresses.edit', array($customer->id, array_get($address->getOriginal(), 'id')))

@@ -14,7 +14,7 @@ return array(
         'ship_dvd' => 'Ship DVDs',
         'mp3_only' => 'MP3s only',
     ),
-    'minimum_shipping_charge' => 5.0,
+    'minimum_shipping_charge' => 4.0,
     'maximum_shipping_charge' => 10.0,
     'free_cd_count' => 6,
     'unit_price_list' => array(
@@ -23,5 +23,6 @@ return array(
         'MP3' => 3.0,
     ),
     'paypal_acct_email' => 'orders@workshopmultimedia.com',
+    'dummy_customer_password' => '-999',
 );
 

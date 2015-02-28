@@ -45,6 +45,7 @@ class CreateOrdersTable extends Migration {
                                 ->onDelete('cascade')
                                 ->onUpdate('cascade');
                         $table->boolean('email_sent_ind')->default(FALSE);
+                        $table->boolean('online_order_ind')->default(TRUE);
 			$table->timestamps();
 		});
                 

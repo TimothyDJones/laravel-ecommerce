@@ -2,6 +2,7 @@
                             <table class="table">
                                 <thead>
                                     <tr>
+                                        <th>Year</th>
                                         <th>Form ID</th>
                                         <th>Title</th>
                                         <th>Speaker</th>
@@ -14,6 +15,7 @@
                                 <tbody>
                                     @foreach ( $cartContents as $cartItem )
                                     <tr>
+                                        <td>{{ $cartItem->workshop_year }}</td>
                                         <td>{{ $cartItem->form_id }}</td>
                                         <td>{{ $cartItem->session_title }}</td>
                                         <td>{{ $cartItem->speaker_name }}</td>
@@ -29,33 +31,33 @@
                                     @endforeach
                                     @if ( $orderVerification == TRUE )
                                     <tr>
-                                        <td colspan="3" class="table-align-right">Subtotal</td>
+                                        <td colspan="4" class="table-align-right">Subtotal</td>
                                         <td class="table-align-right">{{ $order->product_count }}</td>
                                         <td colspan="2" class="table-align-right">{{ money_format("%.2n", $order->subtotal_amt) }}</td>
                                         <td></td>
                                     </tr>
                                         @if ( $order->shipping_charge > 0.0 )
                                         <tr>
-                                            <td colspan="3" class="table-align-right">Shipping & Handling</td>
+                                            <td colspan="4" class="table-align-right">Shipping & Handling</td>
                                             <td colspan="3" class="table-align-right">{{ money_format("%.2n", $order->shipping_charge) }}</td>
                                             <td></td>
                                         </tr>
                                         @endif
                                         @if ( $order->discounts > 0.0 )
                                         <tr>
-                                            <td colspan="3" class="table-align-right">Discounts</td>
+                                            <td colspan="4" class="table-align-right">Discounts</td>
                                             <td colspan="3" class="table-align-right">({{ money_format("%.2n", $order->discounts) }})</td>
                                             <td></td>
                                         </tr>
                                         @endif
                                     <tr>
-                                        <td colspan="3" class="table-align-right">Total</td>
+                                        <td colspan="4" class="table-align-right"><em><strong>Total</strong></em></td>
                                         <td colspan="3" class="table-align-right"><strong>{{ money_format("%.2n", $order->order_total) }}</strong></td>
                                         <td></td>
                                     </tr>
                                     @else
                                     <tr>
-                                        <td colspan="3" class="table-align-right">Total (<em><strong>not</strong> including shipping and/or discounts, if any</em>)</td>
+                                        <td colspan="4" class="table-align-right">Total (<em><strong>not</strong> including shipping and/or discounts, if any</em>)</td>
                                         <td class="table-align-right">{{ Cart::totalItems() }}</td>
                                         <td colspan="2" class="table-align-right">{{ money_format("%.2n", Cart::total()) }}</td>
                                         <td></td>
