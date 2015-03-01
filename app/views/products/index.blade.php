@@ -20,16 +20,16 @@
 
     </script>
     <div class="row">
-    {{ Form::open(array('route' => 'year-update', 'method' => 'post', 'role' => 'form', 'class' => 'form-inline')) }}
-    <div class="form-group floating-label-form-group">
-        {{ Form::label('workshop_year_select', 'Display Items for Workshop Year', array('class' => 'control-label control-label-reqd ')) }}
-        <div class="input-group">
-            <span class="input-group-addon"><i class="fa fa-calendar-o fa-fw"></i></span>
-            {{ Form::select('workshop_year_select', $workshop_year_list, $workshop_year_selected, array('class' => 'form-control input-sm input-sm-reqd floatlabel')) }}
+        {{ Form::open(array('route' => 'year-update', 'method' => 'post', 'role' => 'form', 'class' => 'form-inline')) }}
+        <div class="form-group floating-label-form-group">
+            {{ Form::label('workshop_year_select', 'Display Items for Workshop Year', array('class' => 'control-label control-label-reqd ')) }}
+            <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-calendar-o fa-fw"></i></span>
+                {{ Form::select('workshop_year_select', $workshop_year_list, $workshop_year_selected, array('class' => 'form-control input-sm input-sm-reqd floatlabel')) }}
+            </div>
         </div>
-    </div>
-     {{ Form::submit('Change Year', array('class' => 'btn btn-primary')) }}
-    {{ Form::close() }}
+         {{ Form::submit('Change Year', array('class' => 'btn btn-primary')) }}
+        {{ Form::close() }}
     </div>
     
     <div class="row">&nbsp;</div>
@@ -81,11 +81,16 @@
                                 @if ( $product->prod_type == 'DVD' )
                                     <strong>{{ $product->form_id }}</strong>
                                 @elseif ( $product->prod_type == 'SET' )
-                                    <span style="color: burlywood;"><strong>{{ $product->form_id }}</strong></span>
+                                    <span style="color: #F3F3F3;"><strong>{{ $product->form_id }}</strong></span>
                                 @else
                                     {{ $product->form_id }}
                                 @endif
-                                &nbsp;&nbsp;{{ $product->workshop_year }}
+                                &nbsp;&nbsp;
+                                @if ( $product->workshop_year <> Config::get('workshop.current_workshop_year') )
+                                    <span style="text-decoration: underline;">{{ $product->workshop_year }}</span>
+                                @else
+                                    <strong>{{ $product->workshop_year }}</strong>
+                                @endif
                             </h3>
                             <h2>{{ $product->session_title }}</h2>
                             <h3>{{ $product->speaker_first_name }} {{ $product->speaker_last_name }}</h3>
@@ -93,22 +98,20 @@
                             <div class="form-inline item-form">
                                 {{ Form::open(array('route' => 'cart-add', 'method' => 'post', 'role' => 'form', 'class' => 'form-horizontal')) }}
                                     {{ Form::hidden('session_id', $product->id) }}
-                                    {{ Form::text('qty', '1', array('size' => 2, 'maxlength' => 2, 'class' => 'form-control input-sm',
+                                    {{ Form::text('qty', '1', array('size' => 1, 'maxlength' => 2, 'class' => 'form-control input-sm form-item',
                                                                             'data-toggle' => 'tooltip',
                                                                             'data-placement' => 'right',
                                                                             'data-original-title' => 'Desired quantity of this item.')) }}
                                     @if ( $product->workshop_year < (int) Config::get('workshop.current_workshop_year')
                                             && $product->prod_type == 'CD'
                                             && (int) $product->mp3_free_ind == 0 )
-                                    &nbsp;&nbsp;
-                                    <div class="checkbox">
-                                        {{ Form::checkbox('MP3', 'mp3') }}&nbsp;<span class="item-checkbox" data-toggle="tooltip",
+                                    <div class="checkbox form-item">
+                                        {{ Form::checkbox('MP3', 'mp3') }}<span class="item-checkbox" data-toggle="tooltip",
                                                                             data-placement="bottom",
                                                                             data-original-title="Enable/check to order MP3 instead of CD.">MP3</span>
                                     </div>
                                     @endif
-                                    &nbsp;&nbsp;
-                                    {{ Form::submit('Add', array('class' => 'btn btn-sm item-btn pull-right',
+                                    {{ Form::submit('Add', array('class' => 'btn btn-sm item-btn form-item',
                                                                             'data-toggle' => 'tooltip',
                                                                             'data-placement' => 'bottom',
                                                                             'data-original-title' => 'Add item to shopping cart.')) }}

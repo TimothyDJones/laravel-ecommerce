@@ -51,6 +51,7 @@ class ProductsController extends \BaseController {
                         'workshop_year_selected' => $workshop_year,
                         'workshop_year_list' => ProductsController::getWorkshopYearList(),
                         'orderVerification' => FALSE,
+                        'mp3_tooltip' => "Enable/check to order MP3 for $" . Config::get('workshop.unit_price_list')['MP3'] . " instead of CD.",
                     ));
 	}
 
