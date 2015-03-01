@@ -135,6 +135,9 @@ class CustomersController extends BaseController {
                 }
                 
                 if ( $customer->save() ) {
+                    // Auto-login user after account creation...
+                    Auth::loginUsingId($customer->id);
+                    // Re-direct user to create address information...
                     return Redirect::route('customers.addresses.create', $customer->id)
                             ->with('message', 'Customer created.');
                 } else {
