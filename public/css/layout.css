@@ -444,3 +444,9 @@ box-shadow: none;
     margin-left: 3px;
     margin-right: 3px;    
 }
+
+.div-grey {
+    background-color: #d9d9dd; 
+    padding: 5px 5px 5px 5px; 
+    border-radius: 5px;
+}
