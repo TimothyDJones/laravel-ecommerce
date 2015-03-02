@@ -99,5 +99,23 @@ class Utility {
 
             return $response;
         }
+
+	/**
+	 * PHP work-alike/equivalent to Oracle NVL() function.
+         * Allows user to specify a default value, when one is not specified.
+	 *
+	 * @param  string $val - Regular value, if provided.
+         * @param  string $default (optional) - Default if $val is not specified.
+	 * @return string 
+	 */           
+        public static function nvl($val, $default = '') {
+            if ( empty($val)
+                    || is_null($val)
+                    || $val === '') {
+                return $default;
+            }
+            
+            return $val;
+        }
 }
 
