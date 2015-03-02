@@ -269,7 +269,11 @@ table th[class*="col-"] {
                     <div class="col-md-8 alert alert-info">
                         <p>
                             <strong>Thank you for your order!</strong>
-                            Your payment has been received and your order is being processed.  Details of your order are shown below.
+                            Your payment has been received and your order is being 
+                            processed.  Details of your order are shown below.  
+                            You may also view your order online <strong>
+                                <a href="{{ $order->show_url }}">here</a>.
+                            </strong>
                         </p>
                         <p>
                             If you have any questions about your order, do not hesitate to contact 
