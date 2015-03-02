@@ -1,7 +1,7 @@
 @section('main')
 
     {{-- @include('products.partials._workshop_year_select') --}}
-        <!-- jQuery script to auto-update product list when workshop year drop-down is changed. -->
+    <!-- jQuery script to auto-update product list when workshop year drop-down is changed. -->
     <script type="text/javascript">
         $(document).ready(
             function() {
@@ -21,16 +21,34 @@
 
     </script>
     <div class="row">
-        {{ Form::open(array('route' => 'year-update', 'method' => 'post', 'role' => 'form', 'class' => 'form-inline')) }}
-        <div class="form-group floating-label-form-group">
-            {{ Form::label('workshop_year_select', 'Display Items for Workshop Year', array('class' => 'control-label control-label-reqd ')) }}
-            <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-calendar-o fa-fw"></i></span>
-                {{ Form::select('workshop_year_select', $workshop_year_list, $workshop_year_selected, array('class' => 'form-control input-sm input-sm-reqd floatlabel')) }}
+        <div class="col-md-3 form-inline">
+            {{ Form::open(array('route' => 'year-update', 'method' => 'post', 'role' => 'form')) }}
+            <div class="form-group floating-label-form-group">
+                {{ Form::label('workshop_year_select', 'Display Items for Workshop Year', array('class' => 'control-label control-label-reqd ')) }}
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="fa fa-calendar-o fa-fw"></i></span>
+                    {{ Form::select('workshop_year_select', $workshop_year_list, $workshop_year_selected, array('class' => 'form-control input-sm input-sm-reqd floatlabel')) }}
+                </div>
             </div>
+             {{-- Form::submit('Change Year', array('class' => 'btn btn-primary')) --}}
+            {{ Form::close() }}
         </div>
-         {{-- Form::submit('Change Year', array('class' => 'btn btn-primary')) --}}
-        {{ Form::close() }}
+        
+        <div class="col-md-9 form-inline div-grey">
+            {{ Form::open(array('method' => 'get', 'action' => 'ProductsController@search', 'role' => 'form')) }}
+                <div class="col-xs-7">
+                    <div class="input-group col-xs-12">
+                            <span class="input-group-addon"><i class="fa fa-binoculars"></i></span> 
+                            {{ Form::text('search', null, ['class' => 'form-control input-sm', 'placeholder' => 'Search Criteria']) }}
+                    </div>
+                    <span class="help-block small">Separate search terms with commas.  Search criteria applies to <span style="text-decoration: underline;">title</span> and <span style="text-decoration: underline;">speaker name</span>.</span>
+                </div>
+                <div class="col-xs-5 pull-left">
+                    {{-- Form::select('search_year_ind', array('All' => 'All Years', 'Current' => Config::get('workshop.current_workshop_year') . ' Only'), Utility::nvl($search_year_ind, 'All'), array('class' => 'form-control input-sm')) --}}
+                    {{ Form::submit('Search', ['class' => 'btn btn-primary btn-sm']) }}
+                </div>
+            {{ Form::close() }}
+        </div>
     </div>
     
     <div class="row">&nbsp;</div>
