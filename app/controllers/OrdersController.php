@@ -103,6 +103,10 @@ class OrdersController extends \BaseController {
             $this->order_id = $order->id;
             $this->customer_id = $order->customer_id;
             
+            if ( Input::has('hashkey') ) {
+                Session::put('hashkey', urldecode(Input::get('hashkey')));
+            }
+            
             if ( OrdersController::checkAdminOrOrderUser($order) ) {
                 $order->shipping_option_display = OrdersController::$shipping_options_master[$order->delivery_terms];
                 if ( Cart::totalItems() > 0 ) {
@@ -231,6 +235,12 @@ class OrdersController extends \BaseController {
         public function complete(Order $order) {
             Log::debug('In OrdersController::complete()...  order.id: ' . $order->id);
             
+            if ( Input::get('hashkey') ) {
+                Session::put('hashkey', urldecode(Input::get('hashkey')));
+            }
+            
+            Log::debug('OrdersController::complete() - After saving hashkey to session: ' . print_r(Session::all(), TRUE));
+            
             // Send e-mail of order summary
             // Only send e-mail if order is beyond 'Created' status.
             if ( !$order->email_sent_ind 
@@ -280,10 +290,19 @@ class OrdersController extends \BaseController {
          * or the user who owns the current order.
          * 
 	 * @param  Order $order
-	 * @return Response
+	 * @return Boolean
          */
         private function checkAdminOrOrderUser(Order $order) {
-            if ( Customer::find(Auth::id())->admin_ind || Auth::id() == $order->customer->id ) {
+            
+            Log::debug('OrdersController::checkAdminOrOrderUser() - session data: ' . print_r(Session::all(), TRUE));
+            Log::debug('OrdersController::checkAdminOrOrderUser() - hash of email address '. $order->customer->email . ': ' . print_r(Hash::make($order->customer->email), TRUE));
+
+            if ( Session::has('hashkey') 
+                            && Hash::check($order->customer->email, Session::get('hashkey'))) {
+                return TRUE;
+            } elseif ( Auth::check() && Customer::find(Auth::id())->admin_ind ) {
+                return TRUE;
+            } elseif ( Auth::check() && Auth::id() == $order->customer->id ) {
                 return TRUE;
             }
             
@@ -298,6 +317,11 @@ class OrdersController extends \BaseController {
             $cartContents = OrdersController::convertOrderItemsToCartItems($order->orderItems);
             
             $order->shipping_option_display = OrdersController::$shipping_options_master[$order->delivery_terms];
+            
+            $order->show_url = route('orders.show', $order->id);
+            if ( Session::has('hashkey') ) {
+                $order->show_url .= '?hashkey=' . Session::get ('hashkey');
+            }
             
             // Since we are using a closure in the Mail::send() method,
             // we must use the 'use' method to pass in parameters array.
@@ -578,6 +602,14 @@ class OrdersController extends \BaseController {
             $paypal_attrs['first_name'] = $order->customer->first_name;
             $paypal_attrs['last_name'] = $order->customer->last_name;
             
+            // We save hash of customer e-mail in the Paypal 'custom' (hidden)
+            // attribute.  Then we can check this when user returns from 
+            // Paypal to ensure that this is same user.
+            $email_hash = Hash::make($order->customer->email);
+            $paypal_attrs['custom'] = $email_hash;
+            Session::put('email_hash', $email_hash);
+            Log::debug('OrdersController::getPaypalAttributes() - hash of email address '. $order->customer->email . ': ' . print_r($email_hash, TRUE));
+            
             $paypal_attrs['night_phone_a'] = substr(preg_replace("/[^0-9]/", "", $order->customer->telephone1), 0, 3);
             $paypal_attrs['night_phone_b'] = substr(preg_replace("/[^0-9]/", "", $order->customer->telephone1), 3, 3);
             $paypal_attrs['night_phone_c'] = substr(preg_replace("/[^0-9]/", "", $order->customer->telephone1), 6, 4);
@@ -590,7 +622,7 @@ class OrdersController extends \BaseController {
             $paypal_attrs['country'] = substr($order->customer->address->country, 0, 2);
             
             // URLs for processing Paypal transaction
-            $paypal_attrs['return'] = route('order-complete', $order->id);
+            $paypal_attrs['return'] = route('order-complete', array('order' => $order->id, 'hashkey' => $email_hash));
             $paypal_attrs['cancel_return'] = route('order-cancel', $order->id);
             $paypal_attrs['notify_url'] = route('ipn');
                     
