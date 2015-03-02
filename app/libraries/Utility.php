@@ -92,7 +92,7 @@ class Utility {
             
             $response = json_decode($response, TRUE);  // Convert to array!
             if (empty($response)) {
-                throw new \Exception("No data returned by web server from " . $url . '.');
+                throw new \Exception("No data returned by web server from " . $url . '.', 100);
             }
             
             Log::debug('Response from Zippopotam.us web service for URL "' . $url . '":  ' . print_r($response, TRUE));
