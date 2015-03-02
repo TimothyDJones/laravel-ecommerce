@@ -9,10 +9,11 @@
                     function() {
                         var year_text = $("#workshop_year_select").text();
                         var year_val = $("#workshop_year_select").val();
-                        //alert('change fired: ' + year_text + '\n' + year_val);
-                        var url = "http://localhost:8080/products/" + year_val + "?ajax=1";
-                        //alert('get URL: ' + url);
-                        $.get(url);
+                        var orig_url = window.location;
+                        var new_url = orig_url.protocol + "//" + orig_url.host + "/products/" + year_val;
+                        // Re-direct to new url...
+                        window.location = new_url;
+                        //$.get("products/" + year_val);
                     });
             // Display tooltip on hover.
             $('[data-toggle="tooltip"]').tooltip();
@@ -28,7 +29,7 @@
                 {{ Form::select('workshop_year_select', $workshop_year_list, $workshop_year_selected, array('class' => 'form-control input-sm input-sm-reqd floatlabel')) }}
             </div>
         </div>
-         {{ Form::submit('Change Year', array('class' => 'btn btn-primary')) }}
+         {{-- Form::submit('Change Year', array('class' => 'btn btn-primary')) --}}
         {{ Form::close() }}
     </div>
     
