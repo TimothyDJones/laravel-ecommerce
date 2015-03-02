@@ -47,6 +47,8 @@
                 <p>{{ $order->id }} ({{ $order->order_status }})</p>
                 @endif
             @endforeach
+            
+            {{ link_to_route('products.index', 'New Order', NULL, array('class' => 'btn btn-info')) }}
         </div>
     </div>
 @stop
