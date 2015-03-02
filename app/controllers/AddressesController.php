@@ -50,7 +50,13 @@ class AddressesController extends BaseController {
             
             // Use postal code-to-locality lookup to find city/state to standardize...
             if ( isset($input['postal_code']) ) {
-                $location_data = Utility::getLocalityFromPostalCode($input['postal_code']);
+                $location_data = array();
+                try {
+                    $location_data = Utility::getLocalityFromPostalCode($input['postal_code']);
+                } catch (\Exception $ex) {
+                    if ( $ex->getCode() <> 100 )    // If we get an except OTHER THAN no data found, then pass it up.
+                        throw $ex;
+                }
                 if ( $location_data ) {
                     $input['postal_code'] = $location_data['post code'];
                     $input['city'] = $location_data['places'][0]['place name'];
