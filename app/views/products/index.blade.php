@@ -130,7 +130,7 @@
                                     <div class="checkbox form-item">
                                         {{ Form::checkbox('MP3', 'mp3') }}<span class="item-checkbox" data-toggle="tooltip",
                                                                             data-placement="bottom",
-                                                                            data-original-title="{{ $mp3_tooltip }}">MP3</span>
+                                                                            data-original-title="{{ $mp3_tooltip }}">&nbsp;MP3</span>
                                     </div>
                                     @endif
                                     {{ Form::submit('Add', array('class' => 'btn btn-sm item-btn form-item',
