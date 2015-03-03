@@ -13,9 +13,20 @@
         <!-- Collection of nav links, forms, and other content for toggling -->
         <div id="navbarCollapse" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li class="active">{{ link_to('/', 'Home') }}</li>
-                <li>{{ link_to_route('products.index', 'Products') }}</li>
-                <li>{{ link_to_route('items.index', 'Free Downloads') }}</li>
+                @if ( strpos(Route::currentRouteName(), 'home') !== FALSE )
+                <li class="active">
+                @else
+                <li>
+                @endif                    
+                    {{ link_to('/', 'Home') }}</li>
+                @if ( strpos(Route::currentRouteName(), 'products') !== FALSE )
+                <li class="active">
+                @else
+                <li>
+                @endif                 
+                    {{ link_to_route('products.index', 'Products') }}</li>
+                
+                {{-- <li>{{ link_to_route('items.index', 'Free Downloads') }}</li>
                 <li class="dropdown">
                     <a data-toggle="dropdown" class="dropdown-toggle" href="#">Customers <b class="caret"></b></a>
                     <ul role="menu" class="dropdown-menu">
@@ -25,11 +36,11 @@
                         <li class="divider"></li>
                         <li><a href="#">Trash</a></li>
                     </ul>
-                </li>
+                </li> --}}
             </ul>
-            {{ Form::open(array('route' => 'search-order', 'method' => 'get', 'role' => 'search', 'class' => 'navbar-form navbar-left')) }}
+            {{ Form::open(array('action' => 'ProductsController@search', 'method' => 'get', 'role' => 'search', 'class' => 'navbar-form navbar-left')) }}
                 <div class="form-group">
-                    {{ Form::text('nav-search', null, array('placeholder' => 'Search', 'class' => 'form-control')) }}
+                    {{ Form::text('search', null, array('placeholder' => 'Search', 'class' => 'form-control')) }}
                 </div>
             {{ Form::close() }}
             <ul class="nav navbar-nav navbar-right">
@@ -43,6 +54,10 @@
             </ul>
         </div>
     </nav>
+
+    @if ( Config::get('app.debug') )
+        {{ Kint::dump(Route::currentRouteName()) }}
+    @endif
 
 <!--
 <div class="header">
