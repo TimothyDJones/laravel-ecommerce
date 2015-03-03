@@ -60,7 +60,7 @@ class AddressesController extends BaseController {
                 if ( $location_data ) {
                     $input['postal_code'] = $location_data['post code'];
                     $input['city'] = $location_data['places'][0]['place name'];
-                    $input['state'] = $location_data['places'][0]['state'];
+                    $input['state'] = $location_data['places'][0]['state abbreviation'];
                 }
             }
             
