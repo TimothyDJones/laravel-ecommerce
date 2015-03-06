@@ -275,7 +275,7 @@ class OrdersController extends \BaseController {
         }
         
         public function adminOrderCreate(Customer $customer) {
-            if ( Auth::check() && Auth::user()->admin_ind ) {
+            if ( Utility::isAdminUser() ) {
                 $shipping_options = OrdersController::getShippingOptions();
                 
                 $this->layout->content = View::make('orders.admin-create', compact('customer', 'shipping_options'))
@@ -303,6 +303,8 @@ class OrdersController extends \BaseController {
             } elseif ( Auth::check() && Customer::find(Auth::id())->admin_ind ) {
                 return TRUE;
             } elseif ( Auth::check() && Auth::id() == $order->customer->id ) {
+                return TRUE;
+            } elseif ( Utility::isAdminUser() ) {
                 return TRUE;
             }
             
