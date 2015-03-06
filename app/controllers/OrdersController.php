@@ -276,7 +276,7 @@ class OrdersController extends \BaseController {
         
         public function adminOrderCreate(Customer $customer) {
             if ( Utility::isAdminUser() ) {
-                $shipping_options = OrdersController::getShippingOptions();
+                $shipping_options = OrdersController::$shipping_options_master;
                 
                 $this->layout->content = View::make('orders.admin-create', compact('customer', 'shipping_options'))
                                             ->with(array('shipping_charge_note' => ''));
