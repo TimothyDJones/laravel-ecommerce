@@ -2,7 +2,7 @@
     <h2>Create Order</h2>
     <h3>{{ $customer->first_name }}&nbsp;{{ $customer->last_name }}</h3>
     
-    {{ Form::open( array('action' => array('OrdersController@adminOrderSave', $customer->id),
+    {{ Form::open( array('route' => array('admin-order-save', $customer->id),
                 'method' => 'POST',
                 'class' => 'inline')) }}
                 
