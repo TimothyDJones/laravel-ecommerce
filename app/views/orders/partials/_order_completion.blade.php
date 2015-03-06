@@ -1,5 +1,7 @@
         <h2>Order Completion Confirmation</h2>
         <h3>Workshop Multimedia CD/DVD/MP3 Order #{{ $order->id }}</h3>
+        
+        @if ( !Utility::isAdminUser() )
         <div class="row">
             <div class="col-md-8 alert alert-info">
                 <p>
@@ -13,15 +15,21 @@
                 </p>
             </div>
         </div>
+        @endif
 
         @include('orders/partials/_order_details')
         
-        @if ( Session::get('AdminUser') )
+        @if ( Utility::isAdminUser() )
         <div class="row pull-right">
             {{ link_to_route('resend-order-email', 'Resend E-mail', $order->id, array('class' => 'btn btn-sm btn-danger outline',
                                                                     'data-toggle' => 'tooltip',
                                                                     'data-placement' => 'left',
                                                                     'data-original-title' => 'Resend order confirmation e-mail to customer.')) }}
+            &nbsp;
+            {{ link_to_route('orders.edit', 'Edit', $order->id, array('class' => 'btn btn-sm btn-info',
+                                                                    'data-toggle' => 'tooltip',
+                                                                    'data-placement' => 'left',
+                                                                    'data-original-title' => 'Edit order.')) }}            
         </div>                                                    
         @endif
 

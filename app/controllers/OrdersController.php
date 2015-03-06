@@ -184,7 +184,11 @@ class OrdersController extends \BaseController {
             $formIdList = Input::get('form_id');
             $qtyList = Input::get('qty');
             
+            //$now = Carbon::now('utc')->toDateTimeString();
+            $orderItemList = array();
+            
             for ( $i = 0; $i < count($formIdList); $i++ ) {
+                $formIdList[$i] = strtoupper($formIdList[$i]);
                 if ( !in_array(substr($formIdList[$i], 0, 1), array('C', 'D'))
                         && !strstr($formIdList, 'SET') ) {
                     $formIdList[$i] = 'CD' . str_pad($formIdList[$i], 2, '0', STR_PAD_LEFT);
@@ -193,7 +197,24 @@ class OrdersController extends \BaseController {
                 $query->where('workshop_year', '=', Config::get('workshop.curent_workshop_year'));
                 $product = $query->get()->first();
                 
+                // Do bulk database insert from array for better performance.
+                if ( $product->id > 0 ) {
+                    $orderItemList[] = array('product_id' => $product->id,
+                                                'order_id' => $order->id,
+                                                'qty' => $qtyList[$i],
+                                                'mp3_ind' => FALSE);
+                }
                 
+            }
+            
+            // Bulk insert!
+            OrderItem::insert($orderItemList);
+            
+            // We must get charges AFTER adding/inserting the order items.
+            $order = OrdersController::getOrderCharges($order);
+            if ( $order->updateUniques() ) {
+                // Re-direct to display the order details.
+                Redirect::route('orders.show', $order->id);
             }
         }
         
