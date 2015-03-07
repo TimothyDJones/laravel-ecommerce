@@ -179,7 +179,7 @@ class OrdersController extends \BaseController {
             $order->customer_id = $customer->id;
             $order->order_date = date('Y-m-d');
             $order->online_order_ind = FALSE;
-            
+            $order->save();            
             
             $formIdList = Input::get('form_id');
             $qtyList = Input::get('qty');
@@ -188,17 +188,18 @@ class OrdersController extends \BaseController {
             $orderItemList = array();
             
             for ( $i = 0; $i < count($formIdList); $i++ ) {
+                if ( empty($formIdList[$i]) ) break;
                 $formIdList[$i] = strtoupper($formIdList[$i]);
                 if ( !in_array(substr($formIdList[$i], 0, 1), array('C', 'D'))
-                        && !strstr($formIdList, 'SET') ) {
+                        && !strstr($formIdList[$i], 'SET') ) {
                     $formIdList[$i] = 'CD' . str_pad($formIdList[$i], 2, '0', STR_PAD_LEFT);
                 }
                 $query = Product::where('form_id', '=', $formIdList[$i]);
-                $query->where('workshop_year', '=', Config::get('workshop.curent_workshop_year'));
+                $query->where('workshop_year', '=', Config::get('workshop.current_workshop_year'));
                 $product = $query->get()->first();
                 
                 // Do bulk database insert from array for better performance.
-                if ( $product->id > 0 ) {
+                if ( $product && $product->id > 0 ) {
                     $orderItemList[] = array('product_id' => $product->id,
                                                 'order_id' => $order->id,
                                                 'qty' => $qtyList[$i],
