@@ -179,7 +179,9 @@ class OrdersController extends \BaseController {
             $order->customer_id = $customer->id;
             $order->order_date = date('Y-m-d');
             $order->online_order_ind = FALSE;
-            $order->save();            
+            $order->save();
+            $this->order_id = $order->id;
+            $this->customer_id = $order->customer->id;                    
             
             $formIdList = Input::get('form_id');
             $qtyList = Input::get('qty');
