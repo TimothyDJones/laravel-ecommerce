@@ -217,7 +217,7 @@ class OrdersController extends \BaseController {
             $order = OrdersController::getOrderCharges($order);
             if ( $order->updateUniques() ) {
                 // Re-direct to display the order details.
-                Redirect::route('orders.show', $order->id);
+                return Redirect::route('orders.show', $order->id);
             }
         }
         
