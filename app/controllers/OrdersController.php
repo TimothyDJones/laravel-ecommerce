@@ -215,6 +215,7 @@ class OrdersController extends \BaseController {
             
             // We must get charges AFTER adding/inserting the order items.
             $order = OrdersController::getOrderCharges($order);
+            $order->order_status = 'Complete';
             if ( $order->updateUniques() ) {
                 // Re-direct to display the order details.
                 return Redirect::route('orders.show', $order->id);
