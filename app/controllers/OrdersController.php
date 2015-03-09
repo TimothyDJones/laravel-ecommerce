@@ -215,6 +215,21 @@ class OrdersController extends \BaseController {
             
             // We must get charges AFTER adding/inserting the order items.
             $order = OrdersController::getOrderCharges($order);
+            $override_values = array(
+                    'override_sub_total' => Input::get('override_sub_total'),
+                    'override_shipping' => Input::get('override_shipping'),
+                    'override_discounts' => Input::get('override_discounts'),
+                    'override_total' => Input::get('override_total'),
+                );
+            if ( !empty($override_values['override_sub_total']) )
+                $order->subtotal_amt = $override_values['override_sub_total'];
+            if ( !empty($override_values['override_shipping']) )
+                $order->shipping_charge = $override_values['override_shipping'];
+            if ( !empty($override_values['override_discounts']) )
+                $order->discounts = $override_values['override_discounts'];
+            if ( !empty($override_values['override_total']) )
+                $order->order_total = $override_values['override_total'];
+            
             $order->order_status = 'Complete';
             if ( $order->updateUniques() ) {
                 // Re-direct to display the order details.
