@@ -1,7 +1,7 @@
 @section('main')
 
     <h2>{{ $heading or 'Admin Customers' }}</h2>
-    @include('admin/partials/_search_form)
+    @include('admin/partials/_search_form')
     
                         <div class="table-responsive">
                             <table class="table">
@@ -37,11 +37,13 @@
                                             {{ link_to_route('customers.edit', 'Edit', array('id' => $customer->id), array('class' => 'btn btn-info btn-sm')) }}
                                         </td>
                                         <td>
+                                            {{ link_to_route('admin-order-create', 'New Order', array('id' => $customer->id), array('class' => 'btn btn-primary btn-sm')) }}
                                             @foreach ( $customer->orders as $order )
                                             {{ link_to_route('orders.show', $order->id, array('id' => $order->id )) }}<br />
                                             @endforeach
                                         </td>
                                     </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>    

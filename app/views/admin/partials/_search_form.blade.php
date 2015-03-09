@@ -8,7 +8,7 @@
                 <span class="help-block">Separate search terms with commas.</span>
             </div>
             <div class="col-xs-2">
-                {{ Form::submit('Search', array('class' => 'btn btn-search btn-sm')) }}
+                {{ Form::submit('Search', array('class' => 'btn btn-primary btn-sm')) }}
             </div>
 	{{ Form::close() }}
     </div>
@@ -25,7 +25,7 @@
                 <span class="help-block">Separate search terms with commas.  Partial search criteria (e.g., last name) is OK.</span>
             </div>
             <div class="col-xs-2">
-                {{ Form::submit('Search', array('class' => 'btn btn-search btn-sm')) }}
+                {{ Form::submit('Search', array('class' => 'btn btn-primary btn-sm')) }}
             </div>
 	{{ Form::close() }}
     </div>

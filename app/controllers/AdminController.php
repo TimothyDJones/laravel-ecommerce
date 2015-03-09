@@ -99,13 +99,11 @@ class AdminController extends \BaseController {
             if ( strlen($searchCriteria) > 2 ) {
                 $orders = array();
                 
-                $criteria = explode(',', $searchCriteria);
-                $query = Order::where('id', '=', $criteria[0]);
+                $criteria = array_map("trim", explode(',', $searchCriteria));
+                $query = Order::orderBy('id', 'ASC');
                 foreach ( $criteria as $key => $value ) {
-                    if ( $key > 0 )
-                        $query->whereOr('id', '=', $value);
+                        $query->orWhere('id', '=', $value);
                 }
-                $query->orderBy('id', 'ASC');
                 $orders = $query->remember(5)->get();
                 
                 Log::debug('Order search results: ' . print_r($orders, TRUE));
@@ -113,13 +111,13 @@ class AdminController extends \BaseController {
                 if ( count($orders) == 1 ) {
                     return Redirect::route('orders.show', $orders[0]->id);
                 } elseif ( count($orders) > 1 ) {
-                    $this->layout->content = View::make('admin/orders', compact('orders'));
+                    $this->layout->content = View::make('admin.orders', compact('orders'));
                 } else {
                     return Redirect::back()->with('message', 'No <em><strong>orders</strong></em> found for search criteria: "' . $searchCriteria . '".');
                 }                    
+            } else {
+                return Redirect::back()->with('message', 'Insufficent search criteria.');
             }
-            
-            return Redirect::back()->with('message', 'Insufficent search criteria.');
         }
         
         public function searchCustomer() {
@@ -128,31 +126,65 @@ class AdminController extends \BaseController {
 
             $searchCriteria = trim(urldecode(Input::get('search_customer')));
             
+            Log::debug('AdminController::searchCustomer() - search criteria after extraction: ' . print_r($searchCriteria, TRUE));
+            
             if ( strlen($searchCriteria) > 2 ) {
                 $customers = array();
                 
-                $criteria = explode(',', $searchCriteria);
-                $query = Customer::where('last_name', 'LIKE', '%' . $criteria[0] . '%');
-                $query->whereOr('email', 'LIKE', '%' . $criteria[0] . '%');
-                foreach ( $criteria as $key => $value ) {
-                    $query->whereOr('last_name', 'LIKE', '%' . $value . '%');
-                    $query->whereOr('email', 'LIKE', '%' . $value . '%');
-                }
-                $query->orderBy('last_name', 'ASC')
+                $criteria = array_map("trim", explode(',', $searchCriteria));
+                
+                $query = Customer::orderBy('last_name', 'ASC')
                         ->orderBy('first_name', 'ASC')
                         ->orderBy('email', 'ASC');
+                
+                // Must use MySQL CONCAT() function to add wildcards to search criteria.
+                // See http://blog.mclaughlinsoftware.com/2010/02/21/php-binding-a-wildcard/ for details.
+                
+                foreach ( $criteria as $key => $value ) {
+                    $searchText = strtolower(trim($value));
+                    $query->orWhere( function ( $q2 ) use ( $searchText ) {
+                        $q2->orWhereRaw( "LOWER(`last_name`) LIKE CONCAT('%',?,'%')", array( $searchText ));
+                        $q2->orWhereRaw( "LOWER(`first_name`) LIKE CONCAT('%',?,'%')", array( $searchText ));
+                        $q2->orWhereRaw( "LOWER(`email`) LIKE CONCAT('%',?,'%')", array( $searchText ));
+                    });
+                }
+                
+                /*
+                $raw_query = "SELECT `id` FROM `customers` WHERE ";
+                foreach ( $criteria as $key => $value ) {
+                    if ( $key > 0 ) $raw_query .= " OR ";
+                    $raw_query .= "( LOWER(`last_name`) LIKE CONCAT('%',?,'%') OR ";
+                    $raw_query .= " LOWER(`first_name`) LIKE CONCAT('%',?,'%') OR ";
+                    $raw_query .= " LOWER(`email`) LIKE CONCAT('%',?,'%') ) ";
+                    //$raw_query .= "( LOWER(`last_name`) LIKE '%" . $value . "%' OR ";
+                    //$raw_query .= " LOWER(`first_name`) LIKE '%" . $value ."%' OR ";
+                    //$raw_query .= " LOWER(`first_name`) LIKE '%" . $value ."%' ) ";                    
+                    //$bind_vars[] = trim($value);
+                    //$bind_vars[] = trim($value);
+                    //$bind_vars[] = trim($value);
+                    for ( $i = 0; $i < 3; $i++ ) $bind_vars[] = trim($value);
+                }
+                
+                $results = DB::select( DB::raw($raw_query), $bind_vars);
+                 * 
+                 */
+
                 $customers = $query->remember(5)->get();
+                
+                Log::debug('AdminController::searchCustomer() - query log: ' . print_r(DB::getQueryLog(), TRUE));
                 
                 if ( count($customers) == 1 ) {
                     return Redirect::route('profile', $customers[0]->id);
                 } elseif ( count($customers) > 1 ) {
-                    $this->layout->content = View::make('admin/customers', compact('customers'));
+                    //$this->layout->content = View::make('admin.temp');
+                    $this->layout->content = View::make('admin.customers', compact('customers'))
+                            ->with('message', 'Found ' . count($customers) . ' <em><strong>customers</strong></em> for search criteria: "' . $searchCriteria . '".');
                 } else {
                     return Redirect::back()->with('message', 'No <em><strong>customers</strong></em> found for search criteria: "' . $searchCriteria . '".');
                 }                    
+            } else {
+                return Redirect::back()->with('message', 'Insufficent search criteria.');
             }
-            
-            return Redirect::back()->with('message', 'Insufficent search criteria.');
             
         }
         
