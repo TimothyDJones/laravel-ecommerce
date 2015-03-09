@@ -12,6 +12,19 @@ Some of the core principles of this application include:
 - In most cases, your controller methods should `return` routes (e.g., `Redirect::route(...)`), rather than simply executing the route method itself.  While I don't completely understand all of the details, essentially, this paradigm is part of the fundamental routing functionality of Laravel.
 - Pass **instances** of your model objects to controller methods, when possible, instead of IDs.  This simplifies processing of those instances by the methods and avoids having to make another call to the database.
 - Use database caching judiciously by including the `remember(5)` method in your database queries.  Since caching in Laravel is so simple and transparent, there really is no reason not to use it (even if you don't think you need it!).
+- When performing a `LIKE` query in MySQL with wildcards ('%'), such as `last_name LIKE '%?%'` where `?` is the bind variable placeholder, you must do a [Eloquent](http://laravel.com/docs/4.2/eloquent) "raw" query.  In the "raw" query, you append `Raw` to the name of the `Where` Eloquent method (e.g., `orWhereRaw(...)`) and specify the entire `WHERE` clause using the MySQL `CONCAT()` function in the format `CONCAT('%',?,'%')` to include the wildcards.  For example:
+```php
+	foreach ( $criteria as $key => $value ) {
+	    $searchText = strtolower(trim($value));
+	    $query->orWhere( function ( $q2 ) use ( $searchText ) {
+		$q2->orWhereRaw( "LOWER(`last_name`) LIKE CONCAT('%',?,'%')", array( $searchText ));
+		$q2->orWhereRaw( "LOWER(`first_name`) LIKE CONCAT('%',?,'%')", array( $searchText ));
+		$q2->orWhereRaw( "LOWER(`email`) LIKE CONCAT('%',?,'%')", array( $searchText ));
+	    });
+	}
+```
+This example uses a [function closure](http://php.net/manual/en/functions.anonymous.php) to "OR" the database columns to which the search criteria is applied.
+- One common error with _views_ is the message **FatalErrorException syntax error, unexpected '__data' (T_STRING)**.  The usual cause of this error is a missing quote at end of the path to another view in a Blade `@include` statement.
 
 ### Laravel Packages Used
 - [Laravel Framework](http://laravel.com) - To allow support on shared hosts using PHP 5.3.x, version 4.1 of the Laravel framework is used.  (Framework will be upgraded to version 4.2 later, in a separate branch.)
