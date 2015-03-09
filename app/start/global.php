@@ -93,3 +93,9 @@ Validator::resolver(function($translator, $data, $rules, $messages)
  * Load form macros
  */
 require app_path() . '/libraries/FormMacros.php';
+
+
+/*
+ * Load database query logger.
+ */
+require_once app_path() . '/libraries/DbQueryLogger.php';
