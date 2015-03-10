@@ -61,9 +61,9 @@ class AdminController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function edit($id)
+	public function edit(Order $order)
 	{
-		//
+
 	}
 
 
@@ -73,9 +73,9 @@ class AdminController extends \BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
+	public function update(Order $order)
 	{
-		//
+            
 	}
 
 

@@ -26,7 +26,7 @@
                                                                     'data-placement' => 'left',
                                                                     'data-original-title' => 'Resend order confirmation e-mail to customer.')) }}
             &nbsp;
-            {{ link_to_route('orders.edit', 'Edit', $order->id, array('class' => 'btn btn-sm btn-info',
+            {{ link_to_route('admin-order-edit', 'Edit', $order->id, array('class' => 'btn btn-sm btn-info',
                                                                     'data-toggle' => 'tooltip',
                                                                     'data-placement' => 'left',
                                                                     'data-original-title' => 'Edit order.')) }}            

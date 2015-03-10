@@ -143,9 +143,7 @@ class OrdersController extends \BaseController {
 	 */
 	public function edit(Order $order)
 	{
-            if ( OrdersController::checkAdminOrOrderUser($order) ) {
-                
-            }
+            return Redirect::route('admin-order-edit', $order->id);
 	}
 
 
@@ -177,16 +175,27 @@ class OrdersController extends \BaseController {
             }
 	}
         
-        public function adminOrderSave(Customer $customer) {
+        public function adminOrderSave(Customer $customer, Order $order = NULL) {
+            
+            // Set flag indicating if we are creating a new order or
+            // updating an existing order.
+            $isCreateAction = FALSE;
+            if ( is_null($order) ) $isCreateAction = TRUE;
+            
             // First, save the order header.
-            $order = new Order();
+            if ( $isCreateAction ) $order = new Order();
+            
             $order->delivery_terms = Input::get('shipping_option');
             $order->order_notes = Input::get('order_notes');
             if ( $order->order_notes == 'Order Notes' ) $order->order_notes = NULL;
+            $order->order_status = Input::get('order_status');
             $order->customer_id = $customer->id;
-            $order->order_date = date('Y-m-d');
-            $order->online_order_ind = FALSE;
-            $order->save();
+            if ( $isCreateAction ) {
+                $order->order_date = date('Y-m-d');
+                $order->online_order_ind = FALSE;
+                $order->save();
+            }
+            
             $this->order_id = $order->id;
             $this->customer_id = $order->customer->id;                    
             
@@ -217,6 +226,16 @@ class OrdersController extends \BaseController {
                 
             }
             
+            // Delete existing order items, if any,
+            // if this is an 'update' action.
+            if ( !$isCreateAction ) {
+                $items = array();
+                foreach ( $order->orderItems as $item ) {
+                    $items[] = $item->id;
+                }
+                OrderItem::destroy($items);
+            }
+            
             // Bulk insert!
             OrderItem::insert($orderItemList);
             
@@ -236,8 +255,7 @@ class OrdersController extends \BaseController {
                 $order->discounts = $override_values['discounts'];
             if ( !empty($override_values['order_total']) )
                 $order->order_total = $override_values['order_total'];
-            
-            $order->order_status = 'Complete';
+
             if ( $order->updateUniques() ) {
                 // Re-direct to display the order details.
                 return Redirect::route('orders.show', $order->id);
@@ -330,6 +348,20 @@ class OrdersController extends \BaseController {
                                             ->with(array('shipping_charge_note' => ''));
             } else {
                 return Redirect::route('login');
+            }
+        }
+        
+        public function adminOrderEdit(Order $order) {
+            if ( Utility::isAdminUser() ) {
+                $shipping_options = OrdersController::$shipping_options_master;
+                $order_status_list = OrdersController::$order_status_list;
+                $cartContents = OrdersController::convertOrderItemsToCartItems($order->orderItems);
+                
+                $this->layout->content = View::make('orders.admin-edit', 
+                        compact('order', 'shipping_options', 'order_status_list', 'cartContents'))
+                        ->with(array('submit_button_label' => 'Update',
+                                        'orderVerification' => TRUE,
+                                        'shipping_charge_note' => ''));
             }
         }
         
