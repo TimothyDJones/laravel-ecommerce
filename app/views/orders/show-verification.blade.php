@@ -1,6 +1,7 @@
 @section('main')
         <h2>Order Confirmation</h2>
         <h3>Workshop Multimedia CD/DVD/MP3 Order #{{ $order->id }}</h3>
+        @if ( !Utility::isAdminUser() )
         <div class="row">
             <div class="col-md-8 alert alert-info">
                 <p>
@@ -12,12 +13,18 @@
                 </p>
             </div>
         </div>
+        @endif
         
         {{-- Kint::dump($order) --}}
         
         @include('orders/partials/_order_details')
         <div class="row pull-right">
-                    @include('orders/partials/_paypal')
+            @if ( Utility::isAdminUser() )
+                {{ link_to_route('admin-order-edit', 'Edit', array($order->id),
+                    array('class' => 'btn btn-info',)) }}
+            @else
+                @include('orders/partials/_paypal')
+            @endif            
                     &nbsp;            
             {{ Form::open(array('class' => 'inline', 'method' => 'DELETE', 'route' => array('orders.destroy', $order->id))) }}
                     {{ Form::submit('Cancel Order', array('class' => 'btn btn-sm btn-danger outline',

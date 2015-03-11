@@ -11,9 +11,9 @@
                     <div class="col-md-6 text-center">Form ID</div>
                     <div class="col-md-6 text-center">Qty</div>
                 </div>
-                @for ( $i = 0; $i < 15; $i++ )
+                @for ( $i = 0; $i < max( array(15, count($cartContents)) ); $i++ )
                     <div class="row">
-                        @if ( $order_action == 'Update' && $i >= count($cartContents) )
+                        @if ( $order_action == 'Update' && $i < count($cartContents) )
                         
                         <div class="col-md-6">
                             {{ Form::text('form_id[]', $cartContents[$i]->form_id, array('size' => 1, 'maxlength' => 8, 'class' => 'form-control input-sm',

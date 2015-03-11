@@ -206,7 +206,7 @@ class OrdersController extends \BaseController {
             $orderItemList = array();
             
             for ( $i = 0; $i < count($formIdList); $i++ ) {
-                if ( empty($formIdList[$i]) ) break;
+                if ( empty($formIdList[$i]) ) continue;
                 $formIdList[$i] = strtoupper($formIdList[$i]);
                 if ( !in_array(substr($formIdList[$i], 0, 1), array('C', 'D'))
                         && !strstr($formIdList[$i], 'SET') ) {
@@ -241,20 +241,22 @@ class OrdersController extends \BaseController {
             
             // We must get charges AFTER adding/inserting the order items.
             $order = OrdersController::getOrderCharges($order);
-            $override_values = array(
-                    'subtotal_amt' => Input::get('subtotal_amt'),
-                    'shipping_charge' => Input::get('shipping_charge'),
-                    'discounts' => Input::get('discounts'),
-                    'order_total' => Input::get('order_total'),
-                );
-            if ( !empty($override_values['subtotal_amt']) )
-                $order->subtotal_amt = $override_values['subtotal_amt'];
-            if ( !empty($override_values['shipping_charge']) )
-                $order->shipping_charge = $override_values['shipping_charge'];
-            if ( !empty($override_values['discounts']) )
-                $order->discounts = $override_values['discounts'];
-            if ( !empty($override_values['order_total']) )
-                $order->order_total = $override_values['order_total'];
+            if ( Input::get('override_amounts', FALSE) ) {
+                $override_values = array(
+                        'subtotal_amt' => Input::get('subtotal_amt'),
+                        'shipping_charge' => Input::get('shipping_charge'),
+                        'discounts' => Input::get('discounts'),
+                        'order_total' => Input::get('order_total'),
+                    );
+                if ( !empty($override_values['subtotal_amt']) )
+                    $order->subtotal_amt = $override_values['subtotal_amt'];
+                if ( !empty($override_values['shipping_charge']) )
+                    $order->shipping_charge = $override_values['shipping_charge'];
+                if ( !empty($override_values['discounts']) )
+                    $order->discounts = $override_values['discounts'];
+                if ( !empty($override_values['order_total']) )
+                    $order->order_total = $override_values['order_total'];
+            }
 
             if ( $order->updateUniques() ) {
                 // Re-direct to display the order details.
@@ -369,7 +371,8 @@ class OrdersController extends \BaseController {
                         compact('order', 'shipping_options', 'order_status_list', 'cartContents'))
                         ->with(array('submit_button_label' => 'Update',
                                         'orderVerification' => TRUE,
-                                        'shipping_charge_note' => ''));
+                                        'shipping_charge_note' => '',
+                                        'order_action' => 'Update', ));
             }
         }
         
