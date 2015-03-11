@@ -341,11 +341,19 @@ class OrdersController extends \BaseController {
         
         public function adminOrderCreate(Customer $customer) {
             if ( Utility::isAdminUser() ) {
+                $order = new Order();
+                $order->customer = $customer;
+                $order->order_notes = 'Order Notes';
+                
                 $shipping_options = OrdersController::$shipping_options_master;
                 $order_status_list = OrdersController::$order_status_list;
                 
-                $this->layout->content = View::make('orders.admin-create', compact('customer', 'shipping_options', 'order_status_list'))
-                                            ->with(array('shipping_charge_note' => ''));
+                $cartContents = array();
+                
+                $this->layout->content = View::make('orders.admin-create', compact('order', 'cartContents', 'shipping_options', 'order_status_list'))
+                                            ->with(array('shipping_charge_note' => '',
+                                                            'heading' => 'Create Order',
+                                                            'order_action' => 'Create',));  // We use 'order_action' for the Submit button label.
             } else {
                 return Redirect::route('login');
             }
