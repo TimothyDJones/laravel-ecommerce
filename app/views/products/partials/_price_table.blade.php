@@ -11,22 +11,25 @@
                                     <tr>
                                         <td>CD</td>
                                         <td>$7 ea.</td>
-                                        <td>Get one <span class="text-primary"><strong>free</free> CD for every
+                                        <td>
+                                            @if ( strtotime(date('Y-m-d')) <= strtotime(Config::get('workshop.last_free_cd_discount_date')) )
+                                            Get one <span class="text-primary"><strong>free</free> CD for every
                                                     <em>five</em> purchased.  (No limit!)</span><br />
+                                            @endif
                                             <strong>Free</strong> custom case,
-                                            if you buy 6 or more 2015 sesssion CDs!
+                                            if you buy 6 or more <em>2015</em> sesssion CDs!
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>DVD</td>
                                         <td>$12 ea.</td>
-                                        <td>Delivered in custom case.  (Available by mail only.)</td>
+                                        <td>Delivered in custom case.  <span class="text-warning">(Available by mail only.)</span></td>
                                     </tr>
                                     <tr>
                                         <td><strong>CD Set</strong></td>
                                         <td>$350 ea.</td>
                                         <td>CD recordings of <strong>all 78</strong>
-                                            sessions in custom cases.
+                                            sessions in custom cases.  <strong>That's an over 35% discount compared to purchasing CDs individually.</strong>
                                         </td>
                                     </tr>
                                     <tr>

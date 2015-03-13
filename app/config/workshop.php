@@ -3,7 +3,8 @@
 return array(
     'current_workshop_year' => 2015,
     'last_pickup_order_date' => '2015-03-15',
-    'last_preorder_discount_date' => '2015-03-10',
+    'last_preorder_discount_date' => '2015-03-18',
+    'last_free_cd_discount_date' => '2015-04-21',
     'preorder_discount' => 0.10,
     'shipping_options' => array(
         'ship_together' => 'Ship CDs and DVDs together', 
