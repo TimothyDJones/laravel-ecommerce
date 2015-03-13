@@ -247,9 +247,14 @@ a {
 .item-11 { background: #6A4A3C; border-color: #52392e !important; }
 .item-12 { background: #C63D0F; border-color: #C63D0F !important; }
 .item-13 { background: #3B3738; border-color: #3B3738 !important; }
+/*
 .item-14 { background: #558C89; border-color: #558C89 !important; }
 .item-15 { background: #74AFAD; border-color: #74AFAD !important; }
 .item-16 { background: #D9853B; border-color: #D9853B !important; }
+*/
+.item-14 { background: #105952; border-color: #105952 !important; }
+.item-15 { background: #7F3D17; border-color: #7F3D17 !important; }
+.item-16 { background: #F4733D; border-color: #F4733D !important; }
 
 .item img {
     display: block;
