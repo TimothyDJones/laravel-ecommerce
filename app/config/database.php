@@ -54,10 +54,10 @@ return array(
 
 		'mysql' => array(
 			'driver'    => 'mysql',
-			'host'      => getenv('LARAVEL_DB_HOST'),
-			'database'  => getenv('LARAVEL_DB_NAME'),
-			'username'  => getenv('LARAVEL_DB_USER'),
-			'password'  => getenv('LARAVEL_DB_PASS'),
+			'host'      => 'localhost',
+			'database'  => 'database',
+			'username'  => 'root',
+			'password'  => '',
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
 			'prefix'    => '',
@@ -66,8 +66,8 @@ return array(
 		'pgsql' => array(
 			'driver'   => 'pgsql',
 			'host'     => 'localhost',
-			'database' => 'forge',
-			'username' => 'forge',
+			'database' => 'database',
+			'username' => 'root',
 			'password' => '',
 			'charset'  => 'utf8',
 			'prefix'   => '',
