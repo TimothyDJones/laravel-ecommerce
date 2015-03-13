@@ -651,11 +651,13 @@ class OrdersController extends \BaseController {
             
             $itemCount = OrdersController::getCountOfItems(TRUE, TRUE);  // Exclude count of disks from sets and only CDs from current workshop year.
             
-            $numberFreeCDs = (int) floor($itemCount['CD']['count']/((float) Config::get('workshop.free_cd_count')));
-            $freeCDDiscount = ((float) $unit_price_list['CD']) * $numberFreeCDs;
+            if ( strtotime(date('Y-m-d')) <= strtotime(Config::get('workshop.last_free_cd_discount_date')) ) {
+                $numberFreeCDs = (int) floor($itemCount['CD']['count']/((float) Config::get('workshop.free_cd_count')));
+                $freeCDDiscount = ((float) $unit_price_list['CD']) * $numberFreeCDs;
+            }
             
             // Pre-order discount applies ***ONLY*** to CDs/DVDs from current year's workshop!
-            if ( strtotime(date('Y-m-d')) < strtotime(Config::get('workshop.last_preorder_discount_date')) ) {
+            if ( strtotime(date('Y-m-d')) <= strtotime(Config::get('workshop.last_preorder_discount_date')) ) {
                 $preorderDiscount = ((float) Config::get('workshop.preorder_discount')) *
                         (($itemCount['CD']['sub_total_amt'] - $freeCDDiscount)
                             + $itemCount['DVD']['sub_total_amt']
