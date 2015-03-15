@@ -468,14 +468,16 @@ class OrdersController extends \BaseController {
         }
         
         private function getOrderCharges(Order $order) {
-            $itemSummary = OrdersController::getCountOfItems();
+            $itemSummary = OrdersController::getCountOfItems(TRUE, FALSE);
             
             $order->product_count = $itemSummary['CD']['count']
                     + $itemSummary['DVD']['count']
-                    + $itemSummary['MP3']['count'];
+                    + $itemSummary['MP3']['count']
+                    + $itemSummary['SET']['count'];
             $order->subtotal_amt = $itemSummary['CD']['sub_total_amt']
                     + $itemSummary['DVD']['sub_total_amt']
-                    + $itemSummary['MP3']['sub_total_amt'];
+                    + $itemSummary['MP3']['sub_total_amt']
+                    + $itemSummary['SET']['sub_total_amt'];
             $order->shipping_charge = OrdersController::calculateShipping($order->delivery_terms);
             $order->discounts = OrdersController::calculateDiscounts();
             $order->order_total = ($order->subtotal_amt - $order->discounts) + $order->shipping_charge;
@@ -522,6 +524,7 @@ class OrdersController extends \BaseController {
                 'CD' => array('count' => 0, 'sub_total_amt' => 0.0),
                 'DVD' => array('count' => 0, 'sub_total_amt' => 0.0),
                 'MP3' => array('count' => 0, 'sub_total_amt' => 0.0),
+                'SET' => array('count' => 0, 'sub_total_amt' => 0.0),
             );
             $currentWorkshopYear = Config::get('workshop.current_workshop_year');
             
@@ -661,7 +664,8 @@ class OrdersController extends \BaseController {
                 $preorderDiscount = ((float) Config::get('workshop.preorder_discount')) *
                         (($itemCount['CD']['sub_total_amt'] - $freeCDDiscount)
                             + $itemCount['DVD']['sub_total_amt']
-                            + $itemCount['MP3']['sub_total_amt']);
+                            + $itemCount['MP3']['sub_total_amt']
+                            + $itemCount['SET']['sub_total_amt']);
             }
             
             return ($freeCDDiscount + $preorderDiscount);
