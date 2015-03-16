@@ -444,6 +444,11 @@ class OrdersController extends \BaseController {
             return TRUE;
         }
         
+        public static function sendEmailConfirmationExternal(Order $order) {
+            $oc = new OrdersController();
+            return $oc->sendEmailConfirmation($order);
+        }
+        
         private function persistCart(Order $order) {
             
             if ( OrdersController::checkAdminOrOrderUser($order)
