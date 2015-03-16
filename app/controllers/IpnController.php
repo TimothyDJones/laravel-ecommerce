@@ -26,10 +26,10 @@ class IpnController extends \BaseController {
             $order->save();
             
             // After the order is persisted to IPN tables,
-            // we redirect to the main order processing passing
-            // the txn_id as the key.
-            return Redirect::route('order-complete', $order->id);
+            // we send e-mail notification to customer.
+            // This ensures that e-mail confirmation is sent,
+            // if customer does NOT return to our site.
+            $result = OrdersController::sendEmailConfirmationExternal($order);
 	}
-
 
 }
