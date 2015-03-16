@@ -56,7 +56,7 @@ Route::resource('projects.tasks', 'TasksController');
 Route::get('profile/{customers?}', array( 'as' => 'profile', 'uses' => 'CustomersController@profile' ))->before('auth');
 Route::post('profile/{customers?}', array( 'as' => 'profile', 'uses' => 'CustomersController@profile' ));
 Route::get('logout', 'CustomersController@logout')->before('auth');
-Route::get('login', array( 'as' => 'login', 'uses' => 'CustomersController@login'))->before('guest');
+Route::get('login', array( 'as' => 'login', 'uses' => 'CustomersController@login')); //->before('guest');
 Route::post('login', array( 'as' => 'login', 'uses' => 'CustomersController@login'));
 Route::resource('customers', 'CustomersController');
 //Route::resource('customer', 'CustomersController');
