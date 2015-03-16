@@ -76,12 +76,8 @@
                             <i class="fa fa-shopping-cart fa-fw"></i>
                             Show Cart <span class="badge">&nbsp;${{ money_format("%.2n", Cart::total()) }}&nbsp;({{ Cart::totalItems() }})&nbsp;</span>
                         </button>
-                        @if ( Auth::user() )
                         {{ link_to_route('checkout', 'Check Out', NULL, array('class' => 'btn btn-lg btn-success')) }}
-                        @else
-                        {{ link_to_route('login', 'Log In', NULL, array('class' => 'btn btn-lg btn-primary')) }}
-                        @endif
-                        {{ link_to_route('cart-empty', 'Empty Cart', NULL, array('class' => 'btn btn-primary btn-lg')) }}
+                        {{ link_to_route('cart-empty', 'Empty Cart', NULL, array('class' => 'btn btn-primary btn-sm')) }}
                     </div>
                     @endif
                 </div>
@@ -171,13 +167,9 @@
                         @include('products/partials/_cart', array('cartContents' => Cart::contents()))
                     </div>
                     <div class="modal-footer">
-                        @if ( Auth::user() )
                         {{ link_to_route('checkout', 'Check Out', NULL, array('class' => 'btn btn-lg btn-success')) }}
-                        @else
-                        {{ link_to_route('login', 'Log In', NULL, array('class' => 'btn btn-lg btn-primary')) }}
-                        @endif
-                        {{ link_to_route('cart-empty', 'Empty Cart', NULL, array('class' => 'btn btn-primary btn-lg')) }}
-                        <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal">Close</button>
+                        {{ link_to_route('cart-empty', 'Empty Cart', NULL, array('class' => 'btn btn-primary btn-sm')) }}
+                        <button type="button" class="btn btn-primary btn-sm" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>

@@ -68,7 +68,12 @@ class AddressesController extends BaseController {
             
             if ( $address->save() ) {
                 //return Redirect::route('customers.show', $customer)->with('message', 'Customer created.');
-                return Redirect::route('profile', array($customer->id))->with('message', 'Address created.');
+                //return Redirect::route('profile', array($customer->id))->with('message', 'Address created.');
+                if ( Session::has('checkOutInProgress') && Session::get('checkOutInProgress') == TRUE ) {
+                    return Redirect::route('checkout');
+                } else {
+                    return Redirect::route('products')->with('message', 'Click on "Check Out" button when you are ready to pay.');
+                }
             } else {
                 //return Redirect::route('customers.create')->withInput()->withErrors( $customer->errors() );
                 return Redirect::route('customers.addresses.create', $customer->id)->withInput()->withErrors( $address->errors() );

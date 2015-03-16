@@ -19,7 +19,7 @@ class CustomersController extends BaseController {
         public function login() {
             
             if ( Auth::check() ) {
-                return Redirect::to('/profile');
+                return Redirect::route('profile');
             } elseif ( Request::isMethod('post') ) {
                 $loginValidator = Validator::make(Input::all(), array(
                     'email'     => 'required',

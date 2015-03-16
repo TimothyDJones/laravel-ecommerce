@@ -124,6 +124,7 @@ class OrdersController extends \BaseController {
                 
                 if ( $order->order_status == 'Created' ) {
                     $paypal_attrs = OrdersController::getPaypalAttributes($order);
+                    Session::forget('checkOutInProgress');
 
                     $this->layout->content = View::make('orders.show-verification', compact('order', 'cartContents', 'paypal_attrs'))->with(array('orderVerification' => TRUE));
                 } else {
@@ -277,7 +278,8 @@ class OrdersController extends \BaseController {
                 // Set a session variable to indicate that we are in the
                 // checkout process.
                 Session::put('checkOutInProgress', TRUE);
-                Redirect::route('login');
+                //Redirect::route('login');
+                return Redirect::route('customers.create')->with('message', 'Please create a customer profile.');
             }
             
             // If user is logged in, but doesn't have address and is ordering
@@ -286,7 +288,8 @@ class OrdersController extends \BaseController {
                 $query = Address::where('customer_id', '=', Auth::id());
                 $addr = $query->get()->first();
                 if ( !$addr->id ) {
-                    Redirect::route('customers.address.create', array('id' => Auth::id()));
+                    Redirect::route('customers.address.create', array('id' => Auth::id()))
+                        ->with('message', 'Please enter your address to complete the checkout process.');
                 }
             }
             
