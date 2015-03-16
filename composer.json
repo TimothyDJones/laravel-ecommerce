@@ -20,7 +20,8 @@
 		"moltin/laravel-cart": "dev-master@dev",
 		"barryvdh/laravel-debugbar": "1.*",
 		"logicalgrape/paypal-ipn-laravel": "1.*",
-		"patricktalmadge/bootstrapper": "4.*"
+		"patricktalmadge/bootstrapper": "4.*",
+                "anlutro/curl": "0.*"
 	},
 	"autoload": {
 		"classmap": [
