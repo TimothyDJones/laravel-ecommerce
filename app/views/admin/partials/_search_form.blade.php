@@ -1,6 +1,6 @@
     <div class="row form-inline">
         {{ Form::open(array('method' => 'get', 'route' => 'search-order', 'role' => 'form')) }}
-            <div class="col-xs-6">
+            <div class="col-xs-8">
                 <div class="input-group col-xs-12">
                         <span class="input-group-addon"><i class="fa fa-list-ul"></i></span> 
                         {{ Form::text('search_order', null, array('class' => 'form-control', 'placeholder' => 'Enter order numbers.')) }}
@@ -17,7 +17,7 @@
 
     <div class="row form-inline">
         {{ Form::open(array('method' => 'get', 'route' => 'search-customer', 'role' => 'form')) }}
-            <div class="col-xs-6">
+            <div class="col-xs-8">
                 <div class="input-group col-xs-12">
                         <span class="input-group-addon"><i class="fa fa-users"></i></span> 
                         {{ Form::text('search_customer', null, array('class' => 'form-control', 'placeholder' => 'Enter customer names and/or e-mail addresses.')) }}
