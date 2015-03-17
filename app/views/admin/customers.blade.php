@@ -35,6 +35,8 @@
                                         <td>{{ $customer->address->postal_code }}</td>
                                         <td>
                                             {{ link_to_route('customers.edit', 'Edit', array('id' => $customer->id), array('class' => 'btn btn-info btn-sm')) }}
+                                            <br />
+                                            {{ link_to_route('profile', 'Profile', array('id' => $customer->id), array('class' => 'btn btn-warning btn-sm')) }}
                                         </td>
                                         <td>
                                             {{ link_to_route('admin-order-create', 'New Order', array('id' => $customer->id), array('class' => 'btn btn-primary btn-sm')) }}
