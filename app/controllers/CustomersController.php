@@ -69,7 +69,7 @@ class CustomersController extends BaseController {
                     return Redirect::to('login');
                 }
             } else {
-                $orders = Order::where('customer_id', '=', Auth::id())->get();
+                $orders = Order::where('customer_id', '=', $customer->id)->get();
                 $this->layout->content = View::make('customers.profile', compact('customer', 'orders'));
             }
         }
@@ -136,7 +136,10 @@ class CustomersController extends BaseController {
                 
                 if ( $customer->save() ) {
                     // Auto-login user after account creation...
-                    Auth::loginUsingId($customer->id);
+                    // if *NOT* already logged in as admin...
+                    if ( !(Auth::check() && Auth::user()->admin_ind) ) {
+                        Auth::loginUsingId($customer->id);
+                    }
                     // Re-direct user to create address information...
                     return Redirect::route('customers.addresses.create', $customer->id)
                             ->with('message', 'Customer created.');

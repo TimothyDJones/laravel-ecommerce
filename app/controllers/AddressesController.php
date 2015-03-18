@@ -71,6 +71,8 @@ class AddressesController extends BaseController {
                 //return Redirect::route('profile', array($customer->id))->with('message', 'Address created.');
                 if ( Session::has('checkOutInProgress') && Session::get('checkOutInProgress') == TRUE ) {
                     return Redirect::route('checkout');
+                } elseif ( (Auth::check() && Auth::user()->admin_ind) ) {
+                    return Redirect::route('profile', array('id' => $customer->id));
                 } else {
                     return Redirect::route('products')->with('message', 'Click on "Check Out" button when you are ready to pay.');
                 }
