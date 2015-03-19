@@ -31,8 +31,8 @@ class Customer extends \LaravelBook\Ardent\Ardent
         public static $validation_rules = array(
             'last_name'         => 'required',
             'first_name'        => 'required',
-            'telephone1'        => 'required|phone',
-            'telephone2'        => 'phone',
+            'telephone1'        => 'required',//'required|phone',
+            //'telephone2'        => 'phone',
             'email'             => 'required|email|min:5|unique:customers,email',
             'password'          => 'required|different:email',
             'password_confirmation' => 'required',
