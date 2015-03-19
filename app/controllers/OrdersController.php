@@ -123,7 +123,11 @@ class OrdersController extends \BaseController {
                 }                
                 
                 if ( $order->order_status == 'Created' ) {
-                    $paypal_attrs = OrdersController::getPaypalAttributes($order);
+                    if ( $order->online_order_ind ) {
+                        $paypal_attrs = OrdersController::getPaypalAttributes($order);
+                    } else {
+                        $paypal_attrs = array();
+                    }
                     Session::forget('checkOutInProgress');
 
                     $this->layout->content = View::make('orders.show-verification', compact('order', 'cartContents', 'paypal_attrs'))->with(array('orderVerification' => TRUE));
@@ -242,6 +246,7 @@ class OrdersController extends \BaseController {
             
             // We must get charges AFTER adding/inserting the order items.
             $order = OrdersController::getOrderCharges($order);
+            Log::debug('Admin Order Create - Override value: ' . print_r(Input::get('override_amounts'), TRUE));
             if ( Input::get('override_amounts', FALSE) ) {
                 $override_values = array(
                         'subtotal_amt' => Input::get('subtotal_amt'),
@@ -249,14 +254,17 @@ class OrdersController extends \BaseController {
                         'discounts' => Input::get('discounts'),
                         'order_total' => Input::get('order_total'),
                     );
-                if ( !empty($override_values['subtotal_amt']) )
+                if ( strlen($override_values['subtotal_amt']) )
                     $order->subtotal_amt = $override_values['subtotal_amt'];
-                if ( !empty($override_values['shipping_charge']) )
+                if ( strlen($override_values['shipping_charge']) )
                     $order->shipping_charge = $override_values['shipping_charge'];
-                if ( !empty($override_values['discounts']) )
+                if ( strlen($override_values['discounts']) )
                     $order->discounts = $override_values['discounts'];
-                if ( !empty($override_values['order_total']) )
+                if ( strlen($override_values['order_total']) ) {
                     $order->order_total = $override_values['order_total'];
+                } else {
+                    $order->order_total = ($order->subtotal_amt + $order->shipping_charge) - $order->discounts;
+                }
             }
 
             if ( $order->updateUniques() ) {
@@ -349,6 +357,7 @@ class OrdersController extends \BaseController {
                 $order = new Order();
                 $order->customer = $customer;
                 $order->order_notes = 'Order Notes';
+                $order->delivery_terms = 'Payment Received';
                 
                 $shipping_options = OrdersController::$shipping_options_master;
                 $order_status_list = OrdersController::$order_status_list;

@@ -48,7 +48,7 @@
                 @endfor
             </div>
             
-            {{ Kint::dump($order) }}
+            {{-- Kint::dump($order) --}}
             <div class="col-md-8">
                 <div class="col-md-12">
                     
