@@ -11,8 +11,9 @@
                     <div class="col-md-6 text-center">Form ID</div>
                     <div class="col-md-6 text-center">Qty</div>
                 </div>
+                <div class="row">
                 @for ( $i = 0; $i < max( array(15, count($cartContents)) ); $i++ )
-                    <div class="row">
+                    <div class="row input-qty">
                         @if ( $order_action == 'Update' && $i < count($cartContents) )
                         
                         <div class="col-md-6">
@@ -46,6 +47,9 @@
                         @endif
                     </div>
                 @endfor
+                </div>
+                {{ Form::button('Add Fields', array('class' => 'btn btn-sm btn-primary',
+                                                    'onclick' => 'addFormFields()')) }}
             </div>
             
             {{-- Kint::dump($order) --}}
@@ -142,3 +146,19 @@
             $('#override_amounts').prop('checked', true);
         }
     </script>
+    
+    <script type="text/javascript">
+        function addFormFields() {
+            var newFields = "<div class='row input-qty'></div>"
+            + "<div class='col-md-6'>"
+            + "<input size='1' maxlength='8' class='form-control input-sm' data-toggle='tooltip' data-placement='top' data-original-title='Form ID of product (e.g., &quot;CD01&quot;, &quot;D3&quot;, etc.).' name='form_id[]' type='text'>"
+            + "</div><div class='col-md-6'>"
+            + "<input size='1' maxlength='2' class='form-control input-sm' data-toggle='tooltip' data-placement='right' data-original-title='Desired quantity of this item.' name='qty[]' type='text' value='1'>"
+            + "</div></div>";
+            //$( ".row.input-qty" ).last().after(newFields);
+            for ( i=0; i < 5; i++ ) {
+                $( ".row.input-qty" ).last().after(newFields);
+            }
+        }
+    </script>
+    
