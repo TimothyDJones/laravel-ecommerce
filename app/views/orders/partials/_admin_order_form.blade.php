@@ -17,31 +17,19 @@
                         @if ( $order_action == 'Update' && $i < count($cartContents) )
                         
                         <div class="col-md-6">
-                            {{ Form::text('form_id[]', $cartContents[$i]->form_id, array('size' => 1, 'maxlength' => 8, 'class' => 'form-control input-sm',
-                                                                                    'data-toggle' => 'tooltip',
-                                                                                    'data-placement' => 'top',
-                                                                                    'data-original-title' => 'Form ID of product (e.g., "CD01", "D3", etc.).')) }}
+                            {{ Form::text('form_id[]', $cartContents[$i]->form_id, array('size' => 1, 'maxlength' => 8, 'class' => 'form-control input-sm',)) }}
                         </div>
                         <div class="col-md-6">
-                            {{ Form::text('qty[]', $cartContents[$i]->quantity, array('size' => 1, 'maxlength' => 2, 'class' => 'form-control input-sm',
-                                                                'data-toggle' => 'tooltip',
-                                                                'data-placement' => 'right',
-                                                                'data-original-title' => 'Desired quantity of this item.',)) }}
+                            {{ Form::text('qty[]', $cartContents[$i]->quantity, array('size' => 1, 'maxlength' => 2, 'class' => 'form-control input-sm',)) }}
                         </div>
                         
                         @else
 
                         <div class="col-md-6">
-                            {{ Form::text('form_id[]', null, array('size' => 1, 'maxlength' => 8, 'class' => 'form-control input-sm',
-                                                                                    'data-toggle' => 'tooltip',
-                                                                                    'data-placement' => 'top',
-                                                                                    'data-original-title' => 'Form ID of product (e.g., "CD01", "D3", etc.).')) }}
+                            {{ Form::text('form_id[]', null, array('size' => 1, 'maxlength' => 8, 'class' => 'form-control input-sm',)) }}
                         </div>
                         <div class="col-md-6">
-                            {{ Form::text('qty[]', '1', array('size' => 1, 'maxlength' => 2, 'class' => 'form-control input-sm',
-                                                                'data-toggle' => 'tooltip',
-                                                                'data-placement' => 'right',
-                                                                'data-original-title' => 'Desired quantity of this item.',)) }}
+                            {{ Form::text('qty[]', '1', array('size' => 1, 'maxlength' => 2, 'class' => 'form-control input-sm',)) }}
                         </div>
                         
                         @endif
@@ -151,9 +139,9 @@
         function addFormFields() {
             var newFields = "<div class='row input-qty'></div>"
             + "<div class='col-md-6'>"
-            + "<input size='1' maxlength='8' class='form-control input-sm' data-toggle='tooltip' data-placement='top' data-original-title='Form ID of product (e.g., &quot;CD01&quot;, &quot;D3&quot;, etc.).' name='form_id[]' type='text'>"
+            + "<input size='1' maxlength='8' class='form-control input-sm' name='form_id[]' type='text'>"
             + "</div><div class='col-md-6'>"
-            + "<input size='1' maxlength='2' class='form-control input-sm' data-toggle='tooltip' data-placement='right' data-original-title='Desired quantity of this item.' name='qty[]' type='text' value='1'>"
+            + "<input size='1' maxlength='2' class='form-control input-sm' name='qty[]' type='text' value='1'>"
             + "</div></div>";
             //$( ".row.input-qty" ).last().after(newFields);
             for ( i=0; i < 5; i++ ) {
