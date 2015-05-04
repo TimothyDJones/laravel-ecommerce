@@ -177,7 +177,7 @@ class ProductsController extends \BaseController {
             $params['workshop_year_list'] = ProductsController::getWorkshopYearList();
             $params['orderVerification'] = FALSE;
             $params['mp3_tooltip'] = "Enable/check to order MP3 for $" 
-                    . Config::get('workshop.unit_price_list')['MP3'] 
+                    . \Config::get('workshop.unit_price_list')['MP3'] 
                     . " instead of CD.";
             if (!isset($params['workshop_year_selected']))
                 $params['workshop_year_selected'] = Config::get('workshop.current_workshop_year');
@@ -205,6 +205,9 @@ class ProductsController extends \BaseController {
         
         public function addToCart() {
             $input = Input::all();
+            
+            Log::debug('Form input array for addToCart(): ' . print_r($input, TRUE));
+            
             $product = Product::find($input['session_id']);
             
             // Check to see if item is already in cart.
@@ -226,6 +229,11 @@ class ProductsController extends \BaseController {
                     'session_title' => $product->session_title, //Utility::truncateStringWithEllipsis($product->session_title, 35),
                     'speaker_name' => $product->speaker_first_name . ' ' . $product->speaker_last_name,
                 );
+                if (Input::has('MP3') && $input['MP3'] === 'mp3') {
+                    $cart_item['prod_type'] = 'MP3';
+                    $cart_item['qty'] = 1;
+                    $cart_item['price'] = \Config::get('workshop.unit_price_list')['MP3'];
+                }
                 Cart::insert($cart_item);
                 
                 // Get cart contents and update pop-up (modal) cart window with 
