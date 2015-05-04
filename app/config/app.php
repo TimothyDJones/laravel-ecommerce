@@ -126,6 +126,7 @@ return array(
                 'Moltin\Cart\CartServiceProvider',
                 'Barryvdh\Debugbar\ServiceProvider',
                 'LogicalGrape\PayPalIpnLaravel\PayPalIpnServiceProvider',
+                'Aws\Laravel\AwsServiceProvider',
 
 	),
 
@@ -196,6 +197,7 @@ return array(
                 'Sluggable'         => 'Cviebrock\EloquentSluggable\Facades\Sluggable',
                 'Cart'              => 'Moltin\Cart\Facade',
                 'IPN'               => 'LogicalGrape\PayPalIpnLaravel\Facades\IPN',
+                'AWS'               => 'Aws\Laravel\AwsFacade',
 
 	),
 
