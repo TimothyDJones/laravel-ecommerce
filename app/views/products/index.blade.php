@@ -120,7 +120,7 @@
                                                                             'data-toggle' => 'tooltip',
                                                                             'data-placement' => 'right',
                                                                             'data-original-title' => 'Desired quantity of this item.')) }}
-                                    @if ( $product->workshop_year < (int) Config::get('workshop.current_workshop_year')
+                                    @if ( $product->workshop_year <= (int) Config::get('workshop.current_workshop_year')
                                             && $product->prod_type == 'CD'
                                             && (int) $product->mp3_free_ind == 0 )
                                     <div class="checkbox form-item">
