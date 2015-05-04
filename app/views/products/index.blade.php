@@ -124,8 +124,8 @@
                                             && $product->prod_type == 'CD'
                                             && (int) $product->mp3_free_ind == 0 )
                                     <div class="checkbox form-item">
-                                        {{ Form::checkbox('MP3', 'mp3') }}<span class="item-checkbox" data-toggle="tooltip",
-                                                                            data-placement="bottom",
+                                        {{ Form::checkbox('MP3', 'mp3') }}<span class="item-checkbox" data-toggle="tooltip" 
+                                                                            data-placement="bottom" 
                                                                             data-original-title="{{ $mp3_tooltip }}">&nbsp;MP3</span>
                                     </div>
                                     @endif
