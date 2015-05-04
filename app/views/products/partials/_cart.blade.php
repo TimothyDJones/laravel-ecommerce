@@ -33,27 +33,27 @@
                                     @endforeach
                                     @if ( $orderVerification == TRUE )
                                     <tr>
-                                        <td colspan="4" class="table-align-right">Subtotal</td>
+                                        <td colspan="5" class="table-align-right">Subtotal</td>
                                         <td class="table-align-right">{{ $order->product_count }}</td>
                                         <td colspan="2" class="table-align-right">{{ money_format("%.2n", $order->subtotal_amt) }}</td>
                                         <td></td>
                                     </tr>
                                         @if ( $order->shipping_charge > 0.0 )
                                         <tr>
-                                            <td colspan="4" class="table-align-right">Shipping & Handling</td>
+                                            <td colspan="5" class="table-align-right">Shipping & Handling</td>
                                             <td colspan="3" class="table-align-right">{{ money_format("%.2n", $order->shipping_charge) }}</td>
                                             <td></td>
                                         </tr>
                                         @endif
                                         @if ( $order->discounts > 0.0 )
                                         <tr>
-                                            <td colspan="4" class="table-align-right">Discounts</td>
+                                            <td colspan="5" class="table-align-right">Discounts</td>
                                             <td colspan="3" class="table-align-right">({{ money_format("%.2n", $order->discounts) }})</td>
                                             <td></td>
                                         </tr>
                                         @endif
                                     <tr>
-                                        <td colspan="4" class="table-align-right"><em><strong>Total</strong></em></td>
+                                        <td colspan="5" class="table-align-right"><em><strong>Total</strong></em></td>
                                         <td colspan="3" class="table-align-right"><strong>{{ money_format("%.2n", $order->order_total) }}</strong></td>
                                         <td></td>
                                     </tr>
