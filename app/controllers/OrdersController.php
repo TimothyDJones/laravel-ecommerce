@@ -471,6 +471,9 @@ class OrdersController extends \BaseController {
                     $orderItem['order_id'] = $order->id;
                     $orderItem['product_id'] = $item->id;
                     $orderItem['qty'] = $item->quantity;
+                    if ( $item->prod_type === 'MP3' ) {
+                        $orderItem['mp3_ind'] = TRUE;
+                    }
                     //$orderItemBatch[] = new OrderItem($orderItem);
                     $oi = new OrderItem($orderItem);
                     $oi->save();
