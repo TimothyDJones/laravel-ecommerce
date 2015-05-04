@@ -4,6 +4,7 @@
                                     <tr>
                                         <th>Year</th>
                                         <th>Form ID</th>
+                                        <th>Type</th>
                                         <th>Title</th>
                                         <th>Speaker</th>
                                         <th>Qty</th>
@@ -17,6 +18,7 @@
                                     <tr>
                                         <td>{{ $cartItem->workshop_year }}</td>
                                         <td>{{ $cartItem->form_id }}</td>
+                                        <td>{{ $cartItem->prod_type }}</td>
                                         <td>{{ $cartItem->session_title }}</td>
                                         <td>{{ $cartItem->speaker_name }}</td>
                                         <td class="table-align-right">{{ $cartItem->quantity }}</td>
@@ -57,7 +59,7 @@
                                     </tr>
                                     @else
                                     <tr>
-                                        <td colspan="4" class="table-align-right">Total (<em><strong>not</strong> including shipping and/or discounts, if any</em>)</td>
+                                        <td colspan="5" class="table-align-right">Total (<em><strong>not</strong> including shipping and/or discounts, if any</em>)</td>
                                         <td class="table-align-right">{{ Cart::totalItems() }}</td>
                                         <td colspan="2" class="table-align-right">{{ money_format("%.2n", Cart::total()) }}</td>
                                         <td></td>
