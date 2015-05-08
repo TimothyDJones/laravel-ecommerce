@@ -28,6 +28,10 @@
                                             @if ( !$orderVerification )
                                             {{ link_to_route('cart-remove', 'Remove', array('id' => $cartItem->id), array('class' => 'btn btn-info btn-sm')) }}
                                             @endif
+                                            
+                                            @if ( $order->order_status === 'Completed' && $cartItem->prod_type === 'MP3' )
+                                            {{ link_to($cartItem->mp3dlUrl, 'Download', array('class' => 'btn btn-success btn-sm')) }}                                            
+                                            @endif
                                         </td>
                                     </tr>
                                     @endforeach

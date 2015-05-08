@@ -757,6 +757,39 @@ class OrdersController extends \BaseController {
         }
         
         /**
+         * Generates a pre-signed URL for direct download of MP3 file
+         * from Amazon S3.  URL is valid for 24 hours from creation.
+         * 
+         * @param OrderItem $orderItem
+         * @return string pre-signed Amazon S3 URL of file
+         */
+        private function createMp3DownloadUrl(OrderItem $orderItem) {
+            $s3Buckets = \Config::get('workshop.s3_bucket_list');
+            
+            $dl_filename = 'Tulsa_Workshop_' . 
+                        $orderItem->product->workshop_year . '_' . 
+                        str_replace($orderItem->product->speaker_first_name, ' ', '_') . '_' .
+                        str_replace($orderItem->product->speaker_last_name, ' ', '_') . '_' .
+                        str_replace($orderItem->product->session_title, ' ', '_') . '.mp3';
+            
+            $s3 = AWS::get('s3');
+            $url = $s3->getObjectUrl(
+                $s3Buckets[$orderItem->product->workshop_year],
+                $orderItem->product->prod_code . '_64kbps.mp3',
+                '+24 hours',
+                array(
+                    'ResponseContentDisposition' => 'attachment; filename="' . $dl_filename . '"',  // Force download
+                    'ResponseContentType' => 'audio/mpeg, audio/x-mpeg, audio/x-mpeg-3, audio/mpeg3',      // MIME type of MP3 (RFC 3003)
+                    'ResponseCacheControl' => 'no-cache',   // Prevent caching
+                )
+            );
+            
+            Log::debug("URL for order item #" . $orderItem->id . ": " . print_r($url, TRUE));
+            
+            return $url;
+        }        
+        
+        /**
          * Convert an individual OrderItem to Cart Item.
          * 
          * @param OrderItem $orderItem
@@ -778,8 +811,13 @@ class OrdersController extends \BaseController {
                     'form_id' => $product->form_id,
                     'workshop_year' => $product->workshop_year,
                     'session_title' => $product->session_title, //Utility::truncateStringWithEllipsis($product->session_title, 35),
-                    'speaker_name' => $product->speaker_first_name . ' ' . $product->speaker_last_name,  
+                    'speaker_name' => $product->speaker_first_name . ' ' . $product->speaker_last_name,
+                    'order_item_id' => $orderItem->id,
                 );
+            
+            if ( $orderItem->prod_type === 'MP3' ) {
+                $cartItemArray['mp3dlUrl'] = self::createMp3DownloadUrl($orderItem);
+            }            
             
             $cartItem = new stdClass();
             foreach ( $cartItemArray as $key => $value ) {

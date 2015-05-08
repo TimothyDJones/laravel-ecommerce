@@ -32,6 +32,7 @@ Route::model('addresses', 'Address');
 Route::model('products', 'Product');
 Route::model('items', 'Item');
 Route::model('orders', 'Order');
+Route::model('orderItems', 'OrderItem');
 
 Route::bind('tasks', function($value, $route) {
 	return Task::whereSlug($value)->first();
@@ -89,6 +90,7 @@ Route::get('orders/{orders}/admin-order-edit', array('as' => 'admin-order-edit',
 Route::post('orders/{customers}/admin-order-save', array('as' => 'admin-order-save', 'uses' => 'OrdersController@adminOrderSave'));
 Route::post('orders/{customers}/admin-order-update/{orders}', array('as' => 'admin-order-update', 'uses' => 'OrdersController@adminOrderSave'));
 Route::resource('orders', 'OrdersController');
+Route::get('orders/{orderItems}/mp3dl/{mp3Hash}', array('as' => 'mp3dl', 'uses' => 'OrdersController@mp3Download'));
 
 // Route for automated Paypal IPN processing
 Route::post('ipn', array('uses' => 'IpnController@store', 'as' => 'ipn'));

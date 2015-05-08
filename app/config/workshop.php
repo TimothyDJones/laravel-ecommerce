@@ -25,5 +25,8 @@ return array(
     ),
     'paypal_acct_email' => 'orders@workshopmultimedia.com',
     'dummy_customer_password' => '-999',
+    's3_bucket_list' => array(
+        2015 => 'workshop-2015',
+    ),
 );
 
