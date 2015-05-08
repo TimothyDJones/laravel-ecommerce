@@ -765,6 +765,8 @@ class OrdersController extends \BaseController {
          */
         private function createMp3DownloadUrl(OrderItem $orderItem) {
             $s3Buckets = \Config::get('workshop.s3_bucket_list');
+
+            Log::debug("'product' attribute of order item #" . $orderItem->id . ": " . print_r($orderItem->product, TRUE));
             
             $dl_filename = 'Tulsa_Workshop_' . 
                         $orderItem->product->workshop_year . '_' . 
@@ -815,7 +817,8 @@ class OrdersController extends \BaseController {
                     'order_item_id' => $orderItem->id,
                 );
             
-            if ( $orderItem->prod_type === 'MP3' ) {
+            if ( $orderItem->mp3_ind == TRUE ) {
+                $cartItemArray['prod_type'] = 'MP3';
                 $cartItemArray['mp3dlUrl'] = self::createMp3DownloadUrl($orderItem);
             }            
             
