@@ -13,7 +13,7 @@ class OrderItem extends \LaravelBook\Ardent\Ardent {
         protected $guarded = array();
         
         public function product() {
-            return $this->hasOne('Product', 'product_id');
+            return $this->hasOne('Product', 'id', 'product_id');
         }
         
         public function order() {
