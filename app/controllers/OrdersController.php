@@ -116,11 +116,8 @@ class OrdersController extends \BaseController {
             
             if ( OrdersController::checkAdminOrOrderUser($order) ) {
                 $order->shipping_option_display = OrdersController::$shipping_options_master[$order->delivery_terms];
-                if ( Cart::totalItems() > 0 ) {
-                    $cartContents = Cart::contents();
-                } else {
-                    $cartContents = OrdersController::convertOrderItemsToCartItems($order->orderItems);
-                }                
+                // *Always* get order items from database (do *NOT* use Cart class).
+                $cartContents = OrdersController::convertOrderItemsToCartItems($order->orderItems);
                 
                 if ( $order->order_status == 'Created' ) {
                     if ( $order->online_order_ind ) {
