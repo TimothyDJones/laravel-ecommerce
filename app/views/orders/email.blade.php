@@ -269,8 +269,16 @@ table th[class*="col-"] {
                     <div class="col-md-8 alert alert-info">
                         <p>
                             <strong>Thank you for your order!</strong>
+                            @if ( $order->delivery_terms == 'mp3_only' )
+                            Your payment has been received and your order is complete.
+                            Links to download MP3 files are shown below.  <strong>
+                            Links are valid for 24 hours; please download promptly.
+                            </strong>
+                            @else
                             Your payment has been received and your order is being 
-                            processed.  Details of your order are shown below.  
+                            processed.  
+                            @endif
+                            Details of your order are shown below.  
                             You may also view your order online <strong>
                                 <a href="{{ $order->show_url }}">here</a>.
                             </strong>
@@ -348,6 +356,12 @@ table th[class*="col-"] {
                                         <td>
                                             @if ( !$orderVerification )
                                             {{ link_to_route('cart-remove', 'Remove', array('id' => $cartItem->id), array('class' => 'btn btn-info btn-sm')) }}
+                                            @endif
+                                            @if ( $orderVerification == TRUE && $order->order_status === 'Completed' && $cartItem->prod_type === 'MP3' )
+                                            <a href="{{ $cartItem->mp3dlUrl }}" class="btn btn-success btn-sm">
+                                                <i class="fa fa-download fa-fw"></i>Download MP3
+                                            </a>
+                                            {{-- link_to($cartItem->mp3dlUrl, 'Download', array('class' => 'btn btn-success btn-sm')) --}}                                            
                                             @endif
                                         </td>
                                     </tr>

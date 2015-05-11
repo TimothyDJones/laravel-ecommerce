@@ -6,7 +6,15 @@
             <div class="col-md-8 alert alert-info">
                 <p>
                     <strong>Thank you for your order!</strong>
-                    Your payment has been received and your order is being processed.  Details of your order are shown below.
+                    @if ( $order->delivery_terms == 'mp3_only' )
+                    Your payment has been received and your order is complete.
+                    Links to download MP3 files are shown below.  <strong>
+                    Links are valid for 24 hours; please download promptly.
+                    </strong>
+                    @else
+                    Your payment has been received and your order is being 
+                    processed.  
+                    @endif
                 </p>
                 <p>
                     If you have any questions about your order, do not hesitate to contact 
