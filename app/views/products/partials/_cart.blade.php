@@ -30,7 +30,10 @@
                                             @endif
                                             
                                             @if ( $orderVerification == TRUE && $order->order_status === 'Completed' && $cartItem->prod_type === 'MP3' )
-                                            {{ link_to($cartItem->mp3dlUrl, 'Download', array('class' => 'btn btn-success btn-sm')) }}                                            
+                                            <a href="{{ $cartItem->mp3dlUrl }}" class="btn btn-success btn-sm">
+                                                <i class="fa fa-download fa-fw"></i>Download MP3
+                                            </a>
+                                            {{-- link_to($cartItem->mp3dlUrl, 'Download', array('class' => 'btn btn-success btn-sm')) --}}                                            
                                             @endif
                                         </td>
                                     </tr>
