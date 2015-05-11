@@ -8,7 +8,7 @@ class OrderItem extends \LaravelBook\Ardent\Ardent {
         
         public $timestamps = FALSE;
         
-        protected $fillable = array('product_id', 'order_id', 'qty');
+        protected $fillable = array('product_id', 'order_id', 'qty', 'mp3_ind');
         
         protected $guarded = array();
         
