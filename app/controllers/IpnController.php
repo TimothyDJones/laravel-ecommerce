@@ -22,7 +22,11 @@ class IpnController extends \BaseController {
             $order->ipn_order_id = $ipnOrder->id;
             //$order->id = (int) $orderItem->item_number;
             if ( $ipnOrder->memo ) $order->order_notes .= "\n\n" . $ipnOrder->memo;
-            $order->order_status = 'Payment Received';
+            if ( $order->delivery_terms == 'mp3_only' ) {
+                $order->order_status = 'Completed';
+            } else {
+                $order->order_status = 'Payment Received';
+            }
             $order->save();
             
             // After the order is persisted to IPN tables,
