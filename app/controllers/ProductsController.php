@@ -231,7 +231,7 @@ class ProductsController extends \BaseController {
                 );
                 if (Input::has('MP3') && $input['MP3'] === 'mp3') {
                     $cart_item['prod_type'] = 'MP3';
-                    $cart_item['qty'] = 1;
+                    $cart_item['quantity'] = 1;
                     $cart_item['price'] = \Config::get('workshop.unit_price_list')['MP3'];
                 }
                 Cart::insert($cart_item);
