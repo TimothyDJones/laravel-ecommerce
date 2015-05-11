@@ -767,12 +767,17 @@ class OrdersController extends \BaseController {
             $s3Buckets = \Config::get('workshop.s3_bucket_list');
 
             Log::debug("'product' attribute of order item #" . $orderItem->id . ": " . print_r($orderItem->product, TRUE));
+            Log::debug("Attributes of 'product': " . $orderItem->product->workshop_year . '_' 
+                    . $orderItem->product->speaker_first_name . '_'
+                    . $orderItem->product->speaker_last_name . '_'
+                    . $orderItem->product->session_title);
+            
             
             $dl_filename = 'Tulsa_Workshop_' . 
                         $orderItem->product->workshop_year . '_' . 
-                        str_replace($orderItem->product->speaker_first_name, ' ', '_') . '_' .
-                        str_replace($orderItem->product->speaker_last_name, ' ', '_') . '_' .
-                        str_replace($orderItem->product->session_title, ' ', '_') . '.mp3';
+                        str_replace(' ', '_', $orderItem->product->speaker_first_name) . '_' .
+                        str_replace(' ', '_', $orderItem->product->speaker_last_name) . '_' .
+                        str_replace(' ', '_', $orderItem->product->session_title) . '.mp3';
             
             $s3 = AWS::get('s3');
             $url = $s3->getObjectUrl(
