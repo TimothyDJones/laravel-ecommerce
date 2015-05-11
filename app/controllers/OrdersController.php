@@ -473,7 +473,10 @@ class OrdersController extends \BaseController {
                     }
                     //$orderItemBatch[] = new OrderItem($orderItem);
                     $oi = new OrderItem($orderItem);
+                    Log::debug('persistCart() - order item *BEFORE* save: ' . print_r($oi, TRUE));                    
                     $oi->save();
+                    
+                    Log::debug('persistCart() - order item after save: ' . print_r($oi, TRUE));
                     Log::debug('persistCart - Order->id = ' . $order->id . '  OrderItem->id = ' . $oi->id);
                 }
                 
@@ -821,6 +824,7 @@ class OrdersController extends \BaseController {
             
             if ( $orderItem->mp3_ind == TRUE ) {
                 $cartItemArray['prod_type'] = 'MP3';
+                $cartItemArray['price'] = \Config::get('workshop.unit_price_list')['MP3'];
                 if ( $orderItem->order->order_status === 'Completed' ) {
                     $cartItemArray['mp3dlUrl'] = self::createMp3DownloadUrl($orderItem);
                 }
