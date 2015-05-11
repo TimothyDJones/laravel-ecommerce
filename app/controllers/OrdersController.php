@@ -824,7 +824,9 @@ class OrdersController extends \BaseController {
             
             if ( $orderItem->mp3_ind == TRUE ) {
                 $cartItemArray['prod_type'] = 'MP3';
-                $cartItemArray['mp3dlUrl'] = self::createMp3DownloadUrl($orderItem);
+                if ( $orderItem->order->order_status === 'Completed' ) {
+                    $cartItemArray['mp3dlUrl'] = self::createMp3DownloadUrl($orderItem);
+                }
             }            
             
             $cartItem = new stdClass();
