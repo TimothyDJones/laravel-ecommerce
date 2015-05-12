@@ -773,11 +773,7 @@ class OrdersController extends \BaseController {
                     . $orderItem->product->session_title);
             
             
-            $dl_filename = 'Tulsa_Workshop_' . 
-                        $orderItem->product->workshop_year . '_' . 
-                        str_replace(' ', '_', $orderItem->product->speaker_first_name) . '_' .
-                        str_replace(' ', '_', $orderItem->product->speaker_last_name) . '_' .
-                        str_replace(' ', '_', $orderItem->product->session_title) . '.mp3';
+            $dl_filename = Utility::generateDownloadFilename($orderItem->product);
             
             $s3 = AWS::get('s3');
             $url = $s3->getObjectUrl(
@@ -826,7 +822,7 @@ class OrdersController extends \BaseController {
                 $cartItemArray['prod_type'] = 'MP3';
                 $cartItemArray['price'] = \Config::get('workshop.unit_price_list')['MP3'];
                 if ( $orderItem->order->order_status === 'Completed' ) {
-                    $cartItemArray['mp3dlUrl'] = self::createMp3DownloadUrl($orderItem);
+                    $cartItemArray['mp3dlUrl'] = Utility::generateAwsS3Url($orderItem->product, '+24 hours');
                 }
             }            
             

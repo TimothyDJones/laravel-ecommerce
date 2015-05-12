@@ -275,6 +275,24 @@ class ProductsController extends \BaseController {
             return $return_list;
         }
         
+        public function freeMp3Download(Product $product) {
+            if ( $product->mp3_free_ind ) {
+                $url = Utility::generateAwsS3Url($product, NULL);
+                $dl_filename = Utility::generateDownloadFilename($product);
+                
+                $headers = array(
+                    'Cache-Control' => 'no-cache',
+                    'Content-Type' => 'audio/mpeg, audio/x-mpeg, audio/x-mpeg-3, audio/mpeg3',
+                    'Content-Disposition' => 'attachment; filename="' . $dl_filename . '"',
+                );
+                
+                // Download the file
+                Redirect::to($url, 302, $headers);
+            } else {
+                Redirect::back()->with('message', 'This session is not free.  Please order this session to download it.');
+            }
+        }
+        
 
 
 
