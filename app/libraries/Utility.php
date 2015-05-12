@@ -117,5 +117,77 @@ class Utility {
             
             return $val;
         }
+        
+        /**
+         * Generates the default name used when downloading MP3 files.
+         * 
+         * @param Product $product - An instance of product.
+         * @param string $prefix - Filename prefix to use; defaults to 'Tulsa_Workshop_'.
+         * @return string Default file name
+         */
+        public static function generateDownloadFilename(Product $product, $prefix = 'Tulsa_Workshop_') {
+            $filename = $prefix . 
+                        $product->workshop_year . '_' . 
+                        str_replace(' ', '_', $product->speaker_first_name) . '_' .
+                        str_replace(' ', '_', $product->speaker_last_name) . '_' .
+                        str_replace(' ', '_', $product->session_title) . '.mp3';
+            
+            // Strip out duplicate underscores.
+            $filename = str_replace('___', '_', $filename);
+            $filename = str_replace('__', '_', $filename);
+            
+            // Remove invalid characters from file name.
+            $final_filename = '';
+            for ( $i = 0; $i < strlen($filename); $i++ ) {
+                if (preg_match('([0-9]|[a-z]|[A-Z]|_|\.)', $filename[$i])) {
+                    $final_filename .= $filename[$i];
+                }
+            }
+            
+            return $final_filename;
+        }
+        
+        
+        /**
+         * Generate AWS S3 URL for downloading MP3 file.
+         * 
+         * @param Product $product - An instance of product.
+         * @param string $link_expiry - Duration of link validity; defaults to NULL (no expiry - AWS *PUBLIC* link).
+         * @return string Default file name
+         */
+        public static function generateAwsS3Url(Product $product, $link_expiry = NULL) {
+            
+            Log::debug("generateAwsS3Url() - product attribute: " . print_r($product, TRUE));
+            Log::debug("Attributes of 'product': " . $product->workshop_year . '_' 
+                    . $product->speaker_first_name . '_'
+                    . $product->speaker_last_name . '_'
+                    . $product->session_title);
+            
+            $dl_filename = Utility::generateDownloadFilename($product);
+            $s3Buckets = \Config::get('workshop.s3_bucket_list');
+
+            $s3 = AWS::get('s3');
+            if ( $link_expiry ) {
+                $url = $s3->getObjectUrl(
+                    $s3Buckets[$product->workshop_year],
+                    $product->prod_code . '_64kbps.mp3',
+                    $link_expiry,
+                    array(
+                        'ResponseContentDisposition' => 'attachment; filename="' . $dl_filename . '"',  // Force download
+                        'ResponseContentType' => 'audio/mpeg, audio/x-mpeg, audio/x-mpeg-3, audio/mpeg3',      // MIME type of MP3 (RFC 3003)
+                        'ResponseCacheControl' => 'no-cache',   // Prevent caching
+                    )
+                );
+            } else {    // Unsigned link URL
+                $url = $s3->getObjectUrl(
+                    $s3Buckets[$product->workshop_year],
+                    $product->prod_code . '_64kbps.mp3'
+                );
+            }
+            
+            Log::debug("URL for product #" . $product->id . ": " . print_r($url, TRUE));
+            
+            return $url;
+        }
 }
 
