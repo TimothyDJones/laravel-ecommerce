@@ -165,32 +165,28 @@ class Utility {
             
             $dl_filename = Utility::generateDownloadFilename($product);
             $s3Buckets = \Config::get('workshop.s3_bucket_list');
+            $bucket = $s3Buckets[$product->workshop_year];
 
             $s3 = AWS::get('s3');
-            if ( $link_expiry ) {
-                $url = $s3->getObjectUrl(
-                    $s3Buckets[$product->workshop_year],
-                    $product->prod_code . '_64kbps.mp3',
-                    $link_expiry,
-                    array(
-                        'ResponseContentDisposition' => 'attachment; filename="' . $dl_filename . '"',  // Force download
-                        'ResponseContentType' => 'audio/mpeg, audio/x-mpeg, audio/x-mpeg-3, audio/mpeg3',      // MIME type of MP3 (RFC 3003)
-                        'ResponseCacheControl' => 'no-cache',   // Prevent caching
-                    )
-                );
-            } else {    // Use *signed* link URL even for free downloads.
-                $url = $s3->getObjectUrl(
-                    $s3Buckets[$product->workshop_year],
-                    //$s3Buckets['free'],     // Use the S3 bucket for free Workshop downloads.
-                    $product->prod_code . '_64kbps.mp3',
-                    '+10 min',      // Expire link after 10 minutes
-                    array(
-                        'ResponseContentDisposition' => 'attachment; filename="' . $dl_filename . '"',  // Force download
-                        'ResponseContentType' => 'audio/mpeg, audio/x-mpeg, audio/x-mpeg-3, audio/mpeg3',      // MIME type of MP3 (RFC 3003)
-                        'ResponseCacheControl' => 'no-cache',   // Prevent caching
-                    )                        
-                );
+            if ( !$link_expiry ) {
+                $link_expiry = '+10 min';
             }
+            
+            if ( $product->mp3_free_ind ) {
+                //$bucket = $s3Buckets['free'];
+            }
+            
+            // Use *signed* link URL for all downloads, even for free downloads.
+            $url = $s3->getObjectUrl(
+                $bucket,
+                $product->prod_code . '_64kbps.mp3',
+                $link_expiry,
+                array(
+                    'ResponseContentDisposition' => 'attachment; filename="' . $dl_filename . '"',  // Force download
+                    'ResponseContentType' => 'audio/mpeg, audio/x-mpeg, audio/x-mpeg-3, audio/mpeg3',      // MIME type of MP3 (RFC 3003)
+                    'ResponseCacheControl' => 'no-cache',   // Prevent caching
+                )
+            );
             
             Log::debug("URL for product #" . $product->id . ": " . print_r($url, TRUE));
             
