@@ -180,7 +180,7 @@ class Utility {
                 );
             } else {    // Unsigned link URL
                 $url = $s3->getObjectUrl(
-                    $s3Buckets[$product->workshop_year],
+                    $s3Buckets['free'],     // Use the S3 bucket for free Workshop downloads.
                     $product->prod_code . '_64kbps.mp3'
                 );
             }
