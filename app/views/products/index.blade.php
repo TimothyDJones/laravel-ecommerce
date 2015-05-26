@@ -121,13 +121,20 @@
                                                                             'data-placement' => 'right',
                                                                             'data-original-title' => 'Desired quantity of this item.')) }}
                                     @if ( $product->workshop_year <= (int) Config::get('workshop.current_workshop_year')
-                                            && $product->prod_type == 'CD'
-                                            && (int) $product->mp3_free_ind == 0 )
-                                    <div class="checkbox form-item">
-                                        {{ Form::checkbox('MP3', 'mp3') }}<span class="item-checkbox" data-toggle="tooltip" 
-                                                                            data-placement="bottom" 
-                                                                            data-original-title="{{ $mp3_tooltip }}">&nbsp;MP3</span>
-                                    </div>
+                                            && $product->prod_type == 'CD')
+                                        @if ( (int) $product->mp3_free_ind == 0 )
+                                        <div class="checkbox form-item">
+                                            {{ Form::checkbox('MP3', 'mp3') }}<span class="item-checkbox" data-toggle="tooltip" 
+                                                                                data-placement="bottom" 
+                                                                                data-original-title="{{ $mp3_tooltip }}">&nbsp;MP3</span>
+                                        </div>
+                                        @else
+                                        {{ link_to(Utility::generateAwsS3Url(Product::find($product->id), NULL), 'Free!', 
+                                            array('class' => 'btn btn-sm form-item',
+                                                'data-toggle' => 'tooltip',
+                                                'data-placement' => 'bottom',
+                                                'data-original-title' => 'Free download! Click here to download.')) }}
+                                        @endif
                                     @endif
                                     {{ Form::submit('Add', array('class' => 'btn btn-sm item-btn form-item',
                                                                             'data-toggle' => 'tooltip',

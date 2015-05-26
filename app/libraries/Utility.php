@@ -178,10 +178,17 @@ class Utility {
                         'ResponseCacheControl' => 'no-cache',   // Prevent caching
                     )
                 );
-            } else {    // Unsigned link URL
+            } else {    // Use *signed* link URL even for free downloads.
                 $url = $s3->getObjectUrl(
-                    $s3Buckets['free'],     // Use the S3 bucket for free Workshop downloads.
-                    $product->prod_code . '_64kbps.mp3'
+                    $s3Buckets[$product->workshop_year],
+                    //$s3Buckets['free'],     // Use the S3 bucket for free Workshop downloads.
+                    $product->prod_code . '_64kbps.mp3',
+                    '+10 min',      // Expire link after 10 minutes
+                    array(
+                        'ResponseContentDisposition' => 'attachment; filename="' . $dl_filename . '"',  // Force download
+                        'ResponseContentType' => 'audio/mpeg, audio/x-mpeg, audio/x-mpeg-3, audio/mpeg3',      // MIME type of MP3 (RFC 3003)
+                        'ResponseCacheControl' => 'no-cache',   // Prevent caching
+                    )                        
                 );
             }
             
