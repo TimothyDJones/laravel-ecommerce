@@ -166,6 +166,8 @@ class Utility {
             $dl_filename = Utility::generateDownloadFilename($product);
             $s3Buckets = \Config::get('workshop.s3_bucket_list');
             $bucket = $s3Buckets[$product->workshop_year];
+            $s3FileNameFormat = \Config::get('workshop.s3_file_name_format');
+            $fileNameFormat = $s3FileNameFormat[$product->workshop_year];
 
             $s3 = AWS::get('s3');
             if ( !$link_expiry ) {
@@ -176,10 +178,12 @@ class Utility {
                 //$bucket = $s3Buckets['free'];
             }
             
+            $s3FileName = $fileNameFormat['heading'] . $product->prod_code . $fileNameFormat['ext'];
+            
             // Use *signed* link URL for all downloads, even for free downloads.
             $url = $s3->getObjectUrl(
                 $bucket,
-                $product->prod_code . '_64kbps.mp3',
+                $s3FileName,
                 $link_expiry,
                 array(
                     'ResponseContentDisposition' => 'attachment; filename="' . $dl_filename . '"',  // Force download
