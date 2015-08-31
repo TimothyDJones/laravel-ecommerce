@@ -29,11 +29,22 @@
                                             {{ link_to_route('cart-remove', 'Remove', array('id' => $cartItem->id), array('class' => 'btn btn-info btn-sm')) }}
                                             @endif
                                             
-                                            @if ( $orderVerification == TRUE && $order->order_status === 'Completed' && $cartItem->prod_type === 'MP3' )
-                                            <a href="{{ $cartItem->mp3dlUrl }}" class="btn btn-success btn-sm">
-                                                <i class="fa fa-download fa-fw"></i>Download MP3
-                                            </a>
-                                            {{-- link_to($cartItem->mp3dlUrl, 'Download', array('class' => 'btn btn-success btn-sm')) --}}                                            
+                                            @if ( $orderVerification == TRUE 
+                                                    && $order->order_status === 'Completed' 
+                                                    && $cartItem->prod_type === 'MP3' )
+                                                @if ( (new Carbon\Carbon($order->order_date))->diffInDays(Carbon\Carbon::today()) <= Config::get('workshop.mp3_download_link_expiry') )
+                                                    <a href="{{ $cartItem->mp3dlUrl }}" class="btn btn-success btn-sm">
+                                                        <i class="fa fa-download fa-fw"></i>Download MP3
+                                                    </a>
+                                                    {{-- link_to($cartItem->mp3dlUrl, 'Download', array('class' => 'btn btn-success btn-sm')) --}}
+                                                @else
+                                                    <span class="text-info" data-toggle="tooltip" 
+                                                                                data-placement="bottom" 
+                                                                                data-original-title="Contact Workshop Multimedia for new download link.">
+                                                        <i class="fa fa-exclamation-circle fa-fw"></i>
+                                                        Download Link Expired
+                                                    </span>
+                                                @endif
                                             @endif
                                         </td>
                                     </tr>
