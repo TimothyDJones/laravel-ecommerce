@@ -36,5 +36,15 @@ return array(
         2008 => 'workshop-2008',
         'free' => 'workshop-free',
     ),
+    's3_file_name_format' => array(
+        2008 => array('heading' => 'Tulsa_Workshop_2008_', 'ext' => '_128kbps.mp3'),
+        2009 => array('heading' => 'Tulsa_Workshop_2009_', 'ext' => '_128kbps.mp3'),
+        2010 => array('heading' => 'Tulsa_Workshop_2010_', 'ext' => '_128kbps.mp3'),
+        2011 => array('heading' => 'Tulsa_Workshop_2011_', 'ext' => '_64kbps.mp3'),
+        2012 => array('heading' => 'Tulsa_Workshop_2012_', 'ext' => '_64kbps.mp3'),
+        2013 => array('heading' => 'Tulsa_Workshop_2013_', 'ext' => '_64kbps.mp3'),
+        2014 => array('heading' => '', 'ext' => '_64kbps.mp3'),
+        2015 => array('heading' => '', 'ext' => '_64kbps.mp3'),
+    ),
 );
 
