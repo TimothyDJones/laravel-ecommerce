@@ -27,6 +27,13 @@ return array(
     'dummy_customer_password' => '-999',
     's3_bucket_list' => array(
         2015 => 'workshop-2015',
+        2014 => 'workshop-2014',
+        2013 => 'workshop-2013',
+        2012 => 'workshop-2012',
+        2011 => 'workshop-2011',
+        2010 => 'workshop-2010',
+        2009 => 'workshop-2009',
+        2008 => 'workshop-2008',
         'free' => 'workshop-free',
     ),
 );
