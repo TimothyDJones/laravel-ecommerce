@@ -757,42 +757,6 @@ class OrdersController extends \BaseController {
         }
         
         /**
-         * Generates a pre-signed URL for direct download of MP3 file
-         * from Amazon S3.  URL is valid for 24 hours from creation.
-         * 
-         * @param OrderItem $orderItem
-         * @return string pre-signed Amazon S3 URL of file
-         */
-        private function createMp3DownloadUrl(OrderItem $orderItem) {
-            $s3Buckets = \Config::get('workshop.s3_bucket_list');
-
-            Log::debug("'product' attribute of order item #" . $orderItem->id . ": " . print_r($orderItem->product, TRUE));
-            Log::debug("Attributes of 'product': " . $orderItem->product->workshop_year . '_' 
-                    . $orderItem->product->speaker_first_name . '_'
-                    . $orderItem->product->speaker_last_name . '_'
-                    . $orderItem->product->session_title);
-            
-            
-            $dl_filename = Utility::generateDownloadFilename($orderItem->product);
-            
-            $s3 = AWS::get('s3');
-            $url = $s3->getObjectUrl(
-                $s3Buckets[$orderItem->product->workshop_year],
-                $orderItem->product->prod_code . '_64kbps.mp3',
-                '+24 hours',
-                array(
-                    'ResponseContentDisposition' => 'attachment; filename="' . $dl_filename . '"',  // Force download
-                    'ResponseContentType' => 'audio/mpeg, audio/x-mpeg, audio/x-mpeg-3, audio/mpeg3',      // MIME type of MP3 (RFC 3003)
-                    'ResponseCacheControl' => 'no-cache',   // Prevent caching
-                )
-            );
-            
-            Log::debug("URL for order item #" . $orderItem->id . ": " . print_r($url, TRUE));
-            
-            return $url;
-        }        
-        
-        /**
          * Convert an individual OrderItem to Cart Item.
          * 
          * @param OrderItem $orderItem
