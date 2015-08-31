@@ -46,5 +46,6 @@ return array(
         2014 => array('heading' => '', 'ext' => '_64kbps.mp3'),
         2015 => array('heading' => '', 'ext' => '_64kbps.mp3'),
     ),
+    'mp3_download_link_expiry' => 3,  // Days
 );
 
