@@ -763,7 +763,8 @@ class OrdersController extends \BaseController {
          * @return \stdClass $cartItem
          */
         private function mapOrderItemToCartItem(OrderItem $orderItem) {
-            $product = Product::find($orderItem->product_id);
+            //$product = Product::find($orderItem->product_id);
+            $product = $orderItem->product;
             $cartItemArray = array(
                     'id' => $product->id,
                     'name' => Utility::truncateStringWithEllipsis($product->session_title, 35)
@@ -784,9 +785,14 @@ class OrdersController extends \BaseController {
             
             if ( $orderItem->mp3_ind == TRUE ) {
                 $cartItemArray['prod_type'] = 'MP3';
-                $cartItemArray['price'] = \Config::get('workshop.unit_price_list')['MP3'];
+                $cartItemArray['price'] = max($product->mp3_price, \Config::get('workshop.unit_price_list')['MP3']);
                 if ( $orderItem->order->order_status === 'Completed' ) {
-                    $cartItemArray['mp3dlUrl'] = Utility::generateAwsS3Url($orderItem->product, '+24 hours');
+                    $cartItemArray['mp3dlUrl'] = array();
+                    $urlExpiryDays = (new Carbon\Carbon($orderItem->order->order_date))->diffInDays(Carbon\Carbon::today());
+                    if ($urlExpiryDays <= \Config::get('workshop.mp3_download_link_expiry')) {
+                        $urlExpiryHours = '+' . (24 * $urlExpiryDays) . ' hours';
+                        $cartItemArray['mp3dlUrl'] = Utility::generateAwsS3Url($product, $urlExpiryHours);
+                    }                    
                 }
             }            
             
