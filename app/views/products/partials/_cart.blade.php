@@ -32,18 +32,22 @@
                                             @if ( $orderVerification == TRUE 
                                                     && $order->order_status === 'Completed' 
                                                     && $cartItem->prod_type === 'MP3' )
-                                                @if ( (new Carbon\Carbon($order->order_date))->diffInDays(Carbon\Carbon::today()) <= Config::get('workshop.mp3_download_link_expiry') )
-                                                    <a href="{{ $cartItem->mp3dlUrl }}" class="btn btn-success btn-sm">
-                                                        <i class="fa fa-download fa-fw"></i>Download MP3
-                                                    </a>
-                                                    {{-- link_to($cartItem->mp3dlUrl, 'Download', array('class' => 'btn btn-success btn-sm')) --}}
-                                                @else
+                                                @if ( $cartItem->mp3dlUrl[0] == '' )
                                                     <span class="text-info" data-toggle="tooltip" 
                                                                                 data-placement="bottom" 
                                                                                 data-original-title="Contact Workshop Multimedia for new download link.">
                                                         <i class="fa fa-exclamation-circle fa-fw"></i>
                                                         Download Link Expired
                                                     </span>
+                                                @else
+                                                    @foreach ( $cartItem->mp3dlUrl as $url )
+                                                        <p>
+                                                            <a href="{{ $url }}" class="btn btn-success btn-sm">
+                                                                <i class="fa fa-download fa-fw"></i>Download MP3
+                                                            </a>
+                                                        </p>
+                                                        {{-- link_to($cartItem->mp3dlUrl, 'Download', array('class' => 'btn btn-success btn-sm')) --}}
+                                                    @endforeach
                                                 @endif
                                             @endif
                                         </td>
