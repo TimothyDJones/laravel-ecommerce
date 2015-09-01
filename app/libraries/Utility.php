@@ -163,13 +163,14 @@ class Utility {
                     . $product->speaker_last_name . '_'
                     . $product->session_title);
             
+            $url = array();
+            
             $dl_filename = Utility::generateDownloadFilename($product);
             $s3Buckets = \Config::get('workshop.s3_bucket_list');
             $bucket = $s3Buckets[$product->workshop_year];
             $s3FileNameFormat = \Config::get('workshop.s3_file_name_format');
             $fileNameFormat = $s3FileNameFormat[$product->workshop_year];
 
-            $s3 = AWS::get('s3');
             if ( !$link_expiry ) {
                 $link_expiry = '+10 min';
             }
@@ -178,21 +179,33 @@ class Utility {
                 //$bucket = $s3Buckets['free'];
             }
             
-            $s3FileName = $fileNameFormat['heading'] . $product->prod_code . $fileNameFormat['ext'];
+            $prod_code = $product->prod_code;
             
-            // Use *signed* link URL for all downloads, even for free downloads.
-            $url = $s3->getObjectUrl(
-                $bucket,
-                $s3FileName,
-                $link_expiry,
-                array(
-                    'ResponseContentDisposition' => 'attachment; filename="' . $dl_filename . '"',  // Force download
-                    'ResponseContentType' => 'audio/mpeg, audio/x-mpeg, audio/x-mpeg-3, audio/mpeg3',      // MIME type of MP3 (RFC 3003)
-                    'ResponseCacheControl' => 'no-cache',   // Prevent caching
-                )
-            );
+            // Create link for each MP3 file that belongs to product.
+            for ($i = 1; $i <= $product->unit_count; $i++) {
+                if ( $product->unit_count > 1 ) {
+                    $suffixList = array( 1 => 'A', 2 => 'B', 3 => 'C', 4 => 'D', );
+                    $prod_code = substr($product->prod_code, 0, 4) . $suffixList[$i] . substr($product->prod_code, 4);
+                    $dl_filename = str_replace('.mp3', '_' . $suffixList[$i] . '.mp3', $dl_filename);
+                }
+                $s3FileName = $fileNameFormat['heading'] . $prod_code . $fileNameFormat['ext'];
+
+                // Use *signed* link URL for all downloads, even for free downloads.
+                $s3 = AWS::get('s3');
+                $url[$i] = $s3->getObjectUrl(
+                    $bucket,
+                    $s3FileName,
+                    $link_expiry,
+                    array(
+                        'ResponseContentDisposition' => 'attachment; filename="' . $dl_filename . '"',  // Force download
+                        'ResponseContentType' => 'audio/mpeg, audio/x-mpeg, audio/x-mpeg-3, audio/mpeg3',      // MIME type of MP3 (RFC 3003)
+                        'ResponseCacheControl' => 'no-cache',   // Prevent caching
+                    )
+                );
+
+                Log::debug("URL for product #" . $product->id . ": " . print_r($url[$i], TRUE));
             
-            Log::debug("URL for product #" . $product->id . ": " . print_r($url, TRUE));
+            }
             
             return $url;
         }
