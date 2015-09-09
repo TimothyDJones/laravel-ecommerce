@@ -32,7 +32,7 @@
                                             @if ( $orderVerification == TRUE 
                                                     && $order->order_status === 'Completed' 
                                                     && $cartItem->prod_type === 'MP3' )
-                                                @if ( $cartItem->mp3dlUrl[0] == '' )
+                                                @if ( !$cartItem->mp3dlUrl )
                                                     <span class="text-info" data-toggle="tooltip" 
                                                                                 data-placement="bottom" 
                                                                                 data-original-title="Contact Workshop Multimedia for new download link.">
