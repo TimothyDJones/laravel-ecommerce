@@ -9,7 +9,8 @@
                     @if ( $order->delivery_terms == 'mp3_only' )
                     Your payment has been received and your order is complete.
                     Links to download MP3 files are shown below.  <strong>
-                    Links are valid for 24 hours; please download promptly.
+                    Links are valid for <i>{{ (24 * \Config::get('workshop.mp3_download_link_expiry')) }}
+                    hours</i>; please download promptly.
                     </strong>
                     @else
                     Your payment has been received and your order is being 
