@@ -129,11 +129,13 @@
                                                                                 data-original-title="{{ $mp3_tooltip }}">&nbsp;MP3</span>
                                         </div>
                                         @else
+                                        {{--
                                         {{ link_to(Utility::generateAwsS3Url(Product::find($product->id), NULL), 'Free!', 
                                             array('class' => 'btn btn-sm form-item',
                                                 'data-toggle' => 'tooltip',
                                                 'data-placement' => 'bottom',
                                                 'data-original-title' => 'Free download! Click here to download.')) }}
+                                        --}}
                                         @endif
                                     @endif
                                     {{ Form::submit('Add', array('class' => 'btn btn-sm item-btn form-item',
